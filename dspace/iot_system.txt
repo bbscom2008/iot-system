@@ -1,0 +1,57 @@
+
+#sql
+iot_system_root
+twkDFCzsmrfKRAhF
+
+# Server Port
+server.port=7900
+
+
+/usr/lib/jvm/java-17-openjdk-17.0.16.0.8-2.0.1.1.al8.x86_64/bin/java -jar /www/wwwroot/iot_system/demo-0.0.1-SNAPSHOT.jar --spring.config.location=/www/wwwroot/iot_system/application.properties
+
+/usr/lib/jvm/java-17-openjdk-17.0.16.0.8-2.0.1.1.al8.x86_64/bin/java -jar /www/wwwroot/iot_system/demo-0.0.1-SNAPSHOT.jar --spring.config.location=/www/wwwroot/iot_system/application.properties > /www/wwwroot/iot_system/app.log 2>&1 &
+
+
+https://47.95.6.103:45678/wenqu 
+wenqu 
+wenqujingdian8080.
+
+
+
+
+ftp://wenqu:wenqujingdian8080.@47.95.6.103:0
+
+
+
+
+//===================== iot-system.service
+
+[Unit]
+Description=IoT System Service
+After=network.target
+
+[Service]
+Type=simple
+User=root  # 运行用户（根据权限需求调整，如 root 或 www）
+WorkingDirectory=/www/wwwroot/iot_system  # 程序所在目录
+ExecStart=/usr/lib/jvm/java-17-openjdk-17.0.16.0.8-2.0.1.1.al8.x86_64/bin/java \
+    -Xms512m \
+    -Xmx1024m \
+    -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=200 \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath=/opt/iot-app/dumps/ \
+    -Dspring.profiles.active=prod \
+	-jar /www/wwwroot/iot_system/demo-0.0.1-SNAPSHOT.jar \
+	--spring.config.location=/www/wwwroot/iot_system/application.properties
+	
+StandardOutput=append:/www/wwwroot/iot_system/app.log  # 标准输出日志
+StandardError=append:/www/wwwroot/iot_system/app.log   # 错误输出日志
+
+Restart=always  # 进程意外退出时自动重启
+RestartSec=3   # 重启间隔（秒）
+
+[Install]
+WantedBy=multi-user.target
+
+上面这样写对吗？

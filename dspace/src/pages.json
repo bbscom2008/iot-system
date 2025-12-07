@@ -1,0 +1,121 @@
+{
+	"pages": [
+		{
+			"path": "pages/main/main",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "个人信息",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/particulars/particulars",
+			"style": {
+				"navigationBarTitleText": "设备详情",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/equipmentDetails/equipmentDetails",
+			"style": {
+				"navigationBarTitleText": "设备详情",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/deviceSettings/deviceSettings",
+			"style": {
+				"navigationBarTitleText": "修改设备",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/cropImage/cropImage",
+			"style": {
+				"navigationStyle": "custom",
+				"backgroundColor": "#000000"
+			}
+		},
+		{
+			"path": "pages/password/password",
+			"style": {
+				"navigationBarTitleText": "修改密码",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/rechargeRecord/index",
+			"style": {
+				"navigationBarTitleText": "充值记录",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/curveChart/curveChart",
+			"style": {
+				"navigationBarTitleText": "查看曲线",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/frequencyConverter/frequencyConverter",
+			"style": {
+				"navigationBarTitleText": "变频器详情",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/sensorDetail/sensorDetail",
+			"style": {
+				"navigationBarTitleText": "传感器详情",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/motorFanDetail/motorFanDetail",
+			"style": {
+				"navigationBarTitleText": "风机详情",
+				"navigationBarBackgroundColor": "#04041A",
+				"navigationBarTextStyle": "white"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "首页",
+		"navigationBarBackgroundColor": "#04041A",
+		"backgroundColor": "#080822"
+	}
+}

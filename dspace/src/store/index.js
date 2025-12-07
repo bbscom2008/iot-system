@@ -1,0 +1,37 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import getters from './getters'
+
+import createPersistedState from 'vuex-persistedstate';
+
+import user from './modules/user'
+import app from './modules/app'
+
+Vue.use(Vuex)
+
+const modules = {
+  user,
+  app
+}
+
+const store = new Vuex.Store({
+  modules,
+  getters,
+  plugins: [
+    createPersistedState({
+      // 持久化指定的模块路径
+      // 例如：['user.userInfo', 'app.theme'] 表示只持久化 user 模块下的 userInfo 和 app 模块下的 theme
+      paths: ['user', 'app'], // 持久化整个 user 和 app 模块
+      // 使用 UniApp 的 storage，适配小程序环境
+      storage: {
+        getItem: key => uni.getStorageSync(key),
+        setItem: (key, value) => uni.setStorageSync(key, value),
+        removeItem: key => uni.removeStorageSync(key)
+      },
+      // 存储的 key 名称
+      key: 'vuex'
+    })
+  ]
+})
+
+export default store
