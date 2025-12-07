@@ -19,10 +19,7 @@ public class DeviceSettingsRequest {
     @NotBlank(message = "设备名称不能为空")
     private String deviceName;           // 设备名称
     private String deviceNum;            // 设备编号
-    
-    @NotBlank(message = "设备编号不能为空")
-    private String deviceNum;            // 设备编号
-    
+
     private Integer levelTime;           // 阶梯时间（秒）
     
     private Integer gasUpperLimit;       // 气体上限（ppm）
