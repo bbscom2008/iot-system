@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .table-section {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.3s;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .form-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #editFormSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 用户管理系统</h1>
+
+        <div id="message" class="message"></div>
+
+        <!-- 添加用户表单 -->
+        <div class="form-section">
+            <div class="form-title">➕ 添加新用户</div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required 
+                           minlength="3" maxlength="50" placeholder="请输入用户名（3-50个字符）">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required 
+                           minlength="6" maxlength="100" placeholder="请输入密码（至少6个字符）">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary">添加用户</button>
+                    <button type="button" class="btn-secondary" onclick="loadUsers()">刷新列表</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 编辑用户表单 -->
+        <div id="editFormSection" class="form-section">
+            <div class="form-title">✏️ 编辑用户</div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label for="editUsername">用户名</label>
+                    <input type="text" id="editUsername" name="username" required 
+                           minlength="3" maxlength="50" placeholder="请输入用户名（3-50个字符）">
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">密码</label>
+                    <input type="password" id="editPassword" name="password" required 
+                           minlength="6" maxlength="100" placeholder="请输入密码（至少6个字符）">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn-success">保存修改</button>
+                    <button type="button" class="btn-secondary" onclick="cancelEdit()">取消</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 用户列表 -->
+        <div class="table-section">
+            <div class="form-title">📋 用户列表</div>
+            <div id="loading" class="loading" style="display: none;">加载中...</div>
+            <div id="tableContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/api/user';
+
+        // 页面加载时获取用户列表
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+
+        // 添加用户表单提交
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('添加用户成功！', 'success');
+                    document.getElementById('addUserForm').reset();
+                    loadUsers();
+                } else {
+                    showMessage('添加失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            }
+        });
+
+        // 编辑用户表单提交
+        document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editUserId').value;
+            const username = document.getElementById('editUsername').value;
+            const password = document.getElementById('editPassword').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('更新用户成功！', 'success');
+                    cancelEdit();
+                    loadUsers();
+                } else {
+                    showMessage('更新失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            }
+        });
+
+        // 加载用户列表
+        async function loadUsers() {
+            const loading = document.getElementById('loading');
+            const tableContainer = document.getElementById('tableContainer');
+            
+            loading.style.display = 'block';
+            tableContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/all`);
+                const result = await response.json();
+
+                loading.style.display = 'none';
+
+                if (result.success && result.data && result.data.length > 0) {
+                    displayUsers(result.data);
+                } else {
+                    tableContainer.innerHTML = '<div class="empty-state">暂无用户数据</div>';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                showMessage('加载用户列表失败: ' + error.message, 'error');
+            }
+        }
+
+        // 显示用户列表
+        function displayUsers(users) {
+            const tableContainer = document.getElementById('tableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            users.forEach(user => {
+                const createdAt = new Date(user.createdAt).toLocaleString('zh-CN');
+                html += `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${createdAt}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-warning btn-small" onclick="editUser(${user.id}, '${user.username}')">编辑</button>
+                                <button class="btn-danger btn-small" onclick="deleteUser(${user.id}, '${user.username}')">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            tableContainer.innerHTML = html;
+        }
+
+        // 编辑用户
+        function editUser(id, username) {
+            document.getElementById('editUserId').value = id;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editFormSection').style.display = 'block';
+            document.getElementById('editFormSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 取消编辑
+        function cancelEdit() {
+            document.getElementById('editFormSection').style.display = 'none';
+            document.getElementById('editUserForm').reset();
+        }
+
+        // 删除用户
+        async function deleteUser(id, username) {
+            if (!confirm(`确定要删除用户 "${username}" 吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('删除用户成功！', 'success');
+                    loadUsers();
+                } else {
+                    showMessage('删除失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            }
+        }
+
+        // 显示消息
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+

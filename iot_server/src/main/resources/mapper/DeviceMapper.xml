@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.DeviceMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.Device">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
+        <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
+        <result column="signal" property="signal" jdbcType="INTEGER"/>
+        <result column="electric_quantity" property="electricQuantity" jdbcType="INTEGER"/>
+        <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="last_offline_time" property="lastOfflineTime" jdbcType="TIMESTAMP"/>
+        <result column="level_time" property="levelTime" jdbcType="INTEGER"/>
+        <result column="gas_upper_limit" property="gasUpperLimit" jdbcType="INTEGER"/>
+        <result column="gas_lower_limit" property="gasLowerLimit" jdbcType="INTEGER"/>
+        <result column="temp_upper_limit" property="tempUpperLimit" jdbcType="DECIMAL"/>
+        <result column="temp_lower_limit" property="tempLowerLimit" jdbcType="DECIMAL"/>
+        <result column="humidity_upper_limit" property="humidityUpperLimit" jdbcType="DECIMAL"/>
+        <result column="humidity_lower_limit" property="humidityLowerLimit" jdbcType="DECIMAL"/>
+        <result column="master_switch" property="masterSwitch" jdbcType="INTEGER"/>
+        <result column="power_off_switch" property="powerOffSwitch" jdbcType="INTEGER"/>
+        <result column="temp_switch" property="tempSwitch" jdbcType="INTEGER"/>
+        <result column="humidity_switch" property="humiditySwitch" jdbcType="INTEGER"/>
+        <result column="gas_switch" property="gasSwitch" jdbcType="INTEGER"/>
+        <result column="dialing_method" property="dialingMethod" jdbcType="TINYINT"/>
+        <result column="alarm_method" property="alarmMethod" jdbcType="TINYINT"/>
+        <result column="alarm_phones" property="alarmPhones" jdbcType="VARCHAR" typeHandler="com.example.demo.handler.StringListTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="DeviceListResultMap" type="com.example.demo.dto.DeviceListDTO">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
+        <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
+        <result column="signal" property="signal" jdbcType="INTEGER"/>
+        <result column="electric_quantity" property="electricQuantity" jdbcType="INTEGER"/>
+        <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="last_offline_time" property="lastOfflineTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 查询设备列表（包含用户信息） -->
+    <select id="findListWithUser" resultMap="DeviceListResultMap">
+        SELECT 
+            d.*,
+            u.nike_name as user_name,
+            u.phone as user_phone
+        FROM devices d
+        LEFT JOIN users u ON d.user_id = u.id
+        <where>
+            <if test="userId != null">
+                AND d.user_id = #{userId}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND d.device_name LIKE CONCAT('%', #{deviceName}, '%')
+            </if>
+            <if test="deviceNum != null and deviceNum != ''">
+                AND d.device_num LIKE CONCAT('%', #{deviceNum}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                AND u.phone LIKE CONCAT('%', #{userPhone}, '%')
+            </if>
+            <if test="warningStatus != null">
+                AND d.warning_status = #{warningStatus}
+            </if>
+        </where>
+        ORDER BY d.created_time DESC
+        <if test="offset != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 查询设备总数（包含用户信息筛选） -->
+    <select id="countDeviceWithUser" resultType="long">
+        SELECT COUNT(*)
+        FROM devices d
+        LEFT JOIN users u ON d.user_id = u.id
+        <where>
+            <if test="userId != null">
+                AND d.user_id = #{userId}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND d.device_name LIKE CONCAT('%', #{deviceName}, '%')
+            </if>
+            <if test="deviceNum != null and deviceNum != ''">
+                AND d.device_num LIKE CONCAT('%', #{deviceNum}, '%')
+            </if>
+            <if test="userName != null and userName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                AND u.phone LIKE CONCAT('%', #{userPhone}, '%')
+            </if>
+            <if test="warningStatus != null">
+                AND d.warning_status = #{warningStatus}
+            </if>
+        </where>
+    </select>
+
+    <!-- 原查询设备列表 -->
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT * FROM devices
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="search != null and search != ''">
+                AND (device_name LIKE CONCAT('%', #{search}, '%') 
+                OR device_num LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="deviceType != null">
+                AND device_type = #{deviceType}
+            </if>
+        </where>
+        ORDER BY created_time DESC
+        <if test="offset != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 查询设备总数 -->
+    <select id="countDevice" resultType="long">
+        SELECT COUNT(*) FROM devices
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="search != null and search != ''">
+                AND (device_name LIKE CONCAT('%', #{search}, '%') 
+                OR device_num LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="deviceType != null">
+                AND device_type = #{deviceType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID查询设备 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM devices WHERE id = #{id}
+    </select>
+
+    <!-- 根据设备编号查询 -->
+    <select id="findByDeviceNum" resultMap="BaseResultMap">
+        SELECT * FROM devices WHERE device_num = #{deviceNum}
+    </select>
+
+    <!-- 绑定设备 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO devices (user_id, device_num, device_name, device_type, created_time)
+        VALUES (#{userId}, #{deviceNum}, #{deviceName}, #{deviceType}, NOW())
+    </insert>
+
+    <!-- 解绑设备 -->
+    <delete id="deleteById">
+        DELETE FROM devices WHERE id = #{id}
+    </delete>
+
+    <!-- 更新设备信息 -->
+    <update id="update">
+        UPDATE devices
+        <set>
+            <if test="deviceNum != null">device_num = #{deviceNum},</if>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="deviceLineState != null">device_line_state = #{deviceLineState},</if>
+            <if test="signal != null">signal = #{signal},</if>
+            <if test="electricQuantity != null">electric_quantity = #{electricQuantity},</if>
+            <if test="warningStatus != null">warning_status = #{warningStatus},</if>
+            <if test="lastOfflineTime != null">last_offline_time = #{lastOfflineTime},</if>
+            <if test="levelTime != null">level_time = #{levelTime},</if>
+            <if test="gasUpperLimit != null">gas_upper_limit = #{gasUpperLimit},</if>
+            <if test="gasLowerLimit != null">gas_lower_limit = #{gasLowerLimit},</if>
+            <if test="tempUpperLimit != null">temp_upper_limit = #{tempUpperLimit},</if>
+            <if test="tempLowerLimit != null">temp_lower_limit = #{tempLowerLimit},</if>
+            <if test="humidityUpperLimit != null">humidity_upper_limit = #{humidityUpperLimit},</if>
+            <if test="humidityLowerLimit != null">humidity_lower_limit = #{humidityLowerLimit},</if>
+            <if test="masterSwitch != null">master_switch = #{masterSwitch},</if>
+            <if test="powerOffSwitch != null">power_off_switch = #{powerOffSwitch},</if>
+            <if test="tempSwitch != null">temp_switch = #{tempSwitch},</if>
+            <if test="humiditySwitch != null">humidity_switch = #{humiditySwitch},</if>
+            <if test="gasSwitch != null">gas_switch = #{gasSwitch},</if>
+            <if test="dialingMethod != null">dialing_method = #{dialingMethod},</if>
+            <if test="alarmMethod != null">alarm_method = #{alarmMethod},</if>
+            <if test="alarmPhones != null">alarm_phones = #{alarmPhones,typeHandler=com.example.demo.handler.StringListTypeHandler},</if>
+            updated_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 统计用户所有设备数 -->
+    <select id="countAllByUserId" resultType="long">
+        SELECT COUNT(*) FROM devices WHERE user_id = #{userId}
+    </select>
+
+    <!-- 统计用户在线设备数 -->
+    <select id="countOnlineByUserId" resultType="long">
+        SELECT COUNT(*) FROM devices WHERE user_id = #{userId} AND device_line_state = 1
+    </select>
+
+    <!-- 统计用户报警设备数 -->
+    <select id="countWarningByUserId" resultType="long">
+        SELECT COUNT(*) FROM devices 
+        WHERE user_id = #{userId} 
+        AND warning_status = 1
+    </select>
+
+    <!-- 统计所有设备数（web端使用） -->
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM devices
+    </select>
+
+    <!-- 统计所有在线设备数（web端使用） -->
+    <select id="countOnline" resultType="long">
+        SELECT COUNT(*) FROM devices WHERE device_line_state = 1
+    </select>
+
+    <!-- 统计所有报警设备数（web端使用） -->
+    <select id="countWarning" resultType="long">
+        SELECT COUNT(*) FROM devices WHERE warning_status = 1
+    </select>
+
+</mapper>
+

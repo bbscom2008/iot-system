@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="nike_name" property="nikeName" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="breeding_type" property="breedingType" jdbcType="INTEGER"/>
+        <result column="role" property="role" jdbcType="INTEGER"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 根据手机号查询用户 -->
+    <select id="findByPhone" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE phone = #{phone}
+    </select>
+
+    <!-- 根据ID查询用户 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <!-- 注册用户 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (phone, password, nike_name, address, breeding_type, role, created_at)
+        VALUES (#{phone}, #{password}, #{nikeName}, #{address}, #{breedingType}, #{role}, NOW())
+    </insert>
+
+    <!-- 更新用户信息 -->
+    <update id="updateUser">
+        UPDATE users
+        <set>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="nikeName != null">nike_name = #{nikeName},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="breedingType != null">breeding_type = #{breedingType},</if>
+            <if test="role != null">role = #{role},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 查询用户列表 -->
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT u.* FROM users u
+        LEFT JOIN user_role ur ON u.role = ur.role_id
+        <where>
+            <if test="search != null and search != ''">
+                AND (u.phone LIKE CONCAT('%', #{search}, '%') 
+                OR u.nike_name LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="phone != null and phone != ''">
+                AND u.phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="nickName != null and nickName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="breedingType != null">
+                AND u.breeding_type = #{breedingType}
+            </if>
+            <if test="platform != null and platform != ''">
+                AND ur.platform = #{platform}
+            </if>
+        </where>
+        ORDER BY u.created_at DESC
+        <if test="offset != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 删除用户 -->
+    <delete id="deleteById">
+        DELETE FROM users WHERE id = #{id}
+    </delete>
+
+    <select id="countUser" resultType="long">
+        SELECT COUNT(*) FROM users u
+        LEFT JOIN user_role ur ON u.role = ur.role_id
+        <where>
+            <if test="search != null and search != ''">
+                AND (u.phone LIKE CONCAT('%', #{search}, '%') 
+                OR u.nike_name LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="phone != null and phone != ''">
+                AND u.phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="nickName != null and nickName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="breedingType != null">
+                AND u.breeding_type = #{breedingType}
+            </if>
+            <if test="platform != null and platform != ''">
+                AND ur.platform = #{platform}
+            </if>
+        </where>
+    </select>
+
+</mapper>

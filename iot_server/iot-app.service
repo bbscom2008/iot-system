@@ -1,0 +1,46 @@
+# IoT 系统 systemd 服务配置文件
+# 复制到: /etc/systemd/system/iot-app.service
+
+[Unit]
+Description=IoT Agricultural System Backend Service
+Documentation=https://github.com/your-repo
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+
+# 工作目录
+WorkingDirectory=/opt/iot-app
+
+# 启动命令
+ExecStart=/usr/bin/java \
+    -Xms512m \
+    -Xmx1024m \
+    -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=200 \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath=/opt/iot-app/dumps/ \
+    -Dspring.profiles.active=prod \
+    -jar /opt/iot-app/demo-0.0.1-SNAPSHOT.jar
+
+# 重启策略
+Restart=on-failure
+RestartSec=10
+
+# 日志配置
+StandardOutput=append:/opt/iot-app/logs/app.log
+StandardError=append:/opt/iot-app/logs/error.log
+
+# 安全配置
+PrivateTmp=true
+NoNewPrivileges=true
+
+# 资源限制
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+

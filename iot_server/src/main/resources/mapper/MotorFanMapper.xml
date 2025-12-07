@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.MotorFanMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.MotorFan">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="fan_code" property="fanCode" jdbcType="VARCHAR"/>
+        <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
+        <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
+        <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
+        <result column="probe_sensor_id" property="probeSensorId" jdbcType="BIGINT"/>
+        
+        <result column="temp_upper" property="tempUpper" jdbcType="DECIMAL"/>
+        <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
+        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
+        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        
+        <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
+        <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        
+        <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
+        <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
+        
+        <result column="timer1_enabled" property="timer1Enabled" jdbcType="INTEGER"/>
+        <result column="timer1_start_time" property="timer1StartTime" jdbcType="VARCHAR"/>
+        <result column="timer1_end_time" property="timer1EndTime" jdbcType="VARCHAR"/>
+        <result column="timer1_probe_sensor_id" property="timer1ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer1_start_temp" property="timer1StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer1_stop_temp" property="timer1StopTemp" jdbcType="DECIMAL"/>
+        
+        <result column="timer2_enabled" property="timer2Enabled" jdbcType="INTEGER"/>
+        <result column="timer2_start_time" property="timer2StartTime" jdbcType="VARCHAR"/>
+        <result column="timer2_end_time" property="timer2EndTime" jdbcType="VARCHAR"/>
+        <result column="timer2_probe_sensor_id" property="timer2ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer2_start_temp" property="timer2StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer2_stop_temp" property="timer2StopTemp" jdbcType="DECIMAL"/>
+        
+        <result column="timer3_enabled" property="timer3Enabled" jdbcType="INTEGER"/>
+        <result column="timer3_start_time" property="timer3StartTime" jdbcType="VARCHAR"/>
+        <result column="timer3_end_time" property="timer3EndTime" jdbcType="VARCHAR"/>
+        <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="MotorFanListResultMap" type="com.example.demo.dto.MotorFanListDTO">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="fan_code" property="fanCode" jdbcType="VARCHAR"/>
+        <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
+        <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
+        <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
+        <result column="probe_sensor_id" property="probeSensorId" jdbcType="BIGINT"/>
+        
+        <result column="temp_upper" property="tempUpper" jdbcType="DECIMAL"/>
+        <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
+        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
+        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        
+        <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
+        <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        
+        <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
+        <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
+        
+        <result column="timer1_enabled" property="timer1Enabled" jdbcType="INTEGER"/>
+        <result column="timer1_start_time" property="timer1StartTime" jdbcType="VARCHAR"/>
+        <result column="timer1_end_time" property="timer1EndTime" jdbcType="VARCHAR"/>
+        <result column="timer1_probe_sensor_id" property="timer1ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer1_start_temp" property="timer1StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer1_stop_temp" property="timer1StopTemp" jdbcType="DECIMAL"/>
+        
+        <result column="timer2_enabled" property="timer2Enabled" jdbcType="INTEGER"/>
+        <result column="timer2_start_time" property="timer2StartTime" jdbcType="VARCHAR"/>
+        <result column="timer2_end_time" property="timer2EndTime" jdbcType="VARCHAR"/>
+        <result column="timer2_probe_sensor_id" property="timer2ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer2_start_temp" property="timer2StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer2_stop_temp" property="timer2StopTemp" jdbcType="DECIMAL"/>
+        
+        <result column="timer3_enabled" property="timer3Enabled" jdbcType="INTEGER"/>
+        <result column="timer3_start_time" property="timer3StartTime" jdbcType="VARCHAR"/>
+        <result column="timer3_end_time" property="timer3EndTime" jdbcType="VARCHAR"/>
+        <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
+        <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
+        <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        
+        <!-- 设备信息 -->
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        
+        <!-- 用户信息 -->
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询所有风扇（关联设备和用户信息） -->
+    <select id="findAll" resultMap="MotorFanListResultMap">
+        SELECT 
+            mf.*,
+            d.device_name as device_name,
+            u.nike_name as user_name,
+            u.phone as user_phone
+        FROM motor_fan mf
+        LEFT JOIN devices d ON mf.parent_id = d.id
+        LEFT JOIN users u ON d.user_id = u.id
+        <where>
+            <if test="userName != null and userName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                AND u.phone LIKE CONCAT('%', #{userPhone}, '%')
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND d.device_name LIKE CONCAT('%', #{deviceName}, '%')
+            </if>
+            <if test="deviceNum != null and deviceNum != ''">
+                AND d.device_num LIKE CONCAT('%', #{deviceNum}, '%')
+            </if>
+            <if test="fanName != null and fanName != ''">
+                AND mf.fan_name LIKE CONCAT('%', #{fanName}, '%')
+            </if>
+        </where>
+        ORDER BY mf.created_time DESC
+    </select>
+
+    <!-- 根据父设备ID查询所有风扇 -->
+    <select id="findByParentId" resultMap="BaseResultMap">
+        SELECT * FROM motor_fan
+        WHERE parent_id = #{parentId}
+        ORDER BY id ASC
+    </select>
+
+    <!-- 根据风机编码查询所有风扇 -->
+    <select id="findByFanCode" resultMap="BaseResultMap">
+        SELECT * FROM motor_fan
+        WHERE fan_code = #{fanCode}
+        ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询风扇 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM motor_fan WHERE id = #{id}
+    </select>
+
+    <!-- 新增风扇 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO motor_fan (fan_name, parent_id, fan_code, is_running, control_mode, auto_mode, created_time, updated_time)
+        VALUES (#{fanName}, #{parentId}, #{fanCode}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新风扇运行状态 -->
+    <update id="updateRunningStatus">
+        UPDATE motor_fan
+        SET is_running = #{isRunning}, updated_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新风机配置 -->
+    <update id="update">
+        UPDATE motor_fan
+        <set>
+            <if test="fanName != null">fan_name = #{fanName},</if>
+            <if test="isRunning != null">is_running = #{isRunning},</if>
+            <if test="controlMode != null">control_mode = #{controlMode},</if>
+            <if test="autoMode != null">auto_mode = #{autoMode},</if>
+            <if test="probeSensorId != null">probe_sensor_id = #{probeSensorId},</if>
+            <if test="tempUpper != null">temp_upper = #{tempUpper},</if>
+            <if test="tempLower != null">temp_lower = #{tempLower},</if>
+            <if test="runTime != null">run_time = #{runTime},</if>
+            <if test="pauseTime != null">pause_time = #{pauseTime},</if>
+            <if test="humidityUpper != null">humidity_upper = #{humidityUpper},</if>
+            <if test="humidityLower != null">humidity_lower = #{humidityLower},</if>
+            <if test="gasUpper != null">gas_upper = #{gasUpper},</if>
+            <if test="gasLower != null">gas_lower = #{gasLower},</if>
+            <if test="timer1Enabled != null">timer1_enabled = #{timer1Enabled},</if>
+            <if test="timer1StartTime != null">timer1_start_time = #{timer1StartTime},</if>
+            <if test="timer1EndTime != null">timer1_end_time = #{timer1EndTime},</if>
+            <if test="timer1ProbeSensorId != null">timer1_probe_sensor_id = #{timer1ProbeSensorId},</if>
+            <if test="timer1StartTemp != null">timer1_start_temp = #{timer1StartTemp},</if>
+            <if test="timer1StopTemp != null">timer1_stop_temp = #{timer1StopTemp},</if>
+            <if test="timer2Enabled != null">timer2_enabled = #{timer2Enabled},</if>
+            <if test="timer2StartTime != null">timer2_start_time = #{timer2StartTime},</if>
+            <if test="timer2EndTime != null">timer2_end_time = #{timer2EndTime},</if>
+            <if test="timer2ProbeSensorId != null">timer2_probe_sensor_id = #{timer2ProbeSensorId},</if>
+            <if test="timer2StartTemp != null">timer2_start_temp = #{timer2StartTemp},</if>
+            <if test="timer2StopTemp != null">timer2_stop_temp = #{timer2StopTemp},</if>
+            <if test="timer3Enabled != null">timer3_enabled = #{timer3Enabled},</if>
+            <if test="timer3StartTime != null">timer3_start_time = #{timer3StartTime},</if>
+            <if test="timer3EndTime != null">timer3_end_time = #{timer3EndTime},</if>
+            <if test="timer3ProbeSensorId != null">timer3_probe_sensor_id = #{timer3ProbeSensorId},</if>
+            <if test="timer3StartTemp != null">timer3_start_temp = #{timer3StartTemp},</if>
+            <if test="timer3StopTemp != null">timer3_stop_temp = #{timer3StopTemp},</if>
+            updated_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除风扇 -->
+    <delete id="deleteById">
+        DELETE FROM motor_fan WHERE id = #{id}
+    </delete>
+
+    <!-- 删除父设备的所有风扇 -->
+    <delete id="deleteByParentId">
+        DELETE FROM motor_fan WHERE parent_id = #{parentId}
+    </delete>
+
+</mapper>

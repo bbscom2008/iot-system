@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.SensorDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.SensorData">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sensor_id" property="sensorId" jdbcType="BIGINT"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="sensor_num" property="sensorCode" jdbcType="VARCHAR"/>
+        <result column="sensor_type_id" property="sensorTypeId" jdbcType="INTEGER"/>
+        <result column="sensor_name" property="sensorName" jdbcType="VARCHAR"/>
+        <result column="sensor_value" property="sensorValue" jdbcType="DOUBLE"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="record_time" property="recordTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 批量插入传感器数据 -->
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sensor_data 
+        (sensor_id, device_id, device_num, sensor_num, sensor_type_id, sensor_name, sensor_value, unit, record_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.sensorId}, #{item.deviceId}, #{item.deviceNum}, #{item.sensorCode}, 
+             #{item.sensorTypeId}, #{item.sensorName}, #{item.sensorValue}, #{item.unit}, #{item.recordTime})
+        </foreach>
+    </insert>
+
+    <!-- 根据传感器ID查询历史数据 -->
+    <select id="findBySensorId" resultMap="BaseResultMap">
+        SELECT * FROM sensor_data
+        WHERE sensor_id = #{sensorId}
+        <if test="startTime != null">
+            AND record_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND record_time &lt;= #{endTime}
+        </if>
+        ORDER BY record_time DESC
+    </select>
+
+    <!-- 根据设备ID查询所有传感器的历史数据 -->
+    <select id="findByDeviceId" resultMap="BaseResultMap">
+        SELECT * FROM sensor_data
+        WHERE device_id = #{deviceId}
+        <if test="startTime != null">
+            AND record_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND record_time &lt;= #{endTime}
+        </if>
+        ORDER BY record_time DESC
+    </select>
+
+    <!-- 删除指定时间之前的数据 -->
+    <delete id="deleteBeforeTime">
+        DELETE FROM sensor_data
+        WHERE record_time &lt; #{beforeTime}
+    </delete>
+
+    <!-- 获取指定传感器的最新记录 -->
+    <select id="getLatestBySensorId" resultMap="BaseResultMap">
+        SELECT * FROM sensor_data
+        WHERE sensor_id = #{sensorId}
+        ORDER BY record_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 获取指定设备的所有传感器最新记录 -->
+    <select id="getLatestByDeviceId" resultMap="BaseResultMap">
+        SELECT sd1.* FROM sensor_data sd1
+        INNER JOIN (
+            SELECT sensor_id, MAX(record_time) as max_time
+            FROM sensor_data
+            WHERE device_id = #{deviceId}
+            GROUP BY sensor_id
+        ) sd2 ON sd1.sensor_id = sd2.sensor_id AND sd1.record_time = sd2.max_time
+        WHERE sd1.device_id = #{deviceId}
+        ORDER BY sd1.sensor_type_id, sd1.sensor_id
+    </select>
+
+    <!-- 删除设备的所有传感器历史数据 -->
+    <delete id="deleteByDeviceId">
+        DELETE FROM sensor_data
+        WHERE device_id = #{deviceId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,51 @@
+package com.example.demo.mapper;
+
+import com.example.demo.entity.FrequencyMotor;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface FrequencyMotorMapper {
+
+    /**
+     * 根据父设备ID查询所有变频电机
+     */
+    List<FrequencyMotor> findByParentId(Long parentId);
+
+    /**
+     * 根据设备编号查询所有变频电机
+     */
+    List<FrequencyMotor> findByDeviceNum(String deviceNum);
+
+    /**
+     * 查询所有变频电机（关联设备和用户信息）
+     */
+    List<FrequencyMotor> findAll(Map<String, Object> params);
+
+    /**
+     * 根据ID查询变频电机
+     */
+    FrequencyMotor findById(Long id);
+
+    /**
+     * 新增变频电机
+     */
+    int insert(FrequencyMotor frequencyMotor);
+
+    /**
+     * 更新变频电机配置
+     */
+    int update(FrequencyMotor frequencyMotor);
+
+    /**
+     * 删除变频电机
+     */
+    int deleteById(Long id);
+
+    /**
+     * 删除父设备的所有变频电机
+     */
+    int deleteByParentId(Long parentId);
+}

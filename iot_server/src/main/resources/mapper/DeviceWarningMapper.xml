@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.DeviceWarningMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.DeviceWarning">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="warning_type" property="warningType" jdbcType="VARCHAR"/>
+        <result column="warning_msg" property="warningMsg" jdbcType="VARCHAR"/>
+        <result column="is_read" property="isRead" jdbcType="INTEGER"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 查询报警列表 -->
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT * FROM device_warnings
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="isRead != null">
+                AND is_read = #{isRead}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        <if test="offset != null and pageSize != null">
+            LIMIT #{offset}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 查询报警总数 -->
+    <select id="countWarning" resultType="long">
+        SELECT COUNT(*) FROM device_warnings
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="isRead != null">
+                AND is_read = #{isRead}
+            </if>
+        </where>
+    </select>
+
+    <!-- 标记报警已读 -->
+    <update id="markRead">
+        UPDATE device_warnings
+        SET is_read = 1
+        WHERE device_num = #{deviceNum} AND user_id = #{userId} AND is_read = 0
+    </update>
+
+</mapper>
+

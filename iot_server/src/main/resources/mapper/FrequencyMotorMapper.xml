@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.FrequencyMotorMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.FrequencyMotor">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="protect_speed" property="protectSpeed" jdbcType="DOUBLE"/>
+        <result column="is_auto" property="isAuto" jdbcType="INTEGER"/>
+        <result column="manual_speed" property="manualSpeed" jdbcType="DOUBLE"/>
+        <result column="value" property="value" jdbcType="INTEGER"/>
+        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
+        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        <result column="control_type" property="controlType" jdbcType="INTEGER"/>
+        <result column="temp_sensor_id" property="tempSensorId" jdbcType="BIGINT"/>
+        <result column="temp_upper" property="tempUpper" jdbcType="DOUBLE"/>
+        <result column="temp_lower" property="tempLower" jdbcType="DOUBLE"/>
+        <result column="humidity_upper" property="humidityUpper" jdbcType="DOUBLE"/>
+        <result column="humidity_lower" property="humidityLower" jdbcType="DOUBLE"/>
+        <result column="gas_upper" property="gasUpper" jdbcType="DOUBLE"/>
+        <result column="gas_lower" property="gasLower" jdbcType="DOUBLE"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        
+        <!-- 设备和用户信息 -->
+        <result column="parent_device_name" property="parentDeviceName" jdbcType="VARCHAR"/>
+        <result column="parent_device_num" property="parentDeviceNum" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询所有变频电机（关联设备和用户信息） -->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT 
+            fm.id,
+            fm.parent_id,
+            fm.device_num,
+            fm.device_name,
+            fm.protect_speed,
+            fm.is_auto,
+            fm.manual_speed,
+            fm.value,
+            fm.run_time,
+            fm.pause_time,
+            fm.control_type,
+            fm.temp_sensor_id,
+            fm.temp_upper,
+            fm.temp_lower,
+            fm.humidity_upper,
+            fm.humidity_lower,
+            fm.gas_upper,
+            fm.gas_lower,
+            fm.created_time,
+            fm.updated_time,
+            d.device_name as parent_device_name,
+            d.device_num as parent_device_num,
+            u.nike_name as user_name,
+            u.phone as user_phone
+        FROM frequency_motor fm
+        LEFT JOIN devices d ON fm.parent_id = d.id
+        LEFT JOIN users u ON d.user_id = u.id
+        <where>
+            <if test="userName != null and userName != ''">
+                AND u.nike_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                AND u.phone LIKE CONCAT('%', #{userPhone}, '%')
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND d.device_name LIKE CONCAT('%', #{deviceName}, '%')
+            </if>
+            <if test="deviceNum != null and deviceNum != ''">
+                AND d.device_num LIKE CONCAT('%', #{deviceNum}, '%')
+            </if>
+            <if test="motorName != null and motorName != ''">
+                AND fm.device_name LIKE CONCAT('%', #{motorName}, '%')
+            </if>
+            <if test="motorCode != null and motorCode != ''">
+                AND fm.device_num LIKE CONCAT('%', #{motorCode}, '%')
+            </if>
+        </where>
+        ORDER BY fm.created_time DESC
+    </select>
+
+    <!-- 根据父设备ID查询所有变频电机 -->
+    <select id="findByParentId" resultMap="BaseResultMap">
+        SELECT * FROM frequency_motor
+        WHERE parent_id = #{parentId}
+        ORDER BY id ASC
+    </select>
+
+    <!-- 根据设备编号查询所有变频电机 -->
+    <select id="findByDeviceNum" resultMap="BaseResultMap">
+        SELECT * FROM frequency_motor
+        WHERE device_num = #{deviceNum}
+        ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询变频电机 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM frequency_motor WHERE id = #{id}
+    </select>
+
+    <!-- 新增变频电机 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO frequency_motor 
+        (parent_id, device_num, device_name, protect_speed, is_auto, manual_speed, value, run_time, pause_time, 
+         control_type, temp_sensor_id, temp_upper, temp_lower, humidity_upper, humidity_lower, gas_upper, gas_lower, 
+         created_time, updated_time)
+        VALUES 
+        (#{parentId}, #{deviceNum}, #{deviceName}, #{protectSpeed}, #{isAuto}, #{manualSpeed}, #{value}, #{runTime}, #{pauseTime},
+         #{controlType}, #{tempSensorId}, #{tempUpper}, #{tempLower}, #{humidityUpper}, #{humidityLower}, #{gasUpper}, #{gasLower},
+         NOW(), NOW())
+    </insert>
+
+    <!-- 更新变频电机配置 -->
+    <update id="update">
+        UPDATE frequency_motor
+        SET protect_speed = #{protectSpeed},
+            is_auto = #{isAuto},
+            manual_speed = #{manualSpeed},
+            value = #{value},
+            run_time = #{runTime},
+            pause_time = #{pauseTime},
+            control_type = #{controlType},
+            temp_sensor_id = #{tempSensorId},
+            temp_upper = #{tempUpper},
+            temp_lower = #{tempLower},
+            humidity_upper = #{humidityUpper},
+            humidity_lower = #{humidityLower},
+            gas_upper = #{gasUpper},
+            gas_lower = #{gasLower},
+            device_name = #{deviceName},
+            updated_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除变频电机 -->
+    <delete id="deleteById">
+        DELETE FROM frequency_motor WHERE id = #{id}
+    </delete>
+
+    <!-- 删除父设备的所有变频电机 -->
+    <delete id="deleteByParentId">
+        DELETE FROM frequency_motor WHERE parent_id = #{parentId}
+    </delete>
+
+</mapper>
