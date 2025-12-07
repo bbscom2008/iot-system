@@ -235,5 +235,13 @@
         SELECT COUNT(*) FROM devices WHERE warning_status = 1
     </select>
 
+    <update id="markOnlineByDeviceNum">
+        UPDATE devices
+        SET device_line_state = 1,
+            updated_time = NOW(),
+            last_offline_time = NOW()
+        WHERE device_num = #{deviceNum}
+    </update>
+
 </mapper>
 

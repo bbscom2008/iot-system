@@ -249,5 +249,12 @@ public class DeviceService {
         // 5. 删除设备本身
         deviceMapper.deleteById(deviceId);
     }
+
+    public void markDeviceOnline(String deviceNum) {
+        Device device = deviceMapper.findByDeviceNum(deviceNum);
+        if (device != null) {
+            deviceMapper.markOnlineByDeviceNum(deviceNum);
+        }
+    }
 }
 

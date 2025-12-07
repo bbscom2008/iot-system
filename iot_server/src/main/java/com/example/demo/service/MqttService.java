@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -15,9 +16,12 @@ import org.springframework.util.StringUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MqttService implements MqttCallback {
 
     @Value("${mqtt.broker}")
@@ -45,6 +49,8 @@ public class MqttService implements MqttCallback {
     private int keepAliveInterval;
 
     private MqttClient client;
+    private final ObjectMapper objectMapper;
+    private final DeviceService deviceService;
 
     @PostConstruct
     public void init() {
@@ -88,11 +94,19 @@ public class MqttService implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
-        log.info("MQTT message [{}]: {}", topic, payload);
+        try {
+            JsonNode node = objectMapper.readTree(payload);
+            JsonNode idNode = node.get("id");
+            if (idNode != null && idNode.isTextual()) {
+                String deviceNum = idNode.asText();
+                deviceService.markDeviceOnline(deviceNum);
+            }
+        } catch (Exception e) {
+            log.error("MQTT payload parse error", e);
+        }
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
     }
 }
-

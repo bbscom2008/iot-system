@@ -85,5 +85,7 @@ public interface DeviceMapper {
      * 统计所有报警设备数（web端使用）
      */
     Long countWarning();
+
+    int markOnlineByDeviceNum(@Param("deviceNum") String deviceNum);
 }
 
