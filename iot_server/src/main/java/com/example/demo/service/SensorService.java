@@ -136,5 +136,9 @@ public class SensorService {
     public Long countListWithDeviceAndUser(Map<String, Object> params) {
         return sensorMapper.countListWithDeviceAndUser(params);
     }
+
+    public void updateValueByParentAndCode(Long parentId, String sensorCode, Double sensorValue) {
+        sensorMapper.updateValueByParentAndCode(parentId, sensorCode, sensorValue);
+    }
 }
 

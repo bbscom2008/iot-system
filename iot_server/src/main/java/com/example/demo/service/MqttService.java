@@ -18,6 +18,7 @@ import jakarta.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.entity.Device;
 
 @Slf4j
 @Service
@@ -51,6 +52,7 @@ public class MqttService implements MqttCallback {
     private MqttClient client;
     private final ObjectMapper objectMapper;
     private final DeviceService deviceService;
+    private final SensorService sensorService;
 
     @PostConstruct
     public void init() {
@@ -100,9 +102,24 @@ public class MqttService implements MqttCallback {
             if (idNode != null && idNode.isTextual()) {
                 String deviceNum = idNode.asText();
                 deviceService.markDeviceOnline(deviceNum);
+                Device device = deviceService.findByDeviceNum(deviceNum);
+                if (device != null) {
+                    Long parentId = device.getId();
+                    updateTsSensor(parentId, node, "ts1");
+                    updateTsSensor(parentId, node, "ts2");
+                    updateTsSensor(parentId, node, "ts3");
+                    updateTsSensor(parentId, node, "ts4");
+                }
             }
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
+        }
+    }
+
+    private void updateTsSensor(Long parentId, JsonNode node, String key) {
+        JsonNode v = node.get(key);
+        if (v != null && v.isNumber()) {
+            sensorService.updateValueByParentAndCode(parentId, key, v.asDouble());
         }
     }
 

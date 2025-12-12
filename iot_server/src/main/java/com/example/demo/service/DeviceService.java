@@ -251,10 +251,11 @@ public class DeviceService {
     }
 
     public void markDeviceOnline(String deviceNum) {
-        Device device = deviceMapper.findByDeviceNum(deviceNum);
-        if (device != null) {
-            deviceMapper.markOnlineByDeviceNum(deviceNum);
-        }
+        deviceMapper.markOnlineByDeviceNum(deviceNum);
+    }
+
+    public Device findByDeviceNum(String deviceNum) {
+        return deviceMapper.findByDeviceNum(deviceNum);
     }
 }
 
