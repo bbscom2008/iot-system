@@ -306,19 +306,19 @@ CREATE TABLE `sensor_data`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `sensor_id` bigint NOT NULL COMMENT '传感器ID，关联sensor表的id',
   `device_id` bigint NOT NULL COMMENT '设备ID，关联device表的id',
-  `device_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '设备编号',
-  `sensor_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '传感器编号',
+  `device_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备编号',
+  `sensor_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '传感器编号',
   `sensor_type_id` int NULL DEFAULT NULL COMMENT '传感器类型ID：5-温度 6-湿度 7-气体',
-  `sensor_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '传感器名称',
+  `sensor_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '传感器名称',
   `sensor_value` decimal(10, 2) NULL DEFAULT NULL COMMENT '传感器值',
-  `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '单位：°C, %, ppm等',
+  `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '单位：°C, %, ppm等',
   `record_time` datetime NOT NULL COMMENT '记录时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_sensor_id`(`sensor_id` ASC) USING BTREE,
   INDEX `idx_device_id`(`device_id` ASC) USING BTREE,
   INDEX `idx_record_time`(`record_time` ASC) USING BTREE,
   INDEX `idx_device_record`(`device_id` ASC, `record_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33171 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '传感器数据记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 33171 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '传感器数据记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sensor_data

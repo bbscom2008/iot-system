@@ -76,4 +76,12 @@ public class FrequencyMotorService {
     public void deleteByParentId(Long parentId) {
         frequencyMotorMapper.deleteByParentId(parentId);
     }
+
+    
+    /**
+     * 根据父设备ID和设备编号更新变频电机的当前值
+     */
+    public int updateValueByParentAndCode(Long parentId, String code, Integer value) {
+        return frequencyMotorMapper.updateValueByParentAndCode(parentId, code, value);
+    }
 }

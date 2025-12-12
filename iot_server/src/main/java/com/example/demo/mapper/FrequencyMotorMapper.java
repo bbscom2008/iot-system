@@ -47,5 +47,10 @@ public interface FrequencyMotorMapper {
     /**
      * 删除父设备的所有变频电机
      */
-    int deleteByParentId(Long parentId);
+    void deleteByParentId(Long parentId);
+
+    /**
+     * 根据父设备ID和设备编号更新变频电机的当前值
+     */
+    int updateValueByParentAndCode(Long parentId, String code, Integer value);
 }

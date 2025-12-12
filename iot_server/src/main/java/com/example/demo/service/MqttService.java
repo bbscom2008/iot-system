@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.entity.Device;
+import com.example.demo.service.FrequencyMotorService;
 
 @Slf4j
 @Service
@@ -54,6 +55,7 @@ public class MqttService implements MqttCallback {
     private final DeviceService deviceService;
     private final SensorService sensorService;
     private final MotorFanService motorFanService;
+    private final FrequencyMotorService frequencyMotorService;
 
     @PostConstruct
     public void init() {
@@ -120,6 +122,8 @@ public class MqttService implements MqttCallback {
                     updateMotor(parentId, node, "mt8");
                     updateMotor(parentId, node, "mt9");
                     updateMotor(parentId, node, "mt10");
+                    updateFrequencyMotor(parentId, node, "imt1");
+                    updateFrequencyMotor(parentId, node, "imt2");
                 }
             }
         } catch (Exception e) {
@@ -150,6 +154,14 @@ public class MqttService implements MqttCallback {
             if (run != null) {
                 motorFanService.updateRunningStatusByParentAndCode(parentId, key, run);
             }
+        }
+    }
+    
+    private void updateFrequencyMotor(Long parentId, JsonNode node, String key) {
+        JsonNode v = node.get(key);
+        if (v != null && v.isNumber()) {
+            Integer value = v.intValue();
+            frequencyMotorService.updateValueByParentAndCode(parentId, key, value);
         }
     }
 

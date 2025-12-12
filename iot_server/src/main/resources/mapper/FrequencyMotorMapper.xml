@@ -37,7 +37,7 @@
     <select id="findAll" resultMap="BaseResultMap">
         SELECT 
             fm.id,
-            fm.parent_id,
+            fm.device_id,
             fm.device_num,
             fm.device_name,
             fm.protect_speed,
@@ -61,7 +61,7 @@
             u.nike_name as user_name,
             u.phone as user_phone
         FROM frequency_motor fm
-        LEFT JOIN devices d ON fm.parent_id = d.id
+        LEFT JOIN devices d ON fm.device_id = d.id
         LEFT JOIN users u ON d.user_id = u.id
         <where>
             <if test="userName != null and userName != ''">
@@ -89,7 +89,7 @@
     <!-- 根据父设备ID查询所有变频电机 -->
     <select id="findByParentId" resultMap="BaseResultMap">
         SELECT * FROM frequency_motor
-        WHERE parent_id = #{parentId}
+        WHERE device_id = #{parentId}
         ORDER BY id ASC
     </select>
 
@@ -108,7 +108,7 @@
     <!-- 新增变频电机 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO frequency_motor 
-        (parent_id, device_num, device_name, protect_speed, is_auto, manual_speed, value, run_time, pause_time, 
+        (device_id, device_num, device_name, protect_speed, is_auto, manual_speed, value, run_time, pause_time,
          control_type, temp_sensor_id, temp_upper, temp_lower, humidity_upper, humidity_lower, gas_upper, gas_lower, 
          created_time, updated_time)
         VALUES 
@@ -146,7 +146,16 @@
 
     <!-- 删除父设备的所有变频电机 -->
     <delete id="deleteByParentId">
-        DELETE FROM frequency_motor WHERE parent_id = #{parentId}
+        DELETE FROM frequency_motor WHERE device_id = #{parentId}
     </delete>
+
+    
+    <!-- 根据父设备ID和设备编号更新变频电机的当前值 -->
+    <update id="updateValueByParentAndCode">
+        UPDATE frequency_motor
+        SET value = #{value},
+            updated_time = NOW()
+        WHERE device_id = #{parentId} AND device_num = #{code}
+    </update>
 
 </mapper>
