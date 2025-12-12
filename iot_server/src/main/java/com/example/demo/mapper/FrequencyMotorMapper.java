@@ -53,4 +53,11 @@ public interface FrequencyMotorMapper {
      * 根据父设备ID和设备编号更新变频电机的当前值
      */
     int updateValueByParentAndCode(Long parentId, String code, Integer value);
+    
+    /**
+     * 根据父设备ID批量更新变频电机的当前值
+     * @param params 包含parentId和valuesMap的参数
+     * @return 更新的行数
+     */
+    int batchUpdateValueByParentId(Map<String, Object> params);
 }

@@ -5,6 +5,7 @@ import com.example.demo.mapper.FrequencyMotorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,5 +84,21 @@ public class FrequencyMotorService {
      */
     public int updateValueByParentAndCode(Long parentId, String code, Integer value) {
         return frequencyMotorMapper.updateValueByParentAndCode(parentId, code, value);
+    }
+    
+    /**
+     * 根据父设备ID批量更新变频电机的当前值
+     * @param parentId 父设备ID
+     * @param valuesMap 设备编号与对应值的映射
+     * @return 更新的行数
+     */
+    public int batchUpdateValueByParentId(Long parentId, Map<String, Integer> valuesMap) {
+        if (valuesMap == null || valuesMap.isEmpty()) {
+            return 0;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("parentId", parentId);
+        params.put("valuesMap", valuesMap);
+        return frequencyMotorMapper.batchUpdateValueByParentId(params);
     }
 }

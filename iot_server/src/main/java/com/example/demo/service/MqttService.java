@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.entity.Device;
 import com.example.demo.service.FrequencyMotorService;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -122,8 +124,25 @@ public class MqttService implements MqttCallback {
                     updateMotor(parentId, node, "mt8");
                     updateMotor(parentId, node, "mt9");
                     updateMotor(parentId, node, "mt10");
-                    updateFrequencyMotor(parentId, node, "imt1");
-                    updateFrequencyMotor(parentId, node, "imt2");
+                    // 批量更新变频电机的值
+                    Map<String, Integer> frequencyMotorValues = new HashMap<>();
+                    
+                    // 处理 imt1
+                    JsonNode imt1Node = node.get("imt1");
+                    if (imt1Node != null && imt1Node.isNumber()) {
+                        frequencyMotorValues.put("imt1", imt1Node.intValue());
+                    }
+                    
+                    // 处理 imt2
+                    JsonNode imt2Node = node.get("imt2");
+                    if (imt2Node != null && imt2Node.isNumber()) {
+                        frequencyMotorValues.put("imt2", imt2Node.intValue());
+                    }
+                    
+                    // 如果有需要更新的值，调用批量更新方法
+                    if (!frequencyMotorValues.isEmpty()) {
+                        frequencyMotorService.batchUpdateValueByParentId(parentId, frequencyMotorValues);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -154,14 +173,6 @@ public class MqttService implements MqttCallback {
             if (run != null) {
                 motorFanService.updateRunningStatusByParentAndCode(parentId, key, run);
             }
-        }
-    }
-    
-    private void updateFrequencyMotor(Long parentId, JsonNode node, String key) {
-        JsonNode v = node.get(key);
-        if (v != null && v.isNumber()) {
-            Integer value = v.intValue();
-            frequencyMotorService.updateValueByParentAndCode(parentId, key, value);
         }
     }
 
