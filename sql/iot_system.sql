@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysql
+ Source Server         : rocky9
  Source Server Type    : MySQL
- Source Server Version : 80403
- Source Host           : localhost:3306
+ Source Server Version : 50744
+ Source Host           : 192.168.56.128:3306
  Source Schema         : iot_system
 
  Target Server Type    : MySQL
- Target Server Version : 80403
+ Target Server Version : 50744
  File Encoding         : 65001
 
- Date: 12/12/2025 19:45:48
+ Date: 13/12/2025 06:51:48
 */
 
 SET NAMES utf8mb4;
@@ -22,15 +22,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `breed_type`;
 CREATE TABLE `breed_type`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `dict_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '显示名称',
   `dict_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '字典值',
-  `dict_sort` int NULL DEFAULT 0 COMMENT '排序',
+  `dict_sort` int(11) NULL DEFAULT 0 COMMENT '排序',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_dict_value`(`dict_value` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '养殖类型表' ROW_FORMAT = Dynamic;
+  INDEX `idx_dict_value`(`dict_value`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '养殖类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of breed_type
@@ -47,14 +47,14 @@ INSERT INTO `breed_type` VALUES (6, '其他', '5', 6, NULL, '2025-10-21 06:19:17
 -- ----------------------------
 DROP TABLE IF EXISTS `device_type`;
 CREATE TABLE `device_type`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '显示名称',
   `type_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '类型ID',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_dict_value`(`type_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备类型表' ROW_FORMAT = Dynamic;
+  INDEX `idx_dict_value`(`type_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of device_type
@@ -77,20 +77,20 @@ INSERT INTO `device_type` VALUES (19, '变频器', '11', '变频器', '2025-10-2
 -- ----------------------------
 DROP TABLE IF EXISTS `device_warnings`;
 CREATE TABLE `device_warnings`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '报警ID',
-  `device_id` bigint NOT NULL COMMENT '设备ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '报警ID',
+  `device_id` bigint(20) NOT NULL COMMENT '设备ID',
   `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备编号',
-  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `warning_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '报警类型：温度报警/湿度报警/气体报警/断电报警',
   `warning_msg` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '报警信息',
-  `is_read` int NULL DEFAULT 0 COMMENT '是否已读：0-未读 1-已读',
+  `is_read` int(11) NULL DEFAULT 0 COMMENT '是否已读：0-未读 1-已读',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_device_id`(`device_id` ASC) USING BTREE,
-  INDEX `idx_device_num`(`device_num` ASC) USING BTREE,
-  INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `idx_is_read`(`is_read` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备报警表' ROW_FORMAT = Dynamic;
+  INDEX `idx_device_id`(`device_id`) USING BTREE,
+  INDEX `idx_device_num`(`device_num`) USING BTREE,
+  INDEX `idx_user_id`(`user_id`) USING BTREE,
+  INDEX `idx_is_read`(`is_read`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备报警表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of device_warnings
@@ -103,44 +103,44 @@ INSERT INTO `device_warnings` VALUES (2, 3, 'DEV003', 1, '温度报警', '温度
 -- ----------------------------
 DROP TABLE IF EXISTS `devices`;
 CREATE TABLE `devices`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '设备ID',
-  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '设备ID',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备编号',
   `device_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '设备名称',
-  `device_type` int NULL DEFAULT NULL COMMENT '设备类型：0-报警器 1-环控仪 2-变频器',
-  `device_line_state` int NULL DEFAULT 0 COMMENT '在线状态：0-离线 1-在线',
-  `signal` int NULL DEFAULT 0 COMMENT '信号强度',
-  `electric_quantity` int NULL DEFAULT 100 COMMENT '电量（0-100）',
-  `warning_status` int NULL DEFAULT 0 COMMENT '报警状态：0-正常 1-报警',
+  `device_type` int(11) NULL DEFAULT NULL COMMENT '设备类型：0-报警器 1-环控仪 2-变频器',
+  `device_line_state` int(11) NULL DEFAULT 0 COMMENT '在线状态：0-离线 1-在线',
+  `signal` int(11) NULL DEFAULT 0 COMMENT '信号强度',
+  `electric_quantity` int(11) NULL DEFAULT 100 COMMENT '电量（0-100）',
+  `warning_status` int(11) NULL DEFAULT 0 COMMENT '报警状态：0-正常 1-报警',
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `last_offline_time` datetime NULL DEFAULT NULL COMMENT '最后离线时间',
-  `level_time` int NOT NULL DEFAULT 0 COMMENT '阶梯时间（秒），大于等于0的整数',
-  `gas_upper_limit` int NULL DEFAULT 0 COMMENT '气体上限（ppm）',
-  `gas_lower_limit` int NULL DEFAULT 0 COMMENT '气体下限（ppm）',
+  `level_time` int(11) NOT NULL DEFAULT 0 COMMENT '阶梯时间（秒），大于等于0的整数',
+  `gas_upper_limit` int(11) NULL DEFAULT 0 COMMENT '气体上限（ppm）',
+  `gas_lower_limit` int(11) NULL DEFAULT 0 COMMENT '气体下限（ppm）',
   `temp_upper_limit` decimal(5, 2) NULL DEFAULT 0.00 COMMENT '温度上限（°C）',
   `temp_lower_limit` decimal(5, 2) NULL DEFAULT 0.00 COMMENT '温度下限（°C）',
   `humidity_upper_limit` decimal(5, 2) NULL DEFAULT 0.00 COMMENT '湿度上限（%）',
   `humidity_lower_limit` decimal(5, 2) NULL DEFAULT 0.00 COMMENT '湿度下限（%）',
-  `master_switch` tinyint NOT NULL DEFAULT 1 COMMENT '总开关：0-关闭 1-开启',
-  `power_off_switch` tinyint NOT NULL DEFAULT 0 COMMENT '断电开关：0-关闭 1-开启',
-  `temp_switch` tinyint NOT NULL DEFAULT 1 COMMENT '温度开关：0-关闭 1-开启',
-  `humidity_switch` tinyint NOT NULL DEFAULT 0 COMMENT '湿度开关：0-关闭 1-开启',
-  `gas_switch` tinyint NOT NULL DEFAULT 0 COMMENT '气体开关：0-关闭 1-开启',
-  `dialing_method` tinyint NOT NULL DEFAULT 1 COMMENT '拨打方式：1-同时拨打 2-依次拨打',
-  `alarm_method` tinyint NOT NULL DEFAULT 3 COMMENT '报警方式：1-打电话 2-发短信 3-打电话和发短信',
+  `master_switch` tinyint(4) NOT NULL DEFAULT 1 COMMENT '总开关：0-关闭 1-开启',
+  `power_off_switch` tinyint(4) NOT NULL DEFAULT 0 COMMENT '断电开关：0-关闭 1-开启',
+  `temp_switch` tinyint(4) NOT NULL DEFAULT 1 COMMENT '温度开关：0-关闭 1-开启',
+  `humidity_switch` tinyint(4) NOT NULL DEFAULT 0 COMMENT '湿度开关：0-关闭 1-开启',
+  `gas_switch` tinyint(4) NOT NULL DEFAULT 0 COMMENT '气体开关：0-关闭 1-开启',
+  `dialing_method` tinyint(4) NOT NULL DEFAULT 1 COMMENT '拨打方式：1-同时拨打 2-依次拨打',
+  `alarm_method` tinyint(4) NOT NULL DEFAULT 3 COMMENT '报警方式：1-打电话 2-发短信 3-打电话和发短信',
   `alarm_phones` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '报警电话 JSON字符串，最多10个电话',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `device_num`(`device_num` ASC) USING BTREE,
-  INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
-  INDEX `idx_device_num`(`device_num` ASC) USING BTREE,
-  INDEX `idx_device_type`(`device_type` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备表' ROW_FORMAT = Dynamic;
+  UNIQUE INDEX `device_num`(`device_num`) USING BTREE,
+  INDEX `idx_user_id`(`user_id`) USING BTREE,
+  INDEX `idx_device_num`(`device_num`) USING BTREE,
+  INDEX `idx_device_type`(`device_type`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '设备表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of devices
 -- ----------------------------
-INSERT INTO `devices` VALUES (1, 3, '928172361263', '1号鸡房01', 1, 1, 3, 85, 0, '2025-10-21 06:19:17', '2025-12-12 19:44:01', '2025-12-12 19:44:01', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
+INSERT INTO `devices` VALUES (1, 3, '928172361263', '1号鸡房01', 1, 1, 3, 85, 0, '2025-10-21 06:19:17', '2025-12-13 06:50:32', '2025-12-13 06:50:32', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
 INSERT INTO `devices` VALUES (2, 3, 'd002', '2号猪舍环控仪', 1, 1, 4, 93, 0, '2025-10-21 06:19:17', '2025-12-08 06:06:55', '2025-10-24 05:30:25', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 0, 0, 0, 0, 0, 1, 3, '[\"13812345678\",\"13412345698\"]');
 INSERT INTO `devices` VALUES (3, 3, 'd003', '2号鸡舍环控仪', 1, 1, 1, 15, 1, '2025-10-21 06:19:17', '2025-12-08 06:17:25', '2025-10-26 05:30:30', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
 
@@ -149,17 +149,17 @@ INSERT INTO `devices` VALUES (3, 3, 'd003', '2号鸡舍环控仪', 1, 1, 1, 15, 
 -- ----------------------------
 DROP TABLE IF EXISTS `frequency_motor`;
 CREATE TABLE `frequency_motor`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '变频电机ID',
-  `device_id` bigint NOT NULL COMMENT '设备ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '变频电机ID',
+  `device_id` bigint(20) NOT NULL COMMENT '设备ID',
   `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备编号',
   `device_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '变频电机名称',
   `protect_speed` decimal(10, 2) NULL DEFAULT NULL COMMENT '保护转速',
-  `is_auto` tinyint NOT NULL DEFAULT 0 COMMENT '运行模式：0-手动 1-自动，默认手动',
+  `is_auto` tinyint(4) NOT NULL DEFAULT 0 COMMENT '运行模式：0-手动 1-自动，默认手动',
   `manual_speed` decimal(10, 2) NULL DEFAULT 10.00 COMMENT '手动转速，默认10',
-  `value` int NULL DEFAULT 10 COMMENT '当前值，默认10',
-  `run_time` int NULL DEFAULT 60 COMMENT '运行时间（秒），默认60秒',
-  `pause_time` int NULL DEFAULT 30 COMMENT '暂停时间（秒），默认30秒',
-  `control_type` tinyint NULL DEFAULT 1 COMMENT '控制类型：1-温控 2-湿控 3-气体，默认1',
+  `value` int(11) NULL DEFAULT 10 COMMENT '当前值，默认10',
+  `run_time` int(11) NULL DEFAULT 60 COMMENT '运行时间（秒），默认60秒',
+  `pause_time` int(11) NULL DEFAULT 30 COMMENT '暂停时间（秒），默认30秒',
+  `control_type` tinyint(4) NULL DEFAULT 1 COMMENT '控制类型：1-温控 2-湿控 3-气体，默认1',
   `temp_upper` decimal(10, 2) NULL DEFAULT NULL COMMENT '温度上限',
   `temp_lower` decimal(10, 2) NULL DEFAULT NULL COMMENT '温度下限',
   `humidity_upper` decimal(10, 2) NULL DEFAULT NULL COMMENT '湿度上限',
@@ -168,19 +168,19 @@ CREATE TABLE `frequency_motor`  (
   `gas_lower` decimal(10, 2) NULL DEFAULT NULL COMMENT '气体下限',
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `temp_sensor_id` bigint NULL DEFAULT NULL COMMENT '变频器选择的温度传感器ID',
+  `temp_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '变频器选择的温度传感器ID',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_device_id`(`device_id` ASC) USING BTREE,
-  INDEX `idx_device_num`(`device_num` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '变频电机表' ROW_FORMAT = Dynamic;
+  INDEX `idx_device_id`(`device_id`) USING BTREE,
+  INDEX `idx_device_num`(`device_num`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '变频电机表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of frequency_motor
 -- ----------------------------
-INSERT INTO `frequency_motor` VALUES (1, 1, 'DEV001', '变频cc', 30.00, 1, 10.00, 8, 130, 40, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-11-03 22:32:42', 3);
+INSERT INTO `frequency_motor` VALUES (1, 1, 'imt1', '变频cc', 30.00, 1, 10.00, 55, 130, 40, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-13 06:50:32', 3);
 INSERT INTO `frequency_motor` VALUES (2, 2, 'DEV002', '变频1', 50.00, 0, 10.00, 10, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-27 07:32:17', NULL);
 INSERT INTO `frequency_motor` VALUES (3, 3, 'DEV003', '变频1', 50.00, 0, 10.00, 10, 60, 30, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-28 07:00:51', NULL);
-INSERT INTO `frequency_motor` VALUES (5, 1, 'DEV001', '变频2', 50.00, 0, 10.00, 22, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-29 04:52:36', NULL);
+INSERT INTO `frequency_motor` VALUES (5, 1, 'imt2', '变频2', 50.00, 0, 10.00, 66, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-13 06:50:32', NULL);
 INSERT INTO `frequency_motor` VALUES (6, 2, 'DEV002', '变频2', 50.00, 0, 10.00, 10, 60, 30, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-28 07:00:56', NULL);
 INSERT INTO `frequency_motor` VALUES (7, 3, 'DEV003', '变频2', 50.00, 0, 10.00, 10, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-27 07:32:17', NULL);
 
@@ -189,80 +189,80 @@ INSERT INTO `frequency_motor` VALUES (7, 3, 'DEV003', '变频2', 50.00, 0, 10.00
 -- ----------------------------
 DROP TABLE IF EXISTS `motor_fan`;
 CREATE TABLE `motor_fan`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '风扇ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '风扇ID',
   `fan_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '风扇名称：如 风机1号、风机2号 等',
-  `device_id` bigint NOT NULL COMMENT '设备ID',
+  `device_id` bigint(20) NOT NULL COMMENT '设备ID',
   `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备编号',
-  `is_running` tinyint NOT NULL DEFAULT 0 COMMENT '运行状态：0-停止 1-运行',
-  `control_mode` tinyint NOT NULL DEFAULT 1 COMMENT '控制模式：1-温控 2-循环 3-湿控 4-气体 5-定时',
-  `auto_mode` tinyint NOT NULL DEFAULT 1 COMMENT '自动模式：1-自动 2-开 3-关',
-  `probe_sensor_id` bigint NULL DEFAULT NULL COMMENT '探头传感器ID',
+  `is_running` tinyint(4) NOT NULL DEFAULT 0 COMMENT '运行状态：0-停止 1-运行',
+  `control_mode` tinyint(4) NOT NULL DEFAULT 1 COMMENT '控制模式：1-温控 2-循环 3-湿控 4-气体 5-定时',
+  `auto_mode` tinyint(4) NOT NULL DEFAULT 1 COMMENT '自动模式：1-自动 2-开 3-关',
+  `probe_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '探头传感器ID',
   `temp_upper` decimal(5, 2) NULL DEFAULT 38.00 COMMENT '温度上限/启动温度（°C）',
   `temp_lower` decimal(5, 2) NULL DEFAULT 30.00 COMMENT '温度下限/停止温度（°C）',
-  `run_time` int NULL DEFAULT 5 COMMENT '运行时间/低温运行（秒）',
-  `pause_time` int NULL DEFAULT 5 COMMENT '暂停时间/低温暂停（秒）',
+  `run_time` int(11) NULL DEFAULT 5 COMMENT '运行时间/低温运行（秒）',
+  `pause_time` int(11) NULL DEFAULT 5 COMMENT '暂停时间/低温暂停（秒）',
   `humidity_upper` decimal(5, 2) NULL DEFAULT 75.00 COMMENT '湿度上限（%）',
   `humidity_lower` decimal(5, 2) NULL DEFAULT 45.00 COMMENT '湿度下限（%）',
-  `gas_upper` int NULL DEFAULT 3000 COMMENT '气体上限（ppm）',
-  `gas_lower` int NULL DEFAULT 1000 COMMENT '气体下限（ppm）',
-  `timer1_enabled` tinyint NULL DEFAULT 0 COMMENT '定时1开关：0-关闭 1-开启',
+  `gas_upper` int(11) NULL DEFAULT 3000 COMMENT '气体上限（ppm）',
+  `gas_lower` int(11) NULL DEFAULT 1000 COMMENT '气体下限（ppm）',
+  `timer1_enabled` tinyint(4) NULL DEFAULT 0 COMMENT '定时1开关：0-关闭 1-开启',
   `timer1_start_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时1开启时间（HH:mm）',
   `timer1_end_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时1关闭时间（HH:mm）',
-  `timer1_probe_sensor_id` bigint NULL DEFAULT NULL COMMENT '定时1探头传感器ID',
+  `timer1_probe_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '定时1探头传感器ID',
   `timer1_start_temp` decimal(5, 2) NULL DEFAULT 30.00 COMMENT '定时1启动温度（°C）',
   `timer1_stop_temp` decimal(5, 2) NULL DEFAULT 38.00 COMMENT '定时1停止温度（°C）',
-  `timer2_enabled` tinyint NULL DEFAULT 0 COMMENT '定时2开关：0-关闭 1-开启',
+  `timer2_enabled` tinyint(4) NULL DEFAULT 0 COMMENT '定时2开关：0-关闭 1-开启',
   `timer2_start_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时2开启时间（HH:mm）',
   `timer2_end_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时2关闭时间（HH:mm）',
-  `timer2_probe_sensor_id` bigint NULL DEFAULT NULL COMMENT '定时2探头传感器ID',
+  `timer2_probe_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '定时2探头传感器ID',
   `timer2_start_temp` decimal(5, 2) NULL DEFAULT 30.00 COMMENT '定时2启动温度（°C）',
   `timer2_stop_temp` decimal(5, 2) NULL DEFAULT 38.00 COMMENT '定时2停止温度（°C）',
-  `timer3_enabled` tinyint NULL DEFAULT 0 COMMENT '定时3开关：0-关闭 1-开启',
+  `timer3_enabled` tinyint(4) NULL DEFAULT 0 COMMENT '定时3开关：0-关闭 1-开启',
   `timer3_start_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时3开启时间（HH:mm）',
   `timer3_end_time` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '定时3关闭时间（HH:mm）',
-  `timer3_probe_sensor_id` bigint NULL DEFAULT NULL COMMENT '定时3探头传感器ID',
+  `timer3_probe_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '定时3探头传感器ID',
   `timer3_start_temp` decimal(5, 2) NULL DEFAULT 30.00 COMMENT '定时3启动温度（°C）',
   `timer3_stop_temp` decimal(5, 2) NULL DEFAULT 38.00 COMMENT '定时3停止温度（°C）',
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_device_id`(`device_id` ASC) USING BTREE,
-  INDEX `idx_device_num`(`device_num` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '电机风扇表' ROW_FORMAT = Dynamic;
+  INDEX `idx_device_id`(`device_id`) USING BTREE,
+  INDEX `idx_device_num`(`device_num`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 65 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '电机风扇表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of motor_fan
 -- ----------------------------
 INSERT INTO `motor_fan` VALUES (2, '风机1', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (3, '风机1', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (4, '风机1', 1, 'mt1', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (4, '风机1', 1, 'mt1', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (6, '风机2', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (7, '风机2', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (8, '风机12', 1, 'mt2', 1, 1, 1, 3, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, '5:5', '6:6', NULL, 30.00, 38.00, 0, '12:0', '14:0', NULL, 30.00, 38.00, 0, '18:0', '20:0', NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (8, '风机12', 1, 'mt2', 1, 1, 1, 3, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, '5:5', '6:6', NULL, 30.00, 38.00, 0, '12:0', '14:0', NULL, 30.00, 38.00, 0, '18:0', '20:0', NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (10, '风机3', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (11, '风机3', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (12, '风机3', 1, 'mt3', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (12, '风机3', 1, 'mt3', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (14, '风机4', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (15, '风机4', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (16, '风机4', 1, 'mt4', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (16, '风机4', 1, 'mt4', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (18, '风机5', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (19, '风机5', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (20, '风机5', 1, 'mt5', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (20, '风机5', 1, 'mt5', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (22, '风机6', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (23, '风机6', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (24, '风机6', 1, 'mt6', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (24, '风机6', 1, 'mt6', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (26, '风机7', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (27, '风机7', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (28, '风机7', 1, 'mt7', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (28, '风机7', 1, 'mt7', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (30, '风机8', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (31, '风机8', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (32, '风机8', 1, 'mt8', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (32, '风机8', 1, 'mt8', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (34, '风机9', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (35, '风机9', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (36, '风机9', 1, 'mt9', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (36, '风机9', 1, 'mt9', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (38, '风机10', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (39, '风机10', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (40, '风机10', 1, 'mt10', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 19:44:01');
+INSERT INTO `motor_fan` VALUES (40, '风机10', 1, 'mt10', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 06:50:32');
 INSERT INTO `motor_fan` VALUES (43, '风机11', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (44, '风机11', 1, 'mt11', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 16:12:17');
 INSERT INTO `motor_fan` VALUES (47, '风机12', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
@@ -281,15 +281,15 @@ INSERT INTO `motor_fan` VALUES (64, '风机16', 1, 'DEV001', 0, 1, 1, NULL, 38.0
 -- ----------------------------
 DROP TABLE IF EXISTS `role_type`;
 CREATE TABLE `role_type`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `dict_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '显示名称',
   `dict_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '字典值',
-  `dict_sort` int NULL DEFAULT 0 COMMENT '排序',
+  `dict_sort` int(11) NULL DEFAULT 0 COMMENT '排序',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_dict_value`(`dict_value` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色类型表' ROW_FORMAT = Dynamic;
+  INDEX `idx_dict_value`(`dict_value`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of role_type
@@ -303,22 +303,22 @@ INSERT INTO `role_type` VALUES (3, '其他', '2', 3, NULL, '2025-10-21 06:19:17'
 -- ----------------------------
 DROP TABLE IF EXISTS `sensor_data`;
 CREATE TABLE `sensor_data`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `sensor_id` bigint NOT NULL COMMENT '传感器ID，关联sensor表的id',
-  `device_id` bigint NOT NULL COMMENT '设备ID，关联device表的id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `sensor_id` bigint(20) NOT NULL COMMENT '传感器ID，关联sensor表的id',
+  `device_id` bigint(20) NOT NULL COMMENT '设备ID，关联device表的id',
   `device_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备编号',
   `sensor_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '传感器编号',
-  `sensor_type_id` int NULL DEFAULT NULL COMMENT '传感器类型ID：5-温度 6-湿度 7-气体',
+  `sensor_type_id` int(11) NULL DEFAULT NULL COMMENT '传感器类型ID：5-温度 6-湿度 7-气体',
   `sensor_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '传感器名称',
   `sensor_value` decimal(10, 2) NULL DEFAULT NULL COMMENT '传感器值',
   `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '单位：°C, %, ppm等',
   `record_time` datetime NOT NULL COMMENT '记录时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_sensor_id`(`sensor_id` ASC) USING BTREE,
-  INDEX `idx_device_id`(`device_id` ASC) USING BTREE,
-  INDEX `idx_record_time`(`record_time` ASC) USING BTREE,
-  INDEX `idx_device_record`(`device_id` ASC, `record_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33171 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '传感器数据记录表' ROW_FORMAT = Dynamic;
+  INDEX `idx_sensor_id`(`sensor_id`) USING BTREE,
+  INDEX `idx_device_id`(`device_id`) USING BTREE,
+  INDEX `idx_record_time`(`record_time`) USING BTREE,
+  INDEX `idx_device_record`(`device_id`, `record_time`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 33171 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '传感器数据记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sensor_data
@@ -329,10 +329,10 @@ CREATE TABLE `sensor_data`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sensors`;
 CREATE TABLE `sensors`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '传感器ID',
-  `parent_id` bigint NOT NULL COMMENT '所属父设备ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '传感器ID',
+  `parent_id` bigint(20) NOT NULL COMMENT '所属父设备ID',
   `sensor_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '传感器编号',
-  `sensor_type_id` int NOT NULL COMMENT '传感器类型ID：5-温度 6-湿度 7-气体',
+  `sensor_type_id` int(11) NOT NULL COMMENT '传感器类型ID：5-温度 6-湿度 7-气体',
   `sensor_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '传感器名称：温度1、温度2等',
   `sensor_value` decimal(10, 2) NULL DEFAULT NULL COMMENT '传感器值',
   `adjust_value` double(6, 2) NULL DEFAULT 0.00 COMMENT '校正值（范围：-1024.00 到 1024.00）',
@@ -340,18 +340,18 @@ CREATE TABLE `sensors`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_device_id`(`parent_id` ASC) USING BTREE,
-  INDEX `idx_device_num`(`sensor_code` ASC) USING BTREE,
-  INDEX `idx_sensor_type_id`(`sensor_type_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '传感器表' ROW_FORMAT = Dynamic;
+  INDEX `idx_device_id`(`parent_id`) USING BTREE,
+  INDEX `idx_device_num`(`sensor_code`) USING BTREE,
+  INDEX `idx_sensor_type_id`(`sensor_type_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '传感器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sensors
 -- ----------------------------
-INSERT INTO `sensors` VALUES (1, 1, 'ts1', 5, '温度15', 23.00, 2.00, '°C', '2025-10-27 04:36:16', '2025-12-12 19:44:01');
-INSERT INTO `sensors` VALUES (2, 1, 'ts2', 5, '温度2', 20.50, 1.15, '°C', '2025-10-27 04:36:16', '2025-12-12 19:44:01');
-INSERT INTO `sensors` VALUES (3, 1, 'ts3', 5, '温度3', 20.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-12 19:44:01');
-INSERT INTO `sensors` VALUES (4, 1, 'ts4', 5, '温度4', 21.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-12 19:44:01');
+INSERT INTO `sensors` VALUES (1, 1, 'ts1', 5, '温度15', 23.00, 2.00, '°C', '2025-10-27 04:36:16', '2025-12-13 06:50:32');
+INSERT INTO `sensors` VALUES (2, 1, 'ts2', 5, '温度2', 23.00, 1.15, '°C', '2025-10-27 04:36:16', '2025-12-13 06:50:32');
+INSERT INTO `sensors` VALUES (3, 1, 'ts3', 5, '温度3', 24.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-13 06:50:32');
+INSERT INTO `sensors` VALUES (4, 1, 'ts4', 5, '温度4', 25.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-13 06:50:32');
 INSERT INTO `sensors` VALUES (5, 1, 'sen-6-1001', 6, '湿度03', 60.50, 0.00, '%', '2025-10-27 04:36:16', '2025-10-31 06:21:07');
 INSERT INTO `sensors` VALUES (6, 1, 'sen-co2-1001', 7, 'co2检测', 50.00, 2.00, 'ppm', '2025-10-27 04:36:16', '2025-11-03 22:51:21');
 INSERT INTO `sensors` VALUES (7, 2, 'ts1', 5, '温度1', 24.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-08 07:13:53');
@@ -369,20 +369,20 @@ INSERT INTO `sensors` VALUES (15, 3, 'ts4', 7, '气体03', 80.00, 0.00, 'ppm', '
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '手机号',
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
   `nike_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '昵称',
   `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地址',
   `icon` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '头像(Base64编码或URL)',
-  `breeding_type` int NULL DEFAULT NULL COMMENT '养殖类型：字典中的 breed_type',
-  `role` int NULL DEFAULT NULL COMMENT '角色：字典中的 role_type',
+  `breeding_type` int(11) NULL DEFAULT NULL COMMENT '养殖类型：字典中的 breed_type',
+  `role` int(11) NULL DEFAULT NULL COMMENT '角色：字典中的 role_type',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
-  INDEX `idx_phone`(`phone` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+  UNIQUE INDEX `phone`(`phone`) USING BTREE,
+  INDEX `idx_phone`(`phone`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -397,15 +397,15 @@ INSERT INTO `users` VALUES (4, '13812345676', '123123', '13812345676', NULL, NUL
 -- ----------------------------
 DROP TABLE IF EXISTS `warning_type`;
 CREATE TABLE `warning_type`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `dict_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '显示名称',
   `dict_value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '字典值',
-  `dict_sort` int NULL DEFAULT 0 COMMENT '排序',
+  `dict_sort` int(11) NULL DEFAULT 0 COMMENT '排序',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `idx_dict_value`(`dict_value` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '报警类型表' ROW_FORMAT = Dynamic;
+  INDEX `idx_dict_value`(`dict_value`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '报警类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of warning_type
