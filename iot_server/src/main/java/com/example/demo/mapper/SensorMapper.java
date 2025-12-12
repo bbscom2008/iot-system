@@ -79,5 +79,7 @@ public interface SensorMapper {
     int updateValueByParentAndCode(@Param("parentId") Long parentId,
                                    @Param("sensorCode") String sensorCode,
                                    @Param("sensorValue") Double sensorValue);
+
+    int batchUpdateValueByParentId(Map<String, Object> params);
 }
 

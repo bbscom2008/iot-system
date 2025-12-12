@@ -6,6 +6,7 @@ import com.example.demo.mapper.MotorFanMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,5 +92,15 @@ public class MotorFanService {
      */
     public void updateRunningStatusByParentAndCode(Long parentId, String fanCode, Integer isRunning) {
         motorFanMapper.updateRunningStatusByParentAndCode(parentId, fanCode, isRunning);
+    }
+
+    public int batchUpdateRunningStatusByParentId(Long parentId, Map<String, Integer> valuesMap) {
+        if (valuesMap == null || valuesMap.isEmpty()) {
+            return 0;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("parentId", parentId);
+        params.put("valuesMap", valuesMap);
+        return motorFanMapper.batchUpdateRunningStatusByParentId(params);
     }
 }

@@ -43,6 +43,11 @@ public interface MotorFanMapper {
     int updateRunningStatusByParentAndCode(Long parentId, String fanCode, Integer isRunning);
 
     /**
+     * 批量更新风机运行状态
+     */
+    int batchUpdateRunningStatusByParentId(Map<String, Object> params);
+
+    /**
      * 更新风机配置
      */
     int update(MotorFan motorFan);

@@ -108,6 +108,24 @@
         WHERE parent_id = #{parentId} AND sensor_code = #{sensorCode}
     </update>
 
+    <!-- 批量更新传感器值 -->
+    <update id="batchUpdateValueByParentId" parameterType="map">
+        UPDATE sensors
+        <set>
+            sensor_value = CASE sensor_code
+            <foreach collection="valuesMap.keys" item="code" separator="">
+                WHEN #{code} THEN #{valuesMap[${code}]}
+            </foreach>
+            END,
+            updated_at = NOW()
+        </set>
+        WHERE parent_id = #{parentId}
+        AND sensor_code IN
+        <foreach collection="valuesMap.keys" item="code" open="(" close=")" separator=",">
+            #{code}
+        </foreach>
+    </update>
+
     <!-- 分页查询传感器列表（关联设备和用户信息） -->
     <select id="findListWithDeviceAndUser" resultMap="SensorListResultMap">
         SELECT 

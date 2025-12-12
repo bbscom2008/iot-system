@@ -169,6 +169,24 @@
         WHERE device_id = #{parentId} AND device_num = #{fanCode}
     </update>
 
+    <!-- 批量更新风机运行状态 -->
+    <update id="batchUpdateRunningStatusByParentId" parameterType="map">
+        UPDATE motor_fan
+        <set>
+            is_running = CASE device_num
+            <foreach collection="valuesMap.keys" item="code" separator="">
+                WHEN #{code} THEN #{valuesMap[${code}]}
+            </foreach>
+            END,
+            updated_time = NOW()
+        </set>
+        WHERE device_id = #{parentId}
+        AND device_num IN
+        <foreach collection="valuesMap.keys" item="code" open="(" close=")" separator=",">
+            #{code}
+        </foreach>
+    </update>
+
     <!-- 更新风机配置 -->
     <update id="update">
         UPDATE motor_fan

@@ -6,6 +6,7 @@ import com.example.demo.mapper.SensorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,6 +140,16 @@ public class SensorService {
 
     public void updateValueByParentAndCode(Long parentId, String sensorCode, Double sensorValue) {
         sensorMapper.updateValueByParentAndCode(parentId, sensorCode, sensorValue);
+    }
+
+    public int batchUpdateValueByParentId(Long parentId, Map<String, Double> valuesMap) {
+        if (valuesMap == null || valuesMap.isEmpty()) {
+            return 0;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("parentId", parentId);
+        params.put("valuesMap", valuesMap);
+        return sensorMapper.batchUpdateValueByParentId(params);
     }
 }
 
