@@ -40,6 +40,8 @@ public interface MotorFanMapper {
      */
     int updateRunningStatus(Long id, Integer isRunning);
 
+    int updateRunningStatusByParentAndCode(Long parentId, String fanCode, Integer isRunning);
+
     /**
      * 更新风机配置
      */

@@ -53,6 +53,7 @@ public class MqttService implements MqttCallback {
     private final ObjectMapper objectMapper;
     private final DeviceService deviceService;
     private final SensorService sensorService;
+    private final MotorFanService motorFanService;
 
     @PostConstruct
     public void init() {
@@ -109,6 +110,16 @@ public class MqttService implements MqttCallback {
                     updateTsSensor(parentId, node, "ts2");
                     updateTsSensor(parentId, node, "ts3");
                     updateTsSensor(parentId, node, "ts4");
+                    updateMotor(parentId, node, "mt1");
+                    updateMotor(parentId, node, "mt2");
+                    updateMotor(parentId, node, "mt3");
+                    updateMotor(parentId, node, "mt4");
+                    updateMotor(parentId, node, "mt5");
+                    updateMotor(parentId, node, "mt6");
+                    updateMotor(parentId, node, "mt7");
+                    updateMotor(parentId, node, "mt8");
+                    updateMotor(parentId, node, "mt9");
+                    updateMotor(parentId, node, "mt10");
                 }
             }
         } catch (Exception e) {
@@ -120,6 +131,25 @@ public class MqttService implements MqttCallback {
         JsonNode v = node.get(key);
         if (v != null && v.isNumber()) {
             sensorService.updateValueByParentAndCode(parentId, key, v.asDouble());
+        }
+    }
+
+    private void updateMotor(Long parentId, JsonNode node, String key) {
+        JsonNode v = node.get(key);
+        if (v != null) {
+            Integer run = null;
+            if (v.isBoolean()) {
+                run = v.booleanValue() ? 1 : 0;
+            } else if (v.isNumber()) {
+                run = v.intValue() != 0 ? 1 : 0;
+            } else if (v.isTextual()) {
+                String s = v.asText().trim();
+                if ("true".equalsIgnoreCase(s) || "1".equals(s)) run = 1;
+                else if ("false".equalsIgnoreCase(s) || "0".equals(s)) run = 0;
+            }
+            if (run != null) {
+                motorFanService.updateRunningStatusByParentAndCode(parentId, key, run);
+            }
         }
     }
 

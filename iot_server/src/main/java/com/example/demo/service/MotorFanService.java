@@ -85,4 +85,11 @@ public class MotorFanService {
     public void deleteByParentId(Long parentId) {
         motorFanMapper.deleteByParentId(parentId);
     }
+
+    /**
+     * 根据父设备与风机编码更新运行状态
+     */
+    public void updateRunningStatusByParentAndCode(Long parentId, String fanCode, Integer isRunning) {
+        motorFanMapper.updateRunningStatusByParentAndCode(parentId, fanCode, isRunning);
+    }
 }

@@ -8,6 +8,7 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
         <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="device_id" property="parentId" jdbcType="BIGINT"/>
         <result column="fan_code" property="fanCode" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
         <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
@@ -133,14 +134,14 @@
     <!-- 根据父设备ID查询所有风扇 -->
     <select id="findByParentId" resultMap="BaseResultMap">
         SELECT * FROM motor_fan
-        WHERE parent_id = #{parentId}
+        WHERE device_id = #{parentId}
         ORDER BY id ASC
     </select>
 
     <!-- 根据风机编码查询所有风扇 -->
     <select id="findByFanCode" resultMap="BaseResultMap">
         SELECT * FROM motor_fan
-        WHERE fan_code = #{fanCode}
+        WHERE device_num = #{fanCode}
         ORDER BY id ASC
     </select>
 
@@ -151,7 +152,7 @@
 
     <!-- 新增风扇 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO motor_fan (fan_name, parent_id, fan_code, is_running, control_mode, auto_mode, created_time, updated_time)
+        INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, control_mode, auto_mode, created_time, updated_time)
         VALUES (#{fanName}, #{parentId}, #{fanCode}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
     </insert>
 
@@ -160,6 +161,12 @@
         UPDATE motor_fan
         SET is_running = #{isRunning}, updated_time = NOW()
         WHERE id = #{id}
+    </update>
+
+    <update id="updateRunningStatusByParentAndCode">
+        UPDATE motor_fan
+        SET is_running = #{isRunning}, updated_time = NOW()
+        WHERE device_id = #{parentId} AND device_num = #{fanCode}
     </update>
 
     <!-- 更新风机配置 -->
@@ -209,7 +216,7 @@
 
     <!-- 删除父设备的所有风扇 -->
     <delete id="deleteByParentId">
-        DELETE FROM motor_fan WHERE parent_id = #{parentId}
+        DELETE FROM motor_fan WHERE device_id = #{parentId}
     </delete>
 
 </mapper>
