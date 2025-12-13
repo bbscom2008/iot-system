@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.MqttMessageRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.MqttMessageRecord">
+        <id column="id" property="id" />
+        <result column="payload" property="payload" />
+        <result column="created_time" property="createdTime" />
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mqtt_message_record (payload, created_time)
+        VALUES (#{payload}, NOW())
+    </insert>
+
+</mapper>

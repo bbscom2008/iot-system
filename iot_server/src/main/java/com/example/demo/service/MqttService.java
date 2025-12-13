@@ -57,6 +57,7 @@ public class MqttService implements MqttCallback {
     private final DeviceService deviceService;
     private final SensorService sensorService;
     private final MotorFanService motorFanService;
+    private final MqttMessageRecordService mqttMessageRecordService;
     private final FrequencyMotorService frequencyMotorService;
 
     @PostConstruct
@@ -103,6 +104,7 @@ public class MqttService implements MqttCallback {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         try {
             JsonNode node = objectMapper.readTree(payload);
+            mqttMessageRecordService.save(payload);
             JsonNode idNode = node.get("id");
             if (idNode != null && idNode.isTextual()) {
                 String deviceNum = idNode.asText();
