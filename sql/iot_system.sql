@@ -11,7 +11,7 @@
  Target Server Version : 50744
  File Encoding         : 65001
 
- Date: 13/12/2025 19:57:34
+ Date: 15/12/2025 20:39:27
 */
 
 SET NAMES utf8mb4;
@@ -140,7 +140,7 @@ CREATE TABLE `devices`  (
 -- ----------------------------
 -- Records of devices
 -- ----------------------------
-INSERT INTO `devices` VALUES (1, 3, '928172361263', '1号鸡房01', 1, 1, 3, 85, 0, '2025-10-21 06:19:17', '2025-12-13 11:21:01', '2025-12-13 11:21:01', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
+INSERT INTO `devices` VALUES (1, 3, '928172361263', '1号鸡房01', 1, 1, 3, 85, 0, '2025-10-21 06:19:17', '2025-12-15 10:50:10', '2025-12-15 10:50:10', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
 INSERT INTO `devices` VALUES (2, 3, 'd002', '2号猪舍环控仪', 1, 1, 4, 93, 0, '2025-10-21 06:19:17', '2025-12-08 06:06:55', '2025-10-24 05:30:25', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 0, 0, 0, 0, 0, 1, 3, '[\"13812345678\",\"13412345698\"]');
 INSERT INTO `devices` VALUES (3, 3, 'd003', '2号鸡舍环控仪', 1, 1, 1, 15, 1, '2025-10-21 06:19:17', '2025-12-08 06:17:25', '2025-10-26 05:30:30', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
 
@@ -177,10 +177,10 @@ CREATE TABLE `frequency_motor`  (
 -- ----------------------------
 -- Records of frequency_motor
 -- ----------------------------
-INSERT INTO `frequency_motor` VALUES (1, 1, 'imt1', '变频cc', 30.00, 1, 10.00, 30, 130, 40, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-13 11:21:01', 3);
+INSERT INTO `frequency_motor` VALUES (1, 1, 'imt1', '变频cc', 30.00, 1, 10.00, 30, 130, 40, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-15 10:50:10', 3);
 INSERT INTO `frequency_motor` VALUES (2, 2, 'DEV002', '变频1', 50.00, 0, 10.00, 10, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-27 07:32:17', NULL);
 INSERT INTO `frequency_motor` VALUES (3, 3, 'DEV003', '变频1', 50.00, 0, 10.00, 10, 60, 30, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-28 07:00:51', NULL);
-INSERT INTO `frequency_motor` VALUES (5, 1, 'imt2', '变频2', 50.00, 0, 10.00, 0, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-13 11:21:01', NULL);
+INSERT INTO `frequency_motor` VALUES (5, 1, 'imt2', '变频2', 50.00, 0, 10.00, 0, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-12-15 10:50:10', NULL);
 INSERT INTO `frequency_motor` VALUES (6, 2, 'DEV002', '变频2', 50.00, 0, 10.00, 10, 60, 30, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-28 07:00:56', NULL);
 INSERT INTO `frequency_motor` VALUES (7, 3, 'DEV003', '变频2', 50.00, 0, 10.00, 10, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2025-10-27 07:32:17', NULL);
 
@@ -235,34 +235,34 @@ CREATE TABLE `motor_fan`  (
 -- ----------------------------
 INSERT INTO `motor_fan` VALUES (2, '风机1', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (3, '风机1', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (4, '风机1', 1, 'mt1', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (4, '风机1', 1, 'mt1', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (6, '风机2', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (7, '风机2', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (8, '风机12', 1, 'mt2', 1, 1, 1, 3, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, '5:5', '6:6', NULL, 30.00, 38.00, 0, '12:0', '14:0', NULL, 30.00, 38.00, 0, '18:0', '20:0', NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (8, '风机12', 1, 'mt2', 1, 1, 1, 3, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, '5:5', '6:6', NULL, 30.00, 38.00, 0, '12:0', '14:0', NULL, 30.00, 38.00, 0, '18:0', '20:0', NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (10, '风机3', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (11, '风机3', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (12, '风机3', 1, 'mt3', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (12, '风机3', 1, 'mt3', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (14, '风机4', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (15, '风机4', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (16, '风机4', 1, 'mt4', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (16, '风机4', 1, 'mt4', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (18, '风机5', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (19, '风机5', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (20, '风机5', 1, 'mt5', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (20, '风机5', 1, 'mt5', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (22, '风机6', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (23, '风机6', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (24, '风机6', 1, 'mt6', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (24, '风机6', 1, 'mt6', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (26, '风机7', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (27, '风机7', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (28, '风机7', 1, 'mt7', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (28, '风机7', 1, 'mt7', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (30, '风机8', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (31, '风机8', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (32, '风机8', 1, 'mt8', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (32, '风机8', 1, 'mt8', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (34, '风机9', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (35, '风机9', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (36, '风机9', 1, 'mt9', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (36, '风机9', 1, 'mt9', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (38, '风机10', 3, 'DEV003', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (39, '风机10', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
-INSERT INTO `motor_fan` VALUES (40, '风机10', 1, 'mt10', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-13 11:21:01');
+INSERT INTO `motor_fan` VALUES (40, '风机10', 1, 'mt10', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-15 10:50:10');
 INSERT INTO `motor_fan` VALUES (43, '风机11', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 INSERT INTO `motor_fan` VALUES (44, '风机11', 1, 'mt11', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-12-12 16:12:17');
 INSERT INTO `motor_fan` VALUES (47, '风机12', 2, 'DEV002', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
@@ -277,20 +277,37 @@ INSERT INTO `motor_fan` VALUES (63, '风机16', 2, 'DEV002', 0, 1, 1, NULL, 38.0
 INSERT INTO `motor_fan` VALUES (64, '风机16', 1, 'DEV001', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2025-10-27 06:27:44', '2025-10-27 06:27:44');
 
 -- ----------------------------
--- Table structure for mqtt_message_record
+-- Table structure for mqtt_message_data
 -- ----------------------------
-DROP TABLE IF EXISTS `mqtt_message_record`;
-CREATE TABLE `mqtt_message_record`  (
+DROP TABLE IF EXISTS `mqtt_message_data`;
+CREATE TABLE `mqtt_message_data`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `payload` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ts1` decimal(10, 2) NULL DEFAULT NULL,
+  `ts2` decimal(10, 2) NULL DEFAULT NULL,
+  `ts3` decimal(10, 2) NULL DEFAULT NULL,
+  `ts4` decimal(10, 2) NULL DEFAULT NULL,
+  `mt1` tinyint(4) NULL DEFAULT NULL,
+  `mt2` tinyint(4) NULL DEFAULT NULL,
+  `mt3` tinyint(4) NULL DEFAULT NULL,
+  `mt4` tinyint(4) NULL DEFAULT NULL,
+  `mt5` tinyint(4) NULL DEFAULT NULL,
+  `mt6` tinyint(4) NULL DEFAULT NULL,
+  `mt7` tinyint(4) NULL DEFAULT NULL,
+  `mt8` tinyint(4) NULL DEFAULT NULL,
+  `mt9` tinyint(4) NULL DEFAULT NULL,
+  `mt10` tinyint(4) NULL DEFAULT NULL,
+  `imt1` int(11) NULL DEFAULT NULL,
+  `imt2` int(11) NULL DEFAULT NULL,
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_device_num`(`device_num`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of mqtt_message_record
+-- Records of mqtt_message_data
 -- ----------------------------
-INSERT INTO `mqtt_message_record` VALUES (1, '{\n	\"id\":\"928172361263\",\n	\"ts1\":23,\n	\"ts2\":20.5,\n	\"ts3\":20,\n	\"ts4\":21,\n	\"mt1\":true,\n	\"mt2\":1,\n	\"mt3\":0,\n	\"mt4\":1,\n	\"mt5\":1,\n	\"mt6\":0,\n	\"mt7\":1,\n	\"mt8\":1,\n	\"mt9\":0,\n	\"mt10\":0,\n	\"imt1\":30,\n	\"imt2\":0\n}', '2025-12-13 11:21:01');
+INSERT INTO `mqtt_message_data` VALUES (1, '928172361263', 23.00, 20.50, 20.00, 21.00, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 30, 0, '2025-12-15 10:50:10');
 
 -- ----------------------------
 -- Table structure for role_type
@@ -364,10 +381,10 @@ CREATE TABLE `sensors`  (
 -- ----------------------------
 -- Records of sensors
 -- ----------------------------
-INSERT INTO `sensors` VALUES (1, 1, 'ts1', 5, '温度15', 23.00, 2.00, '°C', '2025-10-27 04:36:16', '2025-12-13 11:21:01');
-INSERT INTO `sensors` VALUES (2, 1, 'ts2', 5, '温度2', 20.50, 1.15, '°C', '2025-10-27 04:36:16', '2025-12-13 11:21:01');
-INSERT INTO `sensors` VALUES (3, 1, 'ts3', 5, '温度3', 20.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-13 11:21:01');
-INSERT INTO `sensors` VALUES (4, 1, 'ts4', 5, '温度4', 21.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-13 11:21:01');
+INSERT INTO `sensors` VALUES (1, 1, 'ts1', 5, '温度15', 23.00, 2.00, '°C', '2025-10-27 04:36:16', '2025-12-15 10:50:10');
+INSERT INTO `sensors` VALUES (2, 1, 'ts2', 5, '温度2', 20.50, 1.15, '°C', '2025-10-27 04:36:16', '2025-12-15 10:50:10');
+INSERT INTO `sensors` VALUES (3, 1, 'ts3', 5, '温度3', 20.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-15 10:50:10');
+INSERT INTO `sensors` VALUES (4, 1, 'ts4', 5, '温度4', 21.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-15 10:50:10');
 INSERT INTO `sensors` VALUES (5, 1, 'sen-6-1001', 6, '湿度03', 60.50, 0.00, '%', '2025-10-27 04:36:16', '2025-10-31 06:21:07');
 INSERT INTO `sensors` VALUES (6, 1, 'sen-co2-1001', 7, 'co2检测', 50.00, 2.00, 'ppm', '2025-10-27 04:36:16', '2025-11-03 22:51:21');
 INSERT INTO `sensors` VALUES (7, 2, 'ts1', 5, '温度1', 24.00, 0.00, '°C', '2025-10-27 04:36:16', '2025-12-08 07:13:53');
