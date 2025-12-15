@@ -1,0 +1,23 @@
+CREATE TABLE `mqtt_message_data` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `device_num` varchar(50) NOT NULL,
+  `ts1` decimal(10,2) NULL,
+  `ts2` decimal(10,2) NULL,
+  `ts3` decimal(10,2) NULL,
+  `ts4` decimal(10,2) NULL,
+  `mt1` tinyint NULL,
+  `mt2` tinyint NULL,
+  `mt3` tinyint NULL,
+  `mt4` tinyint NULL,
+  `mt5` tinyint NULL,
+  `mt6` tinyint NULL,
+  `mt7` tinyint NULL,
+  `mt8` tinyint NULL,
+  `mt9` tinyint NULL,
+  `mt10` tinyint NULL,
+  `imt1` int NULL,
+  `imt2` int NULL,
+  `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_device_num`(`device_num`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

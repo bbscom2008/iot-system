@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.MqttMessageDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.MqttMessageData">
+        <id column="id" property="id"/>
+        <result column="device_num" property="deviceNum"/>
+        <result column="ts1" property="ts1"/>
+        <result column="ts2" property="ts2"/>
+        <result column="ts3" property="ts3"/>
+        <result column="ts4" property="ts4"/>
+        <result column="mt1" property="mt1"/>
+        <result column="mt2" property="mt2"/>
+        <result column="mt3" property="mt3"/>
+        <result column="mt4" property="mt4"/>
+        <result column="mt5" property="mt5"/>
+        <result column="mt6" property="mt6"/>
+        <result column="mt7" property="mt7"/>
+        <result column="mt8" property="mt8"/>
+        <result column="mt9" property="mt9"/>
+        <result column="mt10" property="mt10"/>
+        <result column="imt1" property="imt1"/>
+        <result column="imt2" property="imt2"/>
+        <result column="created_time" property="createdTime"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mqtt_message_data
+        (device_num, ts1, ts2, ts3, ts4, mt1, mt2, mt3, mt4, mt5, mt6, mt7, mt8, mt9, mt10, imt1, imt2, created_time)
+        VALUES
+        (#{deviceNum}, #{ts1}, #{ts2}, #{ts3}, #{ts4}, #{mt1}, #{mt2}, #{mt3}, #{mt4}, #{mt5}, #{mt6}, #{mt7}, #{mt8}, #{mt9}, #{mt10}, #{imt1}, #{imt2}, NOW())
+    </insert>
+
+</mapper>

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.entity.Device;
 import com.example.demo.service.FrequencyMotorService;
+import com.example.demo.service.MqttMessageDataService;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,8 +58,8 @@ public class MqttService implements MqttCallback {
     private final DeviceService deviceService;
     private final SensorService sensorService;
     private final MotorFanService motorFanService;
-    private final MqttMessageRecordService mqttMessageRecordService;
     private final FrequencyMotorService frequencyMotorService;
+    private final MqttMessageDataService mqttMessageDataService;
 
     @PostConstruct
     public void init() {
@@ -104,10 +105,10 @@ public class MqttService implements MqttCallback {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         try {
             JsonNode node = objectMapper.readTree(payload);
-            mqttMessageRecordService.save(payload);
             JsonNode idNode = node.get("id");
             if (idNode != null && idNode.isTextual()) {
                 String deviceNum = idNode.asText();
+                mqttMessageDataService.save(deviceNum, node);
                 deviceService.markDeviceOnline(deviceNum);
                 Device device = deviceService.findByDeviceNum(deviceNum);
                 if (device != null) {
