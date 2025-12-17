@@ -127,7 +127,7 @@ public class MqttService implements MqttCallback {
                         }
                     }
                     if (!sensorValues.isEmpty()) {
-                        //TODO  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
+                        //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
                         sensorService.batchUpdateValueByParentId(parentId, sensorValues);
                     }
                     

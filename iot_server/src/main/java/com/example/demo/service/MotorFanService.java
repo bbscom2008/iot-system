@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +99,37 @@ public class MotorFanService {
     public int batchUpdateRunningStatusByParentId(Long parentId, Map<String, Integer> valuesMap) {
         if (valuesMap == null || valuesMap.isEmpty()) {
             return 0;
+        }
+        List<MotorFan> existing = motorFanMapper.findByParentId(parentId);
+        Set<String> existingCodes = new HashSet<>();
+        if (existing != null) {
+            for (MotorFan mf : existing) {
+                if (mf.getFanCode() != null) {
+                    existingCodes.add(mf.getFanCode());
+                }
+            }
+        }
+        for (Map.Entry<String, Integer> e : valuesMap.entrySet()) {
+            String code = e.getKey();
+            if (!existingCodes.contains(code)) {
+                MotorFan fan = new MotorFan();
+                fan.setParentId(parentId);
+                fan.setFanCode(code);
+                Integer run = e.getValue();
+                fan.setIsRunning(run == null ? 0 : run);
+                fan.setControlMode(1);
+                fan.setAutoMode(1);
+                String name = "风机";
+                try {
+                    String idxStr = code.replaceAll("[^0-9]", "");
+                    if (!idxStr.isEmpty()) {
+                        name = name + idxStr;
+                    }
+                } catch (Exception ignored) {
+                }
+                fan.setFanName(name);
+                motorFanMapper.insert(fan);
+            }
         }
         Map<String, Object> params = new HashMap<>();
         params.put("parentId", parentId);
