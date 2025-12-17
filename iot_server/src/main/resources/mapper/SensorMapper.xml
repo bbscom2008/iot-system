@@ -99,7 +99,7 @@
     <!-- 根据传感器编号查询传感器 -->
     <select id="findBySensorCode" resultMap="BaseResultMap">
         SELECT * FROM sensors
-        WHERE sensor_code = #{sensorCode}
+        WHERE parent_id = #{parentId} AND sensor_code = #{sensorCode}
     </select>
 
     <update id="updateValueByParentAndCode">

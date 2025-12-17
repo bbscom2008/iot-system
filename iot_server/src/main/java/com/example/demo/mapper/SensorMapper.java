@@ -74,7 +74,7 @@ public interface SensorMapper {
     /**
      * 根据传感器编号查询传感器
      */
-    Sensor findBySensorCode(@Param("sensorCode") String sensorCode);
+    Sensor findBySensorCode(@Param("parentId") Long parentId, @Param("sensorCode") String sensorCode);
 
     int updateValueByParentAndCode(@Param("parentId") Long parentId,
                                    @Param("sensorCode") String sensorCode,

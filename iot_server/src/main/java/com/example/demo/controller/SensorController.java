@@ -66,8 +66,8 @@ public class SensorController {
      * POST /sensor
      */
     @PostMapping
-    public ApiResponse<String> addSensor(@RequestBody Sensor sensor) {
-        sensorService.addSensor(sensor);
+    public ApiResponse<String> addSensor(Long parentId, @RequestBody Sensor sensor) {
+        sensorService.addSensor(parentId, sensor);
         return ApiResponse.success("传感器添加成功");
     }
 
@@ -89,8 +89,8 @@ public class SensorController {
      * PUT /sensor/update
      */
     @PutMapping("/update")
-    public ApiResponse<String> updateSensor(@RequestBody Sensor sensor) {
-        sensorService.updateSensor(sensor);
+    public ApiResponse<String> updateSensor(@RequestBody Long deviceId, @RequestBody Sensor sensor) {
+        sensorService.updateSensor(deviceId, sensor);
         return ApiResponse.success("传感器更新成功");
     }
 

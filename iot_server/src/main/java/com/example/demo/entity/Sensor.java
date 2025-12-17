@@ -13,7 +13,7 @@ public class Sensor {
 
     private Long id;
     private Long parentId;          // 所属父设备ID
-    private String sensorCode;      // 传感器编号，格式：sen-{sensor_type_id}-{从1001开始递增}
+    private String sensorCode;      // 传感器编号，格式：ts1  ts2  ts3 ts4
     private Integer sensorTypeId;   // 传感器类型ID：5-温度 6-湿度 7-气体
     private String sensorName;      // 传感器名称：温度1、温度2等
     private Double sensorValue;     // 传感器值（Double类型，精度足够，性能更好）

@@ -39,10 +39,11 @@ public class DeviceService {
 
     /**
      * 获取设备列表（分页）
+     *
      * @param userId 用户ID，为null时查询所有设备
      */
     public PageResult<Device> getDeviceList(Long userId, Integer pageNum, Integer pageSize,
-                                             String search, Integer deviceType) {
+                                            String search, Integer deviceType) {
         Map<String, Object> params = new HashMap<>();
         // userId为null时不添加过滤条件，查询所有设备
         if (userId != null) {
@@ -66,13 +67,14 @@ public class DeviceService {
 
     /**
      * 获取设备统计
+     *
      * @param userId 用户ID，为null时统计所有设备
      */
     public DeviceStatistics getStatistics(Long userId) {
         Long totalDevices;
         Long onlineDevices;
         Long alarmDevices;
-        
+
         if (userId == null) {
             // web端：查询所有设备的统计
             totalDevices = deviceMapper.countAll();
@@ -84,7 +86,7 @@ public class DeviceService {
             onlineDevices = deviceMapper.countOnlineByUserId(userId);
             alarmDevices = deviceMapper.countWarningByUserId(userId);
         }
-        
+
         // 计算离线设备数
         Long offlineDevices = totalDevices - onlineDevices;
 
@@ -101,7 +103,7 @@ public class DeviceService {
         }
         return device;
     }
-    
+
     /**
      * 获取设备详情 DTO（包含所有关联数据）
      */
@@ -110,17 +112,17 @@ public class DeviceService {
         List<Sensor> sensors = sensorMapper.findByDeviceId(deviceId);
         List<MotorFan> motorFans = motorFanMapper.findByParentId(deviceId);
         List<FrequencyMotor> frequencyMotors = frequencyMotorMapper.findByParentId(deviceId);
-        
+
         return dtoConverter.toDeviceDetailDTO(device, sensors, motorFans, frequencyMotors);
     }
-    
+
     /**
      * 获取设备列表 DTO（批量查询传感器）
      */
     public PageResult<DeviceListDTO> getDeviceListDTO(Long userId, Integer pageNum, Integer pageSize,
-                                                       String deviceName, String deviceNum, 
-                                                       String userName, String userPhone, 
-                                                       Integer warningStatus) {
+                                                      String deviceName, String deviceNum,
+                                                      String userName, String userPhone,
+                                                      Integer warningStatus) {
         Map<String, Object> params = new HashMap<>();
         // userId为null时不添加过滤条件，查询所有设备
         if (userId != null) {
@@ -141,7 +143,7 @@ public class DeviceService {
 
         List<DeviceListDTO> list = deviceMapper.findListWithUser(params);
         Long total = deviceMapper.countDeviceWithUser(params);
-        
+
         // 批量查询传感器
         list.forEach(device -> {
             List<Sensor> sensors = sensorMapper.findByDeviceId(device.getId());
@@ -162,7 +164,7 @@ public class DeviceService {
         // 检查设备是否已被绑定
         Device existDevice = deviceMapper.findByDeviceNum(deviceNum);
         if (existDevice != null) {
-            throw new RuntimeException("设备已被绑定");
+            throw new RuntimeException("设备已被其他用户绑定");
         }
 
         // 创建新设备
@@ -172,7 +174,7 @@ public class DeviceService {
         device.setDeviceName(deviceName);
         device.setDeviceType(deviceType); // 默认类型
         device.setDeviceLineState(1); // 默认离线
-        
+
         deviceMapper.insert(device);
     }
 
@@ -211,7 +213,7 @@ public class DeviceService {
 
         // 设置设备ID
         device.setId(deviceId);
-        
+
         // 执行更新
         int rows = deviceMapper.update(device);
         if (rows == 0) {
