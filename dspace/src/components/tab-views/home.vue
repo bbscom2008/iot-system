@@ -281,6 +281,25 @@ export default {
         this.handleAdd();
       }
     },
+    async bindDevice(deviceNum){
+      try {
+        await request.post("/device/bind", {
+          deviceNum: deviceNum,
+        });
+        uni.showToast({
+          title: "绑定成功",
+          icon: "success",
+        });
+        // 刷新设备列表
+        this.getSwiperList();
+        this.equipmentState();
+      } catch (err) {
+        uni.showToast({
+          title: err.msg || "绑定失败",
+          icon: "none",
+        });
+      }
+    },
     // 处理添加设备
     handleAdd() {
       // #ifdef MP-WEIXIN
@@ -289,23 +308,7 @@ export default {
         success: async (res) => {
           console.log("扫码结果:", res.result);
           // 扫码成功后，绑定设备
-          try {
-            await request.post("/device/bind", {
-              deviceNum: res.result,
-            });
-            uni.showToast({
-              title: "绑定成功",
-              icon: "success",
-            });
-            // 刷新设备列表
-            this.getSwiperList();
-            this.equipmentState();
-          } catch (err) {
-            uni.showToast({
-              title: err.msg || "绑定失败",
-              icon: "none",
-            });
-          }
+          this.bindDevice(res.result)
         },
         fail: (err) => {
           console.log("扫码失败:", err);
@@ -318,10 +321,32 @@ export default {
       // #endif
       // #ifdef H5
       uni.showModal({
-        title: "提示",
-        content: "H5环境暂不支持扫码，请通过其他方式添加设备",
-        showCancel: false,
-        confirmText: "确定",
+        title: "添加设备", // 弹窗标题
+        content: "", // 可留空，focus 为 true 时输入框自动聚焦
+        editable: true, // 关键：显示输入框
+        placeholderText: "请输入设备编号", // 输入框占位符
+        success: (res) => {
+          if (res.confirm) {
+            // 点击「确定」，res.content 为输入的内容
+            console.log("用户输入：", res.content);
+            // 业务逻辑：如提交、校验等
+            if (res.content.trim() === "") {
+              uni.showToast({ title: "内容不能为空", icon: "none" });
+              return;
+            }
+            this.bindDevice(res.content)
+          } else if (res.cancel) {
+            // 点击「取消」
+            console.log("用户取消输入");
+          }
+        },
+        fail: (err) => {
+          console.error("当前端不支持输入框", err);
+          uni.showToast({
+              title: `当前端不支持输入框:${err.errMsg}`,
+              icon: "error",
+            });
+        },
       });
       // #endif
     },
@@ -537,10 +562,11 @@ export default {
 .device-info {
   padding-left: 40rpx;
 
-  .base-info {
+  
+}
+.device-info .base-info {
     display: flex;
     align-items: center;
-  }
 }
 /* 设备卡片 */
 .device-card {

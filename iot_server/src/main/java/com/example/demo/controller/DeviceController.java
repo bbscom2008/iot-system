@@ -89,22 +89,24 @@ public class DeviceController {
         String platform = jwtUtil.getPlatformFromToken(token);
         Long userId;
         
-        // 如果是 web 端，可以指定 userId，否则使用当前登录用户
+        // 如果是 web 端(后台端)，或者移动端（h5或小程序）  可以指定 userId，否则使用当前登录用户
+        // 后台绑定设备时，
         if ("web".equals(platform) && params.containsKey("userId")) {
             Object userIdObj = params.get("userId");
             if (userIdObj != null) {
                 userId = Long.valueOf(userIdObj.toString());
             } else {
                 userId = null;
+                throw new RuntimeException("userId 是 null");
             }
         } else {
             userId = jwtUtil.getUserIdFromToken(token);
         }
         
         String deviceNum = (String) params.get("deviceNum");
-        String deviceName = (String) params.get("deviceName");
-        Integer deviceType =  (Integer) params.get("deviceType");
-
+        String deviceName = "环控仪";//(String) params.get("deviceName");
+        // 1 环控仪
+        Integer deviceType =  1; // (Integer) params.get("deviceType");
         deviceService.bindDevice(userId, deviceNum, deviceName, deviceType);
         return ApiResponse.success("绑定成功");
     }

@@ -105,15 +105,18 @@ public class MqttService implements MqttCallback {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         try {
             JsonNode node = objectMapper.readTree(payload);
+//            mqttMessageRecordService.save(payload);
             JsonNode idNode = node.get("id");
             if (idNode != null && idNode.isTextual()) {
                 String deviceNum = idNode.asText();
+                // 存储 mqtt 消息
                 mqttMessageDataService.save(deviceNum, node);
-                deviceService.markDeviceOnline(deviceNum);
+
                 Device device = deviceService.findByDeviceNum(deviceNum);
                 if (device != null) {
+                    // 更新设备为在线状态
+                    deviceService.markDeviceOnline(deviceNum);
                     Long parentId = device.getId();
-                    
                     // 批量更新传感器值
                     Map<String, Double> sensorValues = new HashMap<>();
                     for (int i = 1; i <= 4; i++) {

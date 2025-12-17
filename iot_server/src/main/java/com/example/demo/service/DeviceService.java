@@ -171,7 +171,7 @@ public class DeviceService {
         device.setDeviceNum(deviceNum);
         device.setDeviceName(deviceName);
         device.setDeviceType(deviceType); // 默认类型
-        device.setDeviceLineState(0); // 默认离线
+        device.setDeviceLineState(1); // 默认离线
         
         deviceMapper.insert(device);
     }
