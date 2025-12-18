@@ -13,8 +13,8 @@ public class MotorFan {
 
     private Long id;
     private String fanName;              // 风扇名称
-    private Long parentId;               // 父设备的ID
-    private String fanCode;              // 风机编码
+    private Long deviceId;               // 父设备的ID
+    private String deviceNum;              // 风机编码
     private Integer isRunning;           // 运行状态：0-停止 1-运行
     private Integer controlMode;         // 控制模式：1-温控 2-循环 3-湿控 4-气体 5-定时
     private Integer autoMode;            // 自动模式：1-自动 2-开 3-关

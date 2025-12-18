@@ -104,8 +104,8 @@ public class MotorFanService {
         Set<String> existingCodes = new HashSet<>();
         if (existing != null) {
             for (MotorFan mf : existing) {
-                if (mf.getFanCode() != null) {
-                    existingCodes.add(mf.getFanCode());
+                if (mf.getDeviceNum() != null) {
+                    existingCodes.add(mf.getDeviceNum());
                 }
             }
         }
@@ -113,8 +113,8 @@ public class MotorFanService {
             String code = e.getKey();
             if (!existingCodes.contains(code)) {
                 MotorFan fan = new MotorFan();
-                fan.setParentId(parentId);
-                fan.setFanCode(code);
+                fan.setDeviceId(parentId);
+                fan.setDeviceNum(code);
                 Integer run = e.getValue();
                 fan.setIsRunning(run == null ? 0 : run);
                 fan.setControlMode(1);
@@ -128,7 +128,7 @@ public class MotorFanService {
                 } catch (Exception ignored) {
                 }
                 fan.setFanName(name);
-                motorFanMapper.insert(fan);
+//                motorFanMapper.insert(fan);
             }
         }
         Map<String, Object> params = new HashMap<>();

@@ -7,9 +7,8 @@
     <resultMap id="BaseResultMap" type="com.example.demo.entity.MotorFan">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
-        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
-        <result column="device_id" property="parentId" jdbcType="BIGINT"/>
-        <result column="fan_code" property="fanCode" jdbcType="VARCHAR"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
         <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
         <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
@@ -54,8 +53,8 @@
     <resultMap id="MotorFanListResultMap" type="com.example.demo.dto.MotorFanListDTO">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
-        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
-        <result column="fan_code" property="fanCode" jdbcType="VARCHAR"/>
+        <result column="device_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
         <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
         <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
@@ -109,7 +108,7 @@
             u.nike_name as user_name,
             u.phone as user_phone
         FROM motor_fan mf
-        LEFT JOIN devices d ON mf.parent_id = d.id
+        LEFT JOIN devices d ON mf.device_id = d.id
         LEFT JOIN users u ON d.user_id = u.id
         <where>
             <if test="userName != null and userName != ''">
@@ -141,7 +140,7 @@
     <!-- 根据风机编码查询所有风扇 -->
     <select id="findByFanCode" resultMap="BaseResultMap">
         SELECT * FROM motor_fan
-        WHERE device_num = #{fanCode}
+        WHERE device_num = #{deviceNum}
         ORDER BY id ASC
     </select>
 
@@ -153,7 +152,7 @@
     <!-- 新增风扇 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, control_mode, auto_mode, created_time, updated_time)
-        VALUES (#{fanName}, #{parentId}, #{fanCode}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
+        VALUES (#{fanName}, #{parentId}, #{deviceNum}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
     </insert>
 
     <!-- 更新风扇运行状态 -->
@@ -166,7 +165,7 @@
     <update id="updateRunningStatusByParentAndCode">
         UPDATE motor_fan
         SET is_running = #{isRunning}, updated_time = NOW()
-        WHERE device_id = #{parentId} AND device_num = #{fanCode}
+        WHERE device_id = #{parentId} AND device_num = #{deviceNum}
     </update>
 
     <!-- 批量更新风机运行状态 -->

@@ -146,8 +146,8 @@
             <!-- 第一行：温度传感器（sensor_type_id = 5） -->
             <view
               class="sensor-row"
-              v-if="getTemperatureSensors(item.sensors).length > 0"
             >
+              <!-- v-if="getTemperatureSensors(item.sensors).length > 0" -->
               <view
                 class="sensor-item"
                 v-for="sensor in getTemperatureSensors(item.sensors)"
@@ -387,7 +387,15 @@ export default {
     // 获取温度传感器（sensor_type_id = 5）
     getTemperatureSensors(sensors) {
       if (!sensors || !Array.isArray(sensors)) return [];
-      return sensors.filter((s) => s.sensorTypeId === 5);
+      // 根据 ts1 - 4 排序
+      let sortSensors =  sensors.filter((s) => s.sensorTypeId === 5).sort((a, b) => {
+        const aNum = parseInt(a.sensorCode.replace("ts", ""));
+        const bNum = parseInt(b.sensorCode.replace("ts", ""));
+        return aNum - bNum;
+      });
+      console.log(sortSensors);
+      
+      return sortSensors;
     },
     // 获取其他传感器（sensor_type_id != 5）
     getOtherSensors(sensors) {

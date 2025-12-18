@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -22,6 +23,7 @@ import com.example.demo.entity.Device;
 import com.example.demo.service.FrequencyMotorService;
 import com.example.demo.service.MqttMessageDataService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -118,14 +120,7 @@ public class MqttService implements MqttCallback {
                     deviceService.markDeviceOnline(deviceNum);
                     Long parentId = device.getId();
                     // 批量更新传感器值
-                    Map<String, Double> sensorValues = new HashMap<>();
-                    for (int i = 1; i <= 4; i++) {
-                        String key = "ts" + i;
-                        JsonNode v = node.get(key);
-                        if (v != null && v.isNumber()) {
-                            sensorValues.put(key, v.asDouble());
-                        }
-                    }
+                    List<JsonUtils.KV<Double>> sensorValues = JsonUtils.convertJsonSensors(node);
                     if (!sensorValues.isEmpty()) {
                         //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
                         sensorService.batchUpdateValueByParentId(parentId, sensorValues);

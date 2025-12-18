@@ -67,7 +67,7 @@ public class SensorController {
      */
     @PostMapping
     public ApiResponse<String> addSensor(Long parentId, @RequestBody Sensor sensor) {
-        sensorService.addSensor(parentId, sensor);
+        sensorService.addSensor( sensor);
         return ApiResponse.success("传感器添加成功");
     }
 

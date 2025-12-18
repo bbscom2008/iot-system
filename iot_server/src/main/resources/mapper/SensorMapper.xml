@@ -113,16 +113,16 @@
         UPDATE sensors
         <set>
             sensor_value = CASE sensor_code
-            <foreach collection="valuesMap.keys" item="code" separator="">
-                WHEN #{code} THEN #{valuesMap[${code}]}
+            <foreach collection="list" item="item" separator="">
+                WHEN #{item.key} THEN #{item.value}
             </foreach>
             END,
             updated_at = NOW()
         </set>
         WHERE parent_id = #{parentId}
         AND sensor_code IN
-        <foreach collection="valuesMap.keys" item="code" open="(" close=")" separator=",">
-            #{code}
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.key}
         </foreach>
     </update>
 

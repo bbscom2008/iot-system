@@ -73,10 +73,10 @@ public class MotorFanController {
         if (motorFan.getFanName() == null || motorFan.getFanName().trim().isEmpty()) {
             throw new RuntimeException("风机名称不能为空");
         }
-        if (motorFan.getParentId() == null) {
+        if (motorFan.getDeviceId() == null) {
             throw new RuntimeException("父设备ID不能为空");
         }
-        if (motorFan.getFanCode() == null || motorFan.getFanCode().trim().isEmpty()) {
+        if (motorFan.getDeviceNum() == null || motorFan.getDeviceNum().trim().isEmpty()) {
             throw new RuntimeException("风机编码不能为空");
         }
         

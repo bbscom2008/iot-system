@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.SensorListDTO;
 import com.example.demo.entity.Sensor;
 import com.example.demo.mapper.SensorMapper;
+import com.example.demo.util.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,14 +44,14 @@ public class SensorService {
      * 新增传感器
      * 如果传入了 sensor_code，则使用传入的编码；否则自动生成 sensor_code 格式：sen-{sensor_type_id}-{从1001开始递增}
      */
-    public void addSensor(Long  deviceId,Sensor sensor) {
+    public void addSensor(Sensor sensor) {
         // 如果 sensor_code 为空或null，才自动生成
         if (sensor.getSensorCode() == null || sensor.getSensorCode().trim().isEmpty()) {
             throw new IllegalArgumentException("Sensor code cannot be empty when add sensor");
         }
         
         // 检查 sensor_code 是否已存在
-        Sensor existingSensor = sensorMapper.findBySensorCode(deviceId, sensor.getSensorCode());
+        Sensor existingSensor = sensorMapper.findBySensorCode(sensor.getParentId(), sensor.getSensorCode());
         if (existingSensor != null) {
             throw new RuntimeException("传感器编号已存在：" + sensor.getSensorCode());
         }
@@ -139,45 +140,55 @@ public class SensorService {
         sensorMapper.updateValueByParentAndCode(parentId, sensorCode, sensorValue);
     }
 
-    public int batchUpdateValueByParentId(Long parentId, Map<String, Double> valuesMap) {
-        if (valuesMap == null || valuesMap.isEmpty()) {
-            return 0;
+    public void batchUpdateValueByParentId(Long parentId, List<JsonUtils.KV<Double>> skvList) {
+        if (skvList == null || skvList.isEmpty()) {
+            return;
         }
         List<Sensor> existing = sensorMapper.findByDeviceId(parentId);
         Set<String> existingCodes = new HashSet<>();
         if (existing != null) {
             for (Sensor s : existing) {
-                if (s.getSensorCode() != null) {
-                    existingCodes.add(s.getSensorCode());
-                }
+                existingCodes.add(s.getSensorCode());
             }
         }
-        for (Map.Entry<String, Double> e : valuesMap.entrySet()) {
-            String code = e.getKey();
-            if (!existingCodes.contains(code)) {
-                Sensor sensor = new Sensor();
-                sensor.setParentId(parentId);
-                sensor.setSensorCode(code);
-                sensor.setSensorTypeId(5);
-                String name = "温度";
-                try {
-                    String idxStr = code.replaceAll("[^0-9]", "");
-                    if (!idxStr.isEmpty()) {
-                        name = name + idxStr;
-                    }
-                } catch (Exception ignored) {
-                }
-                sensor.setSensorName(name);
-                sensor.setSensorValue(e.getValue());
-                sensor.setAdjustValue(0.0);
-                sensor.setUnit("°C");
-                addSensor(parentId, sensor);
+        for (JsonUtils.KV<Double> e : skvList) {
+            String tsKey = e.getKey(); // ts1  ts2
+            if (!existingCodes.contains(tsKey)) {
+                Sensor sensor = generateSensor(parentId, tsKey, e.getValue());
+                addSensor(sensor);
             }
         }
-        Map<String, Object> params = new HashMap<>();
-        params.put("parentId", parentId);
-        params.put("valuesMap", valuesMap);
-        return sensorMapper.batchUpdateValueByParentId(params);
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("parentId", parentId);
+//        params.put("valuesList", skvList);
+        sensorMapper.batchUpdateValueByParentId(parentId, skvList);
+    }
+
+    /**
+     * 根据 parentId ts1  value 创建 sensor 对象
+     * @param parentId
+     * @param tsKey
+     * @param value
+     * @return
+     */
+    private static Sensor generateSensor(Long parentId, String tsKey, Double value) {
+        Sensor sensor = new Sensor();
+        sensor.setParentId(parentId);
+        sensor.setSensorCode(tsKey);
+        sensor.setSensorTypeId(5);
+        String name = "温度";
+        try {
+            String idxStr = tsKey.replaceAll("[^0-9]", "");
+            if (!idxStr.isEmpty()) {
+                name = name + idxStr;
+            }
+        } catch (Exception ignored) {
+        }
+        sensor.setSensorName(name);
+        sensor.setSensorValue(value);
+        sensor.setAdjustValue(0.0);
+        sensor.setUnit("°C");
+        return sensor;
     }
 }
 

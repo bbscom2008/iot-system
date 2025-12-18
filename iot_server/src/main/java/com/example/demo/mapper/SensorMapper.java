@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.dto.SensorListDTO;
 import com.example.demo.entity.Sensor;
+import com.example.demo.util.JsonUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -80,6 +81,11 @@ public interface SensorMapper {
                                    @Param("sensorCode") String sensorCode,
                                    @Param("sensorValue") Double sensorValue);
 
-    int batchUpdateValueByParentId(Map<String, Object> params);
+    // 显式指定List的参数名为list，避免默认名歧义
+    int batchUpdateValueByParentId(
+            @Param("parentId") Long parentId,
+            @Param("list") List<JsonUtils.KV<Double>> list
+    );
+
 }
 
