@@ -107,9 +107,9 @@ public class MqttService implements MqttCallback {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         try {
             JsonNode node = objectMapper.readTree(payload);
-//            mqttMessageRecordService.save(payload);
             JsonNode idNode = node.get("id");
             if (idNode != null && idNode.isTextual()) {
+                // 设备 ID ， 传感器设备的 父ID
                 String deviceNum = idNode.asText();
                 // 存储 mqtt 消息
                 mqttMessageDataService.save(deviceNum, node);
@@ -119,38 +119,15 @@ public class MqttService implements MqttCallback {
                     // 更新设备为在线状态
                     deviceService.markDeviceOnline(deviceNum);
                     Long parentId = device.getId();
-                    // 批量更新传感器值
+
+                    //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
                     List<JsonUtils.KV<Double>> sensorValues = JsonUtils.convertJsonSensors(node);
-                    if (!sensorValues.isEmpty()) {
-                        //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
-                        sensorService.batchUpdateValueByParentId(parentId, sensorValues);
-                    }
-                    
+                    sensorService.batchUpdateValueByParentId(parentId, sensorValues);
+
                     // 批量更新电机运行状态
-                    Map<String, Integer> motorValues = new HashMap<>();
-                    for (int i = 1; i <= 10; i++) {
-                        String key = "mt" + i;
-                        JsonNode v = node.get(key);
-                        if (v != null) {
-                            Integer run = null;
-                            if (v.isBoolean()) {
-                                run = v.booleanValue() ? 1 : 0;
-                            } else if (v.isNumber()) {
-                                run = v.intValue() != 0 ? 1 : 0;
-                            } else if (v.isTextual()) {
-                                String s = v.asText().trim();
-                                if ("true".equalsIgnoreCase(s) || "1".equals(s)) run = 1;
-                                else if ("false".equalsIgnoreCase(s) || "0".equals(s)) run = 0;
-                            }
-                            if (run != null) {
-                                motorValues.put(key, run);
-                            }
-                        }
-                    }
-                    if (!motorValues.isEmpty()) {
-                        motorFanService.batchUpdateRunningStatusByParentId(parentId, motorValues);
-                    }
-                    
+                    List<JsonUtils.KV<Integer>> motorValues = JsonUtils.convertJsonMotors(node);
+                    motorFanService.batchUpdateRunningStatusByParentId(parentId, motorValues);
+
                     // 批量更新变频电机的值
                     Map<String, Integer> frequencyMotorValues = new HashMap<>();
                     

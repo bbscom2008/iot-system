@@ -1,16 +1,19 @@
 package com.example.demo.service;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.MotorFanListDTO;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.mapper.MotorFanMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.example.demo.util.JsonUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -96,44 +99,49 @@ public class MotorFanService {
         motorFanMapper.updateRunningStatusByParentAndCode(parentId, fanCode, isRunning);
     }
 
-    public int batchUpdateRunningStatusByParentId(Long parentId, Map<String, Integer> valuesMap) {
-        if (valuesMap == null || valuesMap.isEmpty()) {
+    public int batchUpdateRunningStatusByParentId(Long parentId, List<JsonUtils.KV<Integer>> motorList) {
+        if (motorList == null || motorList.isEmpty()) {
             return 0;
         }
         List<MotorFan> existing = motorFanMapper.findByParentId(parentId);
+        // 现有的所有风机的编号
         Set<String> existingCodes = new HashSet<>();
         if (existing != null) {
             for (MotorFan mf : existing) {
-                if (mf.getDeviceNum() != null) {
-                    existingCodes.add(mf.getDeviceNum());
-                }
+                existingCodes.add(mf.getDeviceNum());
             }
         }
-        for (Map.Entry<String, Integer> e : valuesMap.entrySet()) {
-            String code = e.getKey();
-            if (!existingCodes.contains(code)) {
-                MotorFan fan = new MotorFan();
-                fan.setDeviceId(parentId);
-                fan.setDeviceNum(code);
-                Integer run = e.getValue();
-                fan.setIsRunning(run == null ? 0 : run);
-                fan.setControlMode(1);
-                fan.setAutoMode(1);
-                String name = "风机";
-                try {
-                    String idxStr = code.replaceAll("[^0-9]", "");
-                    if (!idxStr.isEmpty()) {
-                        name = name + idxStr;
-                    }
-                } catch (Exception ignored) {
-                }
-                fan.setFanName(name);
-//                motorFanMapper.insert(fan);
+        for (JsonUtils.KV<Integer> e : motorList) {
+            String deviceNum = e.getKey();
+            // 如果某个编号不存在，就创建一个新的风机
+            if (!existingCodes.contains(deviceNum)) {
+                MotorFan fan = getMotorFan(parentId, e);
+                motorFanMapper.insert(fan);
             }
         }
-        Map<String, Object> params = new HashMap<>();
-        params.put("parentId", parentId);
-        params.put("valuesMap", valuesMap);
-        return motorFanMapper.batchUpdateRunningStatusByParentId(params);
+        // Map<String, Object> params = new HashMap<>();
+        // params.put("parentId", parentId);
+        // params.put("motorList", motorList);
+        return motorFanMapper.batchUpdateRunningStatusByParentId(parentId, motorList);
+    }
+
+    private static MotorFan getMotorFan(Long parentId, JsonUtils.KV<Integer> e) {
+        MotorFan fan = new MotorFan();
+        fan.setDeviceId(parentId);
+        fan.setDeviceNum(e.getKey());
+        Integer run = e.getValue();
+        fan.setIsRunning(run == null ? 0 : run);
+        fan.setControlMode(1);
+        fan.setAutoMode(1);
+        String name = "风机";
+        try {
+            String idxStr = e.getKey().replaceAll("[^0-9]", "");
+            if (!idxStr.isEmpty()) {
+                name = name + idxStr;
+            }
+        } catch (Exception ignored) {
+        }
+        fan.setFanName(name);
+        return fan;
     }
 }

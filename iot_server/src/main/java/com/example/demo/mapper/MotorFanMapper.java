@@ -1,11 +1,14 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.MotorFanListDTO;
-import com.example.demo.entity.MotorFan;
-import org.apache.ibatis.annotations.Mapper;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.example.demo.dto.MotorFanListDTO;
+import com.example.demo.entity.MotorFan;
+import com.example.demo.util.JsonUtils;
 
 @Mapper
 public interface MotorFanMapper {
@@ -13,12 +16,12 @@ public interface MotorFanMapper {
     /**
      * 根据父设备ID查询所有风扇
      */
-    List<MotorFan> findByParentId(Long parentId);
+    List<MotorFan> findByParentId(Long deviceId);
 
     /**
      * 根据风机编码查询所有风扇
      */
-    List<MotorFan> findByFanCode(String fanCode);
+    List<MotorFan> findByFanCode(String deviceNum);
 
     /**
      * 查询所有风扇（关联设备和用户信息）
@@ -40,12 +43,14 @@ public interface MotorFanMapper {
      */
     int updateRunningStatus(Long id, Integer isRunning);
 
-    int updateRunningStatusByParentAndCode(Long parentId, String fanCode, Integer isRunning);
+    int updateRunningStatusByParentAndCode(Long deviceId, String fanCode, Integer isRunning);
 
     /**
      * 批量更新风机运行状态
      */
-    int batchUpdateRunningStatusByParentId(Map<String, Object> params);
+    int batchUpdateRunningStatusByParentId(
+        @Param("deviceId") Long deviceId, 
+        @Param("motorList") List<JsonUtils.KV<Integer>> motorList);
 
     /**
      * 更新风机配置
@@ -60,5 +65,5 @@ public interface MotorFanMapper {
     /**
      * 删除父设备的所有风扇
      */
-    int deleteByParentId(Long parentId);
+    int deleteByParentId(Long deviceId);
 }

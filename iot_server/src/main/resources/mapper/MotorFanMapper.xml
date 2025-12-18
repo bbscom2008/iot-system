@@ -53,7 +53,7 @@
     <resultMap id="MotorFanListResultMap" type="com.example.demo.dto.MotorFanListDTO">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="fan_name" property="fanName" jdbcType="VARCHAR"/>
-        <result column="device_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
         <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
@@ -133,7 +133,7 @@
     <!-- 根据父设备ID查询所有风扇 -->
     <select id="findByParentId" resultMap="BaseResultMap">
         SELECT * FROM motor_fan
-        WHERE device_id = #{parentId}
+        WHERE device_id = #{deviceId}
         ORDER BY id ASC
     </select>
 
@@ -152,7 +152,7 @@
     <!-- 新增风扇 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, control_mode, auto_mode, created_time, updated_time)
-        VALUES (#{fanName}, #{parentId}, #{deviceNum}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
+        VALUES (#{fanName}, #{deviceId}, #{deviceNum}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
     </insert>
 
     <!-- 更新风扇运行状态 -->
@@ -165,7 +165,7 @@
     <update id="updateRunningStatusByParentAndCode">
         UPDATE motor_fan
         SET is_running = #{isRunning}, updated_time = NOW()
-        WHERE device_id = #{parentId} AND device_num = #{deviceNum}
+        WHERE device_id = #{deviceId} AND device_num = #{deviceNum}
     </update>
 
     <!-- 批量更新风机运行状态 -->
@@ -173,16 +173,16 @@
         UPDATE motor_fan
         <set>
             is_running = CASE device_num
-            <foreach collection="valuesMap.keys" item="code" separator="">
-                WHEN #{code} THEN #{valuesMap[${code}]}
+            <foreach collection="motorList" item="item" separator="">
+                WHEN #{item.key} THEN #{item.value}
             </foreach>
             END,
             updated_time = NOW()
         </set>
-        WHERE device_id = #{parentId}
+        WHERE device_id = #{deviceId}
         AND device_num IN
-        <foreach collection="valuesMap.keys" item="code" open="(" close=")" separator=",">
-            #{code}
+        <foreach collection="motorList" item="item" open="(" close=")" separator=",">
+            #{item.key}
         </foreach>
     </update>
 
@@ -233,7 +233,7 @@
 
     <!-- 删除父设备的所有风扇 -->
     <delete id="deleteByParentId">
-        DELETE FROM motor_fan WHERE device_id = #{parentId}
+        DELETE FROM motor_fan WHERE device_id = #{deviceId}
     </delete>
 
 </mapper>
