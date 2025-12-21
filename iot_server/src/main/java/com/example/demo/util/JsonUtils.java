@@ -31,6 +31,24 @@ public class JsonUtils {
     }
 
     /**
+     * 根据 mqtt 数居，解析出 所有的 变频电机
+     * @param node
+     * @return
+     */
+    public static List<KV<Integer>> convertJsonIMotor(JsonNode node) {
+        ArrayList<KV<Integer>> list = new ArrayList<KV<Integer>>();
+        for (int i = 1; i <= 2; i++) {
+            String key = "imt" + i;
+            JsonNode v = node.get(key);
+            if (v != null && v.isNumber()) {
+                list.add(new KV<Integer>(key, v.intValue()));
+            }
+        }
+        return list;
+    }
+
+
+    /**
      * 根据 mqtt 数居，解析出 所有的 motor
      * @param node
      * @return

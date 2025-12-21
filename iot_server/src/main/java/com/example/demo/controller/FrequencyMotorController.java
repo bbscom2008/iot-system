@@ -74,7 +74,7 @@ public class FrequencyMotorController {
         if (frequencyMotor.getDeviceName() == null || frequencyMotor.getDeviceName().trim().isEmpty()) {
             throw new RuntimeException("变频电机名称不能为空");
         }
-        if (frequencyMotor.getParentId() == null) {
+        if (frequencyMotor.getDeviceId() == null) {
             throw new RuntimeException("父设备ID不能为空");
         }
         if (frequencyMotor.getDeviceNum() == null || frequencyMotor.getDeviceNum().trim().isEmpty()) {

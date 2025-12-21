@@ -6,7 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.example.demo.entity.FrequencyMotor">
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="device_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
         <result column="protect_speed" property="protectSpeed" jdbcType="DOUBLE"/>
@@ -89,7 +89,7 @@
     <!-- 根据父设备ID查询所有变频电机 -->
     <select id="findByParentId" resultMap="BaseResultMap">
         SELECT * FROM frequency_motor
-        WHERE device_id = #{parentId}
+        WHERE device_id = #{deviceId}
         ORDER BY id ASC
     </select>
 
@@ -112,7 +112,7 @@
          control_type, temp_sensor_id, temp_upper, temp_lower, humidity_upper, humidity_lower, gas_upper, gas_lower, 
          created_time, updated_time)
         VALUES 
-        (#{parentId}, #{deviceNum}, #{deviceName}, #{protectSpeed}, #{isAuto}, #{manualSpeed}, #{value}, #{runTime}, #{pauseTime},
+        (#{deviceId}, #{deviceNum}, #{deviceName}, #{protectSpeed}, #{isAuto}, #{manualSpeed}, #{value}, #{runTime}, #{pauseTime},
          #{controlType}, #{tempSensorId}, #{tempUpper}, #{tempLower}, #{humidityUpper}, #{humidityLower}, #{gasUpper}, #{gasLower},
          NOW(), NOW())
     </insert>
@@ -146,7 +146,7 @@
 
     <!-- 删除父设备的所有变频电机 -->
     <delete id="deleteByParentId">
-        DELETE FROM frequency_motor WHERE parent_id = #{parentId}
+        DELETE FROM frequency_motor WHERE parent_id = #{deviceId}
     </delete>
 
     
@@ -155,7 +155,7 @@
         UPDATE frequency_motor
         SET value = #{value},
             updated_time = NOW()
-        WHERE device_id = #{parentId} AND device_num = #{code}
+        WHERE device_id = #{deviceId} AND device_num = #{code}
     </update>
     
     <!-- 根据父设备ID批量更新变频电机的当前值 -->
@@ -163,16 +163,16 @@
         UPDATE frequency_motor
         <set>
             value = CASE device_num
-            <foreach collection="valuesMap.keys" item="code" separator="">
-                WHEN #{code} THEN #{valuesMap[${code}]}
+            <foreach collection="list" item="item" separator="">
+                WHEN #{item.key} THEN #{item.value}
             </foreach>
             END,
             updated_time = NOW()
         </set>
-        WHERE device_id = #{parentId}
+        WHERE device_id = #{deviceId}
         AND device_num IN
-        <foreach collection="valuesMap.keys" item="code" open="(" close=")" separator=",">
-            #{code}
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.key}
         </foreach>
     </update>
 

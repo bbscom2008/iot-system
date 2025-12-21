@@ -129,23 +129,11 @@ public class MqttService implements MqttCallback {
                     motorFanService.batchUpdateRunningStatusByParentId(parentId, motorValues);
 
                     // 批量更新变频电机的值
-                    Map<String, Integer> frequencyMotorValues = new HashMap<>();
-                    
-                    // 处理 imt1
-                    JsonNode imt1Node = node.get("imt1");
-                    if (imt1Node != null && imt1Node.isNumber()) {
-                        frequencyMotorValues.put("imt1", imt1Node.intValue());
-                    }
-                    
-                    // 处理 imt2
-                    JsonNode imt2Node = node.get("imt2");
-                    if (imt2Node != null && imt2Node.isNumber()) {
-                        frequencyMotorValues.put("imt2", imt2Node.intValue());
-                    }
-                    
+                    // 处理 变频电机
+                    List<JsonUtils.KV<Integer>> freqMotorValues = JsonUtils.convertJsonIMotor(node);
                     // 如果有需要更新的值，调用批量更新方法
-                    if (!frequencyMotorValues.isEmpty()) {
-                        frequencyMotorService.batchUpdateValueByParentId(parentId, frequencyMotorValues);
+                    if (!freqMotorValues.isEmpty()) {
+                        frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
                     }
                 }
             }

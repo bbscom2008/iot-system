@@ -1,7 +1,10 @@
 package com.example.demo.mapper;
 
 import com.example.demo.entity.FrequencyMotor;
+import com.example.demo.util.JsonUtils;
+
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -59,5 +62,7 @@ public interface FrequencyMotorMapper {
      * @param params 包含parentId和valuesMap的参数
      * @return 更新的行数
      */
-    int batchUpdateValueByParentId(Map<String, Object> params);
+    int batchUpdateValueByParentId(
+         @Param("deviceId") Long deviceId, 
+        @Param("list") List<JsonUtils.KV<Integer>> list);
 }
