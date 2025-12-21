@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import com.example.demo.util.DateUtils;
-import com.example.demo.entity.Device;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

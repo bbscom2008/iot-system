@@ -1,14 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.FrequencyMotor;
-import com.example.demo.entity.MotorFan;
 import com.example.demo.mapper.FrequencyMotorMapper;
 import com.example.demo.util.JsonUtils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
