@@ -105,6 +105,10 @@ public class MqttService implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) {
         String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
+        System.out.println("=====mqttmessage=====");
+        System.out.println("topic : "+topic);
+        System.out.println(payload);
+
         try {
             JsonNode node = objectMapper.readTree(payload);
             JsonNode idNode = node.get("id");
@@ -132,9 +136,7 @@ public class MqttService implements MqttCallback {
                     // 处理 变频电机
                     List<JsonUtils.KV<Integer>> freqMotorValues = JsonUtils.convertJsonIMotor(node);
                     // 如果有需要更新的值，调用批量更新方法
-                    if (!freqMotorValues.isEmpty()) {
-                        frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
-                    }
+                    frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
                 }
             }
         } catch (Exception e) {
