@@ -279,33 +279,33 @@ export default {
       return typeMap[controlType] || "未知";
     },
     // 启动风扇状态随机更新（模拟 WebSocket）
-    startFanStatusUpdate() {
-      // 每5秒随机更新一次风扇状态
-      this.fanUpdateTimer = setInterval(() => {
-        if (this.deviceInfo.motorFans && this.deviceInfo.motorFans.length > 0) {
-          // 随机选择一个风扇
-          const randomIndex = Math.floor(
-            Math.random() * this.deviceInfo.motorFans.length
-          );
-          const fan = this.deviceInfo.motorFans[randomIndex];
+    // startFanStatusUpdate() {
+    //   // 每5秒随机更新一次风扇状态
+    //   this.fanUpdateTimer = setInterval(() => {
+    //     if (this.deviceInfo.motorFans && this.deviceInfo.motorFans.length > 0) {
+    //       // 随机选择一个风扇
+    //       const randomIndex = Math.floor(
+    //         Math.random() * this.deviceInfo.motorFans.length
+    //       );
+    //       const fan = this.deviceInfo.motorFans[randomIndex];
 
-          // 随机决定是否切换状态（50% 概率）
-          if (Math.random() > 0.5) {
-            const newStatus = fan.isRunning === 1 ? 0 : 1;
-            this.$set(fan, "isRunning", newStatus);
+    //       // 随机决定是否切换状态（50% 概率）
+    //       if (Math.random() > 0.5) {
+    //         const newStatus = fan.isRunning === 1 ? 0 : 1;
+    //         this.$set(fan, "isRunning", newStatus);
 
-            console.log(`${fan.fanName} ${newStatus === 1 ? "启动" : "停止"}`);
-          }
-        }
-      }, 5000); // 每5秒更新一次
-    },
+    //         console.log(`${fan.fanName} ${newStatus === 1 ? "启动" : "停止"}`);
+    //       }
+    //     }
+    //   }, 5000); // 每5秒更新一次
+    // },
     // 停止风扇状态更新
-    stopFanStatusUpdate() {
-      if (this.fanUpdateTimer) {
-        clearInterval(this.fanUpdateTimer);
-        this.fanUpdateTimer = null;
-      }
-    },
+    // stopFanStatusUpdate() {
+    //   if (this.fanUpdateTimer) {
+    //     clearInterval(this.fanUpdateTimer);
+    //     this.fanUpdateTimer = null;
+    //   }
+    // },
     // 处理变频器点击事件
     handleFrequencyMotorClick(motor) {
       // 将变频器完整对象存入 Vuex
