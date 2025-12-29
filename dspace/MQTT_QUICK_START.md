@@ -1,6 +1,6 @@
 # MQTT 集成 - 快速开始
 
-## 🚀 5分钟快速上手
+## 🚀 5 分钟快速上手
 
 ### 步骤 1: 安装依赖
 
@@ -18,13 +18,13 @@ pnpm install
 ```javascript
 const MQTT_CONFIG = {
   dev: {
-    broker: 'ws://192.168.56.128:8883',      // 改为你的 Broker 地址 (H5)
+    broker: 'ws://192.168.56.128:8883', // 改为你的 Broker 地址 (H5)
     brokerTcp: 'mqtt://192.168.56.128:1883', // 改为你的 Broker 地址 (小程序)
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9),
     username: '', // 如需认证，填写用户名
     password: '', // 如需认证，填写密码
-  }
-};
+  },
+}
 ```
 
 ### 步骤 3: 在页面中使用
@@ -44,8 +44,8 @@ import MqttDemo from '@/components/MqttDemo.vue'
 
 export default {
   components: {
-    MqttDemo
-  }
+    MqttDemo,
+  },
 }
 </script>
 ```
@@ -57,7 +57,7 @@ export default {
   <view>
     <text v-if="isConnected">✓ 已连接</text>
     <text v-else>✗ 未连接</text>
-    
+
     <view v-for="(data, id) in allDeviceData" :key="id">
       <text>{{ id }}: {{ data.temperature }}°C, {{ data.humidity }}%</text>
     </view>
@@ -72,8 +72,8 @@ export default {
     ...mapGetters('mqtt', ['isConnected', 'getAllDeviceData']),
     allDeviceData() {
       return this.getAllDeviceData
-    }
-  }
+    },
+  },
 }
 </script>
 ```
@@ -94,16 +94,16 @@ import { DeviceControlCommand } from '@/utils/message-parser'
 export default {
   methods: {
     ...mapActions('mqtt', ['publishMessage']),
-    
+
     async setTemperature() {
-      const cmd = DeviceControlCommand.createTemperatureControl('device001', 25);
+      const cmd = DeviceControlCommand.createTemperatureControl('device001', 25)
       await this.publishMessage({
         deviceId: 'device001',
         action: cmd.action,
-        payload: cmd.payload
-      });
-    }
-  }
+        payload: cmd.payload,
+      })
+    },
+  },
 }
 </script>
 ```
@@ -156,7 +156,7 @@ export const MQTT_TOPICS = {
   DEVICE_DATA: 'your/custom/topic/data',
   DEVICE_STATUS: 'your/custom/topic/status',
   // ...
-};
+}
 ```
 
 ### 禁用自动连接
@@ -164,7 +164,7 @@ export const MQTT_TOPICS = {
 编辑 `src/main.js`:
 
 ```javascript
-const shouldInitMqtt = false; // 改为 false
+const shouldInitMqtt = false // 改为 false
 ```
 
 ### 增加日志输出
@@ -234,9 +234,9 @@ import mqttClient from '@/utils/mqtt'
 export default {
   mounted() {
     mqttClient.on('message', ({ topic, message }) => {
-      console.log('DEBUG: Message received', topic, message);
-    });
-  }
+      console.log('DEBUG: Message received', topic, message)
+    })
+  },
 }
 ```
 
@@ -244,13 +244,13 @@ export default {
 
 ## ⚠️ 常见问题排查
 
-| 问题 | 原因 | 解决方案 |
-|------|------|--------|
-| WebSocket is closed | 连接断开 | 检查 Broker 是否运行，IP 端口是否正确 |
-| ECONNREFUSED | 无法连接 | 检查防火墙，确认 Broker 监听的地址和端口 |
-| 小程序连接失败 | 域名白名单 | 在小程序后台添加 Broker 的域名或 IP 到白名单 |
-| 消息接收不到 | 主题订阅错误 | 检查订阅的主题是否正确匹配 |
-| 断线无法重连 | 重连配置 | 检查 `mqtt-config.js` 中的 `reconnectPeriod` |
+| 问题                | 原因         | 解决方案                                     |
+| ------------------- | ------------ | -------------------------------------------- |
+| WebSocket is closed | 连接断开     | 检查 Broker 是否运行，IP 端口是否正确        |
+| ECONNREFUSED        | 无法连接     | 检查防火墙，确认 Broker 监听的地址和端口     |
+| 小程序连接失败      | 域名白名单   | 在小程序后台添加 Broker 的域名或 IP 到白名单 |
+| 消息接收不到        | 主题订阅错误 | 检查订阅的主题是否正确匹配                   |
+| 断线无法重连        | 重连配置     | 检查 `mqtt-config.js` 中的 `reconnectPeriod` |
 
 ---
 
@@ -279,7 +279,7 @@ store.getters['mqtt/isConnected']
 store.dispatch('mqtt/publishMessage', {
   deviceId: 'device001',
   action: 'set_temperature',
-  payload: { targetTemperature: 25 }
+  payload: { targetTemperature: 25 },
 })
 
 // 订阅设备
