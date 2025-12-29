@@ -14,6 +14,7 @@ class MqttClient {
     this.isConnected = false;
     this.isConnecting = false;
     this.subscriptions = new Map(); // 存储订阅的主题和回调
+    this.pendingSubscriptions = []; // 存储在未连接时的待处理订阅
     this.messageHandlers = new Map(); // 消息处理器
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 10;
@@ -66,6 +67,9 @@ class MqttClient {
 
           // 重新订阅之前的主题
           this.resubscribeTopics();
+
+          // 处理在连接前缓存的订阅
+          this.processPendingSubscriptions();
 
           // 触发连接事件
           this.emit('connected');
@@ -121,13 +125,15 @@ class MqttClient {
    * @returns {Promise}
    */
   async subscribe(topics, options = {}, callback) {
-    return new Promise((resolve, reject) => {
-      if (!this.isConnected) {
-        
-        reject(new Error('Not connected， 先缓存起来，等连接成功后再订阅'));
-        return;
-      }
+    // 如果未连接：将订阅请求缓存，连接后处理并在实际订阅后 resolve
+    if (!this.isConnected) {
+      return new Promise((resolve, reject) => {
+        this.pendingSubscriptions.push({ topics, options, callback, resolve, reject });
+        console.log('[MQTT] Not connected — subscription cached for topics:', topics);
+      });
+    }
 
+    return new Promise((resolve, reject) => {
       const topicArray = Array.isArray(topics) ? topics : [topics];
       const opts = {
         qos: options.qos || this.config.qos,
@@ -157,6 +163,43 @@ class MqttClient {
       } catch (error) {
         console.error('[MQTT] Subscribe failed:', error);
         reject(error);
+      }
+    });
+  }
+
+  /**
+   * 处理在未连接期间缓存的订阅请求
+   * @private
+   */
+  processPendingSubscriptions() {
+    if (!this.client || !this.isConnected) return;
+    if (this.pendingSubscriptions.length === 0) return;
+
+    const pending = this.pendingSubscriptions.slice();
+    this.pendingSubscriptions = [];
+
+    pending.forEach((entry) => {
+      const { topics, options = {}, callback, resolve, reject } = entry;
+      const topicArray = Array.isArray(topics) ? topics : [topics];
+      const opts = { qos: options.qos || this.config.qos, ...options };
+
+      try {
+        this.client.subscribe(topicArray, opts, (error, granted) => {
+          if (error) {
+            console.error('[MQTT] Pending subscribe error:', error);
+            if (reject) reject(error);
+          } else {
+            console.log('[MQTT] Pending subscribed to:', granted);
+            topicArray.forEach((topic) => {
+              this.subscriptions.set(topic, { qos: opts.qos, callback });
+            });
+            this.emit('subscribed', topicArray);
+            if (resolve) resolve(granted);
+          }
+        });
+      } catch (error) {
+        console.error('[MQTT] Pending subscribe failed:', error);
+        if (reject) reject(error);
       }
     });
   }
