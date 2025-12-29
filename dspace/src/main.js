@@ -64,15 +64,15 @@ if (shouldInitMqtt) {
 
 // 应用进入前台时重连
 if (typeof uni !== 'undefined') {
-  uni.onAppShow(() => {
-    console.log('[App] App shown')
-    if (!store.getters['mqtt/isConnected'] && !store.getters['mqtt/isConnecting']) {
-      console.log('[App] Reconnecting MQTT...')
-      store.dispatch('mqtt/initMqtt').catch((error) => {
-        console.warn('[App] Reconnect failed:', error)
-      })
-    }
-  })
+  // uni.onAppShow(() => {
+  //   console.log('[App] App shown')
+  //   if (!store.getters['mqtt/isConnected'] && !store.getters['mqtt/isConnecting']) {
+  //     console.log('[App] Reconnecting MQTT...')
+  //     store.dispatch('mqtt/initMqtt').catch((error) => {
+  //       console.warn('[App] Reconnect failed:', error)
+  //     })
+  //   }
+  // })
 
   // 应用进入后台时断开连接（可选）
   // uni.onAppHide(() => {

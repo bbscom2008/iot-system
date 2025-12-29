@@ -7,8 +7,8 @@
 const MQTT_CONFIG = {
   // 开发环境配置
   dev: {
-    broker: 'ws://192.168.56.128:8883', // WebSocket 连接地址（H5 和小程序支持）
-    brokerTcp: 'mqtt://192.168.56.128:1883', // TCP 连接地址
+    broker: 'ws://192.168.56.128:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
+    brokerWx: 'ws://192.168.56.128:8083/mqtt', // TCP 连接地址
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
     username: '', // 用户名
     password: '', // 密码
@@ -20,16 +20,16 @@ const MQTT_CONFIG = {
   },
   // 生产环境配置
   prod: {
-    broker: 'ws://your-prod-broker:8883',
-    brokerTcp: 'mqtt://your-prod-broker:1883',
-    clientId: 'dspace-' + Math.random().toString(36).substr(2, 9),
-    username: '', // 生产环境配置用户名
-    password: '', // 生产环境配置密码
-    keepalive: 60,
-    reconnectPeriod: 5000, // 生产环境重连间隔更长
-    connectTimeout: 30000,
-    clean: true,
-    qos: 1,
+    broker: 'ws://192.168.56.128:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
+    brokerWx: 'ws://192.168.56.128:8083/mqtt', // TCP 连接地址
+    clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
+    username: '', // 用户名
+    password: '', // 密码
+    keepalive: 60, // 心跳间隔（秒）
+    reconnectPeriod: 3000, // 重连间隔（毫秒）
+    connectTimeout: 30000, // 连接超时（毫秒）
+    clean: true, // 是否清除会话
+    qos: 1, // 默认 QoS 等级 (0, 1, 2)
   },
 };
 
@@ -59,14 +59,8 @@ export function getbrokerUrl() {
   // 判断是否为小程序环境
   if (typeof wx !== 'undefined') {
     // 微信小程序环境 - 使用 TCP 协议
-    return config.brokerTcp;
-  } else if (typeof uni !== 'undefined' && uni.getSystemInfoSync) {
-    const systemInfo = uni.getSystemInfoSync();
-    // 如果是小程序，使用 TCP 协议
-    if (systemInfo.platform === 'devtools' || systemInfo.uniPlatform) {
-      return config.brokerTcp;
-    }
-  }
+    return config.brokerWx;
+  } 
   
   // H5 环境 - 使用 WebSocket 协议
   return config.broker;

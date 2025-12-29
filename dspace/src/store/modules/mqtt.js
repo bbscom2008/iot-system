@@ -185,8 +185,8 @@ const actions = {
   async subscribeDefaultTopics({ commit }) {
     try {
       const topics = [
-        MQTT_TOPICS.DEVICE_DATA, // device/+/data
-        MQTT_TOPICS.DEVICE_STATUS, // device/+/status
+        // MQTT_TOPICS.DEVICE_DATA, // device/+/data
+        // MQTT_TOPICS.DEVICE_STATUS, // device/+/status
         MQTT_TOPICS.SYSTEM, // system/#
       ];
 

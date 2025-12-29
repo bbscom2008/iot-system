@@ -4,7 +4,7 @@
  * 支持 H5 和微信小程序环境
  */
 
-import mqtt from 'mqtt';
+import mqtt from './mqtt.min.js';
 import { getMqttConfig, MQTT_TOPICS } from './mqtt-config';
 
 class MqttClient {

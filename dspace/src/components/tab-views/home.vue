@@ -81,7 +81,7 @@
         <!-- 设备卡片 -->
         <view
           class="device-card"
-          v-for="(item, index) in postList"
+          v-for="(item) in postList"
           :key="item.id"
           @tap="todate(item)"
         >
