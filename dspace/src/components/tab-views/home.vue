@@ -247,6 +247,9 @@ export default {
 
         if (res.list && res.list.length > 0) {
           this.postList = res.list;
+          // 订阅这几个设备的通知
+          const deviceIds = this.postList.map((device) => device.deviceNum);
+          this.$store.dispatch("mqtt/subscribeDevice", deviceIds);
         } else {
           this.postList = [];
         }

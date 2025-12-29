@@ -123,7 +123,8 @@ class MqttClient {
   async subscribe(topics, options = {}, callback) {
     return new Promise((resolve, reject) => {
       if (!this.isConnected) {
-        reject(new Error('Not connected'));
+        
+        reject(new Error('Not connected， 先缓存起来，等连接成功后再订阅'));
         return;
       }
 

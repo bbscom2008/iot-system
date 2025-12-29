@@ -185,8 +185,6 @@ const actions = {
   async subscribeDefaultTopics({ commit }) {
     try {
       const topics = [
-        // MQTT_TOPICS.DEVICE_DATA, // device/+/data
-        // MQTT_TOPICS.DEVICE_STATUS, // device/+/status
         MQTT_TOPICS.SYSTEM, // system/#
       ];
 
@@ -308,10 +306,10 @@ const actions = {
    */
   async subscribeDevice({ commit }, deviceId) {
     try {
-      const topics = [
-        `device/${deviceId}/data`,
-        `device/${deviceId}/status`,
-      ];
+      const idArray = Array.isArray(deviceId) ? deviceId : [deviceId];
+      const topics = idArray.map(id=>{
+        return `device/${id}`;
+      })
       await mqttClient.subscribe(topics, { qos: 1 });
       commit('SET_SUBSCRIPTIONS', mqttClient.getSubscriptions());
     } catch (error) {
@@ -325,10 +323,10 @@ const actions = {
    */
   async unsubscribeDevice({ commit }, deviceId) {
     try {
-      const topics = [
-        `device/${deviceId}/data`,
-        `device/${deviceId}/status`,
-      ];
+      const idArray = Array.isArray(deviceId) ? deviceId : [deviceId];
+      const topics = idArray.map(id=>{
+        return `device/${id}`;
+      })
       await mqttClient.unsubscribe(topics);
       commit('SET_SUBSCRIPTIONS', mqttClient.getSubscriptions());
     } catch (error) {
