@@ -7,13 +7,15 @@ import createPersistedState from 'vuex-persistedstate';
 import user from './modules/user'
 import app from './modules/app'
 import mqtt from './modules/mqtt'
+import device from './modules/device'
 
 Vue.use(Vuex)
 
 const modules = {
   user,
   app,
-  mqtt
+  mqtt,
+  device
 }
 
 const store = new Vuex.Store({
@@ -23,7 +25,7 @@ const store = new Vuex.Store({
     createPersistedState({
       // 持久化指定的模块路径
       // 例如：['user.userInfo', 'app.theme'] 表示只持久化 user 模块下的 userInfo 和 app 模块下的 theme
-      paths: ['user', 'app'], // 持久化整个 user 和 app 模块（MQTT 状态不持久化）
+      paths: ['user', 'app', 'device'], // 持久化 user、app 和 device 模块（MQTT 状态不持久化）
     })
   ]
 })

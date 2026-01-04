@@ -198,17 +198,14 @@
 import request from "@/utils/request.js";
 import SvgIcon from "@/components/SvgIcon.vue";
 import RechargeView from "./recharge.vue";
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: "HomeView",
   components: { SvgIcon, RechargeView },
   data() {
     return {
-      deviceList: [],
       searchValue: "",
-      allDevice: "",
-      lineDevice: "",
-      warningDevice: "",
       isLogin: true,
       currentTab: 0,
       QueryParams: {
@@ -218,11 +215,23 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState('device', {
+      deviceList: state => state.deviceList,
+      allDevice: state => state.deviceStats.allDevice,
+      lineDevice: state => state.deviceStats.lineDevice,
+      warningDevice: state => state.deviceStats.warningDevice,
+    })
+  },
   mounted() {
     this.getSwiperList();
     this.equipmentState();
   },
   methods: {
+    ...mapActions('device', [
+      'setDeviceList',
+      'setDeviceStats'
+    ]),
     // 切换 Tab
     switchTab(index) {
       this.currentTab = index;
@@ -246,12 +255,14 @@ export default {
         });
 
         if (res.list && res.list.length > 0) {
-          this.deviceList = res.list;
+          // 保存到 Vuex 仓库
+          this.setDeviceList(res.list);
           // 订阅这几个设备的通知
-          const deviceIds = this.deviceList.map((device) => device.deviceNum);
+          const deviceIds = res.list.map((device) => device.deviceNum);
           this.$store.dispatch("mqtt/subscribeDevice", deviceIds);
         } else {
-          this.deviceList = [];
+          // 清空设备列表
+          this.setDeviceList([]);
         }
       } catch (err) {
         console.log("获取设备列表失败", err);
@@ -263,9 +274,12 @@ export default {
       try {
         const res = await request.get("/device/statistics");
 
-        this.lineDevice = res.lineDevice;
-        this.allDevice = res.allDevice;
-        this.warningDevice = res.warningDevice;
+        // 保存到 Vuex 仓库
+        this.setDeviceStats({
+          lineDevice: res.lineDevice,
+          allDevice: res.allDevice,
+          warningDevice: res.warningDevice,
+        });
       } catch (err) {
         console.log("获取设备统计失败", err);
       }
@@ -358,7 +372,8 @@ export default {
         const res = await request.get("/device/list", {
           search: keyword,
         });
-        this.deviceList = res.list || [];
+        // 保存搜索结果到 Vuex 仓库
+        this.setDeviceList(res.list || []);
         if (res.list && res.list.length === 0) {
           uni.showToast({
             title: "未找到相关设备",
