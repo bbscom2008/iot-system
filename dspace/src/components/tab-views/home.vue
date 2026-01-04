@@ -73,7 +73,7 @@
       <!-- 设备列表 -->
       <view class="device-list-container">
         <!-- 设备类型标题 -->
-        <view class="section-title" v-if="postList.length">
+        <view class="section-title" v-if="deviceList.length">
           <view class="title-bar"></view>
           <text>设备列表</text>
         </view>
@@ -81,7 +81,7 @@
         <!-- 设备卡片 -->
         <view
           class="device-card"
-          v-for="(item) in postList"
+          v-for="(item) in deviceList"
           :key="item.id"
           @tap="todate(item)"
         >
@@ -179,7 +179,7 @@
         </view>
 
         <!-- 空状态 -->
-        <view class="empty-state" v-if="!postList.length">
+        <view class="empty-state" v-if="!deviceList.length">
           <view class="empty-icon">📱</view>
           <view class="empty-text">暂无设备</view>
         </view>
@@ -204,7 +204,7 @@ export default {
   components: { SvgIcon, RechargeView },
   data() {
     return {
-      postList: [],
+      deviceList: [],
       searchValue: "",
       allDevice: "",
       lineDevice: "",
@@ -246,12 +246,12 @@ export default {
         });
 
         if (res.list && res.list.length > 0) {
-          this.postList = res.list;
+          this.deviceList = res.list;
           // 订阅这几个设备的通知
-          const deviceIds = this.postList.map((device) => device.deviceNum);
+          const deviceIds = this.deviceList.map((device) => device.deviceNum);
           this.$store.dispatch("mqtt/subscribeDevice", deviceIds);
         } else {
-          this.postList = [];
+          this.deviceList = [];
         }
       } catch (err) {
         console.log("获取设备列表失败", err);
@@ -358,7 +358,7 @@ export default {
         const res = await request.get("/device/list", {
           search: keyword,
         });
-        this.postList = res.list || [];
+        this.deviceList = res.list || [];
         if (res.list && res.list.length === 0) {
           uni.showToast({
             title: "未找到相关设备",

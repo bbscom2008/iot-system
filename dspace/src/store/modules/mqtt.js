@@ -49,6 +49,7 @@ const mutations = {
 
   // 更新设备数据
   UPDATE_DEVICE_DATA(state, { deviceId, data }) {
+    
     if (!state.deviceDataMap[deviceId]) {
       state.deviceDataMap[deviceId] = {};
     }
@@ -202,7 +203,7 @@ const actions = {
    */
   async handleMessage({ commit }, { topic, message }) {
     // 匹配设备数据主题：device/{deviceId}/data
-    if (topic.startsWith('device/') && topic.endsWith('/data')) {
+    if (topic.startsWith('device/') ) {
       const deviceId = topic.split('/')[1];
       try {
         const data = typeof message === 'string' ? JSON.parse(message) : message;
