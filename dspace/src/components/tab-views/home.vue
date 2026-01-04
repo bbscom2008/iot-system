@@ -230,7 +230,9 @@ export default {
   methods: {
     ...mapActions('device', [
       'setDeviceList',
-      'setDeviceStats'
+      'setDeviceStats',
+      'fetchDeviceList',
+      'fetchDeviceStats'
     ]),
     // 切换 Tab
     switchTab(index) {
@@ -245,43 +247,20 @@ export default {
     async getRechargeList() {
       console.log("获取充值列表");
     },
-    // 获取设备列表
+    // 获取设备列表（使用 Vuex action）
     async getSwiperList() {
       try {
-        const res = await request.get("/device/list", {
-          pageNum: this.QueryParams.pageNum,
-          pageSize: this.QueryParams.pageSize,
-          type: this.QueryParams.type,
-        });
-
-        if (res.list && res.list.length > 0) {
-          // 保存到 Vuex 仓库
-          this.setDeviceList(res.list);
-          // 订阅这几个设备的通知
-          const deviceIds = res.list.map((device) => device.deviceNum);
-          this.$store.dispatch("mqtt/subscribeDevice", deviceIds);
-        } else {
-          // 清空设备列表
-          this.setDeviceList([]);
-        }
+        await this.fetchDeviceList();
       } catch (err) {
-        console.log("获取设备列表失败", err);
-        // 401 错误已在 request.js 中统一处理，会自动跳转登录页
+        console.log('获取设备列表失败', err)
       }
     },
-    // 获取设备统计
+    // 获取设备统计（使用 Vuex action）
     async equipmentState() {
       try {
-        const res = await request.get("/device/statistics");
-
-        // 保存到 Vuex 仓库
-        this.setDeviceStats({
-          lineDevice: res.lineDevice,
-          allDevice: res.allDevice,
-          warningDevice: res.warningDevice,
-        });
+        await this.fetchDeviceStats();
       } catch (err) {
-        console.log("获取设备统计失败", err);
+        console.log('获取设备统计失败', err)
       }
     },
     // 搜索输入处理（预留方法）

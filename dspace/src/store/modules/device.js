@@ -2,6 +2,7 @@
  * Vuex Device 模块
  * 管理设备列表、设备统计等信息
  */
+import request from '../../utils/request.js'
 
 const state = {
   // 设备列表
@@ -60,20 +61,29 @@ const mutations = {
 }
 
 const actions = {
-  // 获取设备列表
-  async fetchDeviceList({ commit }, params = {}) {
+  // 获取设备列表（含网络请求）
+  async fetchDeviceList({ commit, dispatch }) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
-    
     try {
-      // 注意：这里需要在 home.vue 中调用时传入 request 对象
-      // 或者在此处导入 request
-      // 这里暂时返回 Promise，由 home.vue 中处理 API 调用
-      return {
-        success: true
+      const res = await request.get('/device/list', {
+        pageNum: 1,
+        pageSize: 10,
+        type: 1,
+      })
+
+      const list = res.list && Array.isArray(res.list) ? res.list : []
+      commit('SET_DEVICE_LIST', list)
+
+      if (list.length > 0) {
+        const deviceIds = list.map(d => d.deviceNum)
+        // 让 mqtt 模块订阅这些设备
+        dispatch('mqtt/subscribeDevice', deviceIds, { root: true })
       }
+
+      return { success: true, list }
     } catch (error) {
-      commit('SET_ERROR', error.message)
+      commit('SET_ERROR', error && error.message ? error.message : error)
       throw error
     } finally {
       commit('SET_LOADING', false)
@@ -85,15 +95,19 @@ const actions = {
     commit('SET_DEVICE_LIST', deviceList)
   },
 
-  // 获取设备统计
-  async fetchDeviceStats({ commit }, params = {}) {
+  // 获取设备统计（含网络请求）
+  async fetchDeviceStats({ commit }) {
     try {
-      // 由 home.vue 处理 API 调用，这里仅负责 mutation
-      return {
-        success: true
+      const res = await request.get('/device/statistics')
+      const stats = {
+        lineDevice: res.lineDevice || 0,
+        allDevice: res.allDevice || 0,
+        warningDevice: res.warningDevice || 0,
       }
+      commit('SET_DEVICE_STATS', stats)
+      return { success: true, stats }
     } catch (error) {
-      commit('SET_ERROR', error.message)
+      commit('SET_ERROR', error && error.message ? error.message : error)
       throw error
     }
   },
