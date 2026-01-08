@@ -236,7 +236,7 @@ export default {
         return this.deviceInfo.deviceName || "";
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "deviceName",
           value,
         });
@@ -247,7 +247,7 @@ export default {
         return this.deviceInfo.deviceNum || "";
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "deviceNum",
           value,
         });
@@ -258,7 +258,7 @@ export default {
         return String(this.deviceInfo.levelTime );
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "levelTime",
           value: parseInt(value) || 0,
         });
@@ -272,7 +272,7 @@ export default {
           : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "gasUpperLimit",
           value: parseInt(value) || null,
         });
@@ -285,7 +285,7 @@ export default {
           : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "gasLowerLimit",
           value: parseInt(value) || null,
         });
@@ -298,7 +298,7 @@ export default {
           : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "tempUpperLimit",
           value: parseFloat(value) || null,
         });
@@ -311,7 +311,7 @@ export default {
           : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "tempLowerLimit",
           value: parseFloat(value) || null,
         });
@@ -324,7 +324,7 @@ export default {
           : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "humidityUpperLimit",
           value: parseFloat(value) || null,
         });
@@ -337,7 +337,7 @@ export default {
         : '0';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "humidityLowerLimit",
           value: parseFloat(value) || null,
         });
@@ -349,25 +349,25 @@ export default {
         return this.deviceInfo.masterSwitch === 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "masterSwitch",
           value: value ? 1 : 0,
         });
         // 总开关关闭时，关闭所有子开关
         if (!value) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "powerOffSwitch",
             value: 0,
           });
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "tempSwitch",
             value: 0,
           });
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "humiditySwitch",
             value: 0,
           });
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "gasSwitch",
             value: 0,
           });
@@ -379,13 +379,13 @@ export default {
         return this.deviceInfo.powerOffSwitch === 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "powerOffSwitch",
           value: value ? 1 : 0,
         });
         // 子开关打开时，打开总开关
         if (value) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "masterSwitch",
             value: 1,
           });
@@ -397,13 +397,13 @@ export default {
         return this.deviceInfo.tempSwitch === 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "tempSwitch",
           value: value ? 1 : 0,
         });
         // 子开关打开时，打开总开关
         if (value) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "masterSwitch",
             value: 1,
           });
@@ -415,13 +415,13 @@ export default {
         return this.deviceInfo.humiditySwitch === 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "humiditySwitch",
           value: value ? 1 : 0,
         });
         // 子开关打开时，打开总开关
         if (value) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "masterSwitch",
             value: 1,
           });
@@ -433,13 +433,13 @@ export default {
         return this.deviceInfo.gasSwitch === 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "gasSwitch",
           value: value ? 1 : 0,
         });
         // 子开关打开时，打开总开关
         if (value) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "masterSwitch",
             value: 1,
           });
@@ -452,7 +452,7 @@ export default {
         return this.deviceInfo.dialingMethod || 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "dialingMethod",
           value,
         });
@@ -464,7 +464,7 @@ export default {
         return this.deviceInfo.alarmMethod || 3;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
           field: "alarmMethod",
           value,
         });
@@ -480,7 +480,7 @@ export default {
       },
       set(value) {
         if (Array.isArray(value)) {
-          this.$store.commit("app/UPDATE_DEVICE_FIELD", {
+          this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
             field: "alarmPhones",
             value: value,
           });
@@ -534,20 +534,20 @@ export default {
         success: (res) => {
           if (res.confirm) {
             // 将 defaultValue 的值赋给仓库
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'levelTime', value: this.defaultValue.levelTime });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'gasUpperLimit', value: this.defaultValue.gasUpperLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'gasLowerLimit', value: this.defaultValue.gasLowerLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'tempUpperLimit', value: this.defaultValue.tempUpperLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'tempLowerLimit', value: this.defaultValue.tempLowerLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'humidityUpperLimit', value: this.defaultValue.humidityUpperLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'humidityLowerLimit', value: this.defaultValue.humidityLowerLimit });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'masterSwitch', value: this.defaultValue.masterAlarm });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'powerOffSwitch', value: this.defaultValue.powerOff });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'tempSwitch', value: this.defaultValue.tempSwitch });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'humiditySwitch', value: this.defaultValue.humiditySwitch });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'gasSwitch', value: this.defaultValue.gasSwitch });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'dialingMethod', value: this.defaultValue.dialingMethod });
-            this.$store.commit('app/UPDATE_DEVICE_FIELD', { field: 'alarmMethod', value: this.defaultValue.alarmMethod });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'levelTime', value: this.defaultValue.levelTime });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'gasUpperLimit', value: this.defaultValue.gasUpperLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'gasLowerLimit', value: this.defaultValue.gasLowerLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'tempUpperLimit', value: this.defaultValue.tempUpperLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'tempLowerLimit', value: this.defaultValue.tempLowerLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'humidityUpperLimit', value: this.defaultValue.humidityUpperLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'humidityLowerLimit', value: this.defaultValue.humidityLowerLimit });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'masterSwitch', value: this.defaultValue.masterAlarm });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'powerOffSwitch', value: this.defaultValue.powerOff });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'tempSwitch', value: this.defaultValue.tempSwitch });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'humiditySwitch', value: this.defaultValue.humiditySwitch });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'gasSwitch', value: this.defaultValue.gasSwitch });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'dialingMethod', value: this.defaultValue.dialingMethod });
+            this.$store.commit('deviceDetail/UPDATE_DEVICE_FIELD', { field: 'alarmMethod', value: this.defaultValue.alarmMethod });
             
             uni.showToast({
               title: '恢复成功',

@@ -105,7 +105,7 @@ export default {
       
       // 保留两位小数
       this.sensorInfo.adjustValue = newValue.toFixed(2);
-      this.$store.commit("app/SET_CURRENT_SENSOR", this.sensorInfo);
+      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR", this.sensorInfo);
     },
     
     // 保存传感器信息

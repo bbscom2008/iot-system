@@ -206,7 +206,7 @@ export default {
       this.getDeviceInfo();
 
       // 启动风扇状态随机更新（模拟 WebSocket）
-      this.startFanStatusUpdate();
+      // this.startFanStatusUpdate();
     }
   },
   onUnload() {
@@ -233,7 +233,7 @@ export default {
         }
         console.log("设置后的 deviceInfo:", this.deviceInfo);
         // 将设备信息存入仓库
-        this.$store.commit("app/SET_DEVICE_INFO", this.deviceInfo);
+        this.$store.commit("deviceDetail/SET_DEVICE_INFO", this.deviceInfo);
       } catch (err) {
         console.log("获取设备信息失败", err);
         uni.showToast({
@@ -246,7 +246,7 @@ export default {
     // 处理风机点击事件 - 跳转到风机详情页面
     handleFanToggle(fan) {
       // 将风机完整对象存入 Vuex
-      this.$store.commit("app/SET_CURRENT_MOTOR_FAN", fan);
+      this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", fan);
 
       // 跳转到风机详情页面
       uni.navigateTo({
@@ -309,7 +309,7 @@ export default {
     // 处理变频器点击事件
     handleFrequencyMotorClick(motor) {
       // 将变频器完整对象存入 Vuex
-      this.$store.commit("app/SET_CURRENT_FREQUENCY_MOTOR", motor);
+      this.$store.commit("deviceDetail/SET_CURRENT_FREQUENCY_MOTOR", motor);
 
       // 跳转到变频器详情页面
       uni.navigateTo({
@@ -324,7 +324,7 @@ export default {
     },
     // 跳转到传感器详情页面
     goToSensorDetail(sensor) {
-      this.$store.commit("app/SET_CURRENT_SENSOR", sensor);
+      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR", sensor);
       uni.navigateTo({
         url: `/pages/sensorDetail/sensorDetail`,
       });

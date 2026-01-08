@@ -576,7 +576,7 @@ export default {
         return this.currFan.fanName || '';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "fanName",
           value,
         });
@@ -588,7 +588,7 @@ export default {
         return this.currFan.controlMode || 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "controlMode",
           value,
         });
@@ -600,7 +600,7 @@ export default {
         return this.currFan.autoMode || 1;
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "autoMode",
           value,
         });
@@ -614,7 +614,7 @@ export default {
       },
       set(value) {
         const sensorId = value >= 0 && this.temperatureSensors[value] ? this.temperatureSensors[value].id : null;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "probeSensorId",
           value: sensorId,
         });
@@ -626,7 +626,7 @@ export default {
         return this.currFan.tempUpper !== undefined ? String(this.currFan.tempUpper) : '35';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "tempUpper",
           value: parseFloat(value) || 0,
         });
@@ -638,7 +638,7 @@ export default {
         return this.currFan.tempLower !== undefined ? String(this.currFan.tempLower) : '10';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "tempLower",
           value: parseFloat(value) || 0,
         });
@@ -652,7 +652,7 @@ export default {
       set(value) {
         const minutes = parseInt(value) || 0;
         const seconds = this.currFan.runTime ? this.currFan.runTime % 60 : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "runTime",
           value: minutes * 60 + seconds,
         });
@@ -666,7 +666,7 @@ export default {
       set(value) {
         const seconds = parseInt(value) || 0;
         const minutes = this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "runTime",
           value: minutes * 60 + seconds,
         });
@@ -680,7 +680,7 @@ export default {
       set(value) {
         const minutes = parseInt(value) || 0;
         const seconds = this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "pauseTime",
           value: minutes * 60 + seconds,
         });
@@ -694,7 +694,7 @@ export default {
       set(value) {
         const seconds = parseInt(value) || 0;
         const minutes = this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "pauseTime",
           value: minutes * 60 + seconds,
         });
@@ -706,7 +706,7 @@ export default {
         return this.currFan.humidityUpper !== undefined ? String(this.currFan.humidityUpper) : '90';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "humidityUpper",
           value: parseFloat(value) || 0,
         });
@@ -718,7 +718,7 @@ export default {
         return this.currFan.humidityLower !== undefined ? String(this.currFan.humidityLower) : '30';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "humidityLower",
           value: parseFloat(value) || 0,
         });
@@ -730,7 +730,7 @@ export default {
         return this.currFan.gasUpper !== undefined ? String(this.currFan.gasUpper) : '3000';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "gasUpper",
           value: parseInt(value) || 0,
         });
@@ -742,7 +742,7 @@ export default {
         return this.currFan.gasLower !== undefined ? String(this.currFan.gasLower) : '1000';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "gasLower",
           value: parseInt(value) || 0,
         });
@@ -754,7 +754,7 @@ export default {
         return this.currFan.tempUpper !== undefined ? String(this.currFan.tempUpper) : '35';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "tempUpper",
           value: parseFloat(value) || 0,
         });
@@ -766,7 +766,7 @@ export default {
         return this.currFan.tempLower !== undefined ? String(this.currFan.tempLower) : '10';
       },
       set(value) {
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "tempLower",
           value: parseFloat(value) || 0,
         });
@@ -780,7 +780,7 @@ export default {
       set(value) {
         const minutes = parseInt(value) || 0;
         const seconds = this.currFan.runTime ? this.currFan.runTime % 60 : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "runTime",
           value: minutes * 60 + seconds,
         });
@@ -794,7 +794,7 @@ export default {
       set(value) {
         const seconds = parseInt(value) || 0;
         const minutes = this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "runTime",
           value: minutes * 60 + seconds,
         });
@@ -808,7 +808,7 @@ export default {
       set(value) {
         const minutes = parseInt(value) || 0;
         const seconds = this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "pauseTime",
           value: minutes * 60 + seconds,
         });
@@ -822,7 +822,7 @@ export default {
       set(value) {
         const seconds = parseInt(value) || 0;
         const minutes = this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
-        this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "pauseTime",
           value: minutes * 60 + seconds,
         });
@@ -888,7 +888,7 @@ export default {
     },
     onTimerSwitchChange(value) {
       const field = `timer${this.currentTimerGroup}Enabled`;
-      this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+      this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
         field,
         value: value ? 1 : 0,
       });
@@ -897,14 +897,14 @@ export default {
       const index = parseInt(e.detail.value);
       const sensorId = index >= 0 && this.temperatureSensors[index] ? this.temperatureSensors[index].id : null;
       const field = `timer${this.currentTimerGroup}ProbeSensorId`;
-      this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+      this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
         field,
         value: sensorId,
       });
     },
     updateTimerField(timerNum, fieldName, value) {
       const field = `timer${timerNum}${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`;
-      this.$store.commit("app/UPDATE_MOTOR_FAN_FIELD", {
+      this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
         field,
         value,
       });

@@ -46,14 +46,6 @@ const mutations = {
     state.error = error
   },
 
-  // 更新单个设备
-  UPDATE_DEVICE(state, updatedDevice) {
-    const index = state.deviceList.findIndex(d => d.id === updatedDevice.id)
-    if (index !== -1) {
-      state.deviceList.splice(index, 1, updatedDevice)
-    }
-  },
-
   // 清空设备列表
   CLEAR_DEVICE_LIST(state) {
     state.deviceList = []
@@ -128,11 +120,6 @@ const actions = {
   setDeviceStats({ commit }, stats) {
     commit('SET_DEVICE_STATS', stats)
   },
-
-  // 更新单个设备
-//   updateDevice({ commit }, device) {
-//     commit('UPDATE_DEVICE', device)
-//   },
 
   // 清空设备列表
   clearDeviceList({ commit }) {

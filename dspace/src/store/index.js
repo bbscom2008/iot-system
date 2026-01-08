@@ -5,7 +5,7 @@ import getters from './getters'
 import createPersistedState from 'vuex-persistedstate';
 
 import user from './modules/user'
-import app from './modules/app'
+import deviceDetail from './modules/deviceDetail'
 import mqtt from './modules/mqtt'
 import device from './modules/device'
 
@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 const modules = {
   user,
-  app,
+  deviceDetail,
   mqtt,
   device
 }
