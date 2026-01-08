@@ -137,8 +137,20 @@ public class MqttService implements MqttCallback {
                     List<JsonUtils.KV<Integer>> freqMotorValues = JsonUtils.convertJsonIMotor(node);
                     // 如果有需要更新的值，调用批量更新方法
                     frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
+
+
+                    // 发布消息给前端
+                    Map<String, Object> messageMap = new HashMap<>();
+                    messageMap.put("topic", topic);
+                    messageMap.put("payload", "UPDATE_DEVICES");
+                    // qos 1 确保消息到达
+                    MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
+                    mqttMessage.setQos(1);  
+                    client.publish("wxapi/"+deviceNum, mqttMessage);
+
                 }
             }
+
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
         }

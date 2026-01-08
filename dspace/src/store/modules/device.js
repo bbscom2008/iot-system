@@ -61,14 +61,26 @@ const mutations = {
 }
 
 const actions = {
+
+    // 更新设备首页信息
+    updateDeviceHome({ commit, dispatch }, {id,message}) {
+        console.log('---更新设备首页信息---',id, message);
+        // 更新设备信息后，重新获取设备列表
+        if(message.payload == "UPDATE_DEVICES"){
+            dispatch('fetchDeviceList', false)
+            dispatch('fetchDeviceStats')
+        }
+    },
+
+
   // 获取设备列表（含网络请求）
-  async fetchDeviceList({ commit, dispatch }) {
-    commit('SET_LOADING', true)
+  async fetchDeviceList({ commit, dispatch }, loading = true) {
+    commit('SET_LOADING', loading)
     commit('SET_ERROR', null)
     try {
       const res = await request.get('/device/list', {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 100,
         type: 1,
       })
 
@@ -100,9 +112,9 @@ const actions = {
     try {
       const res = await request.get('/device/statistics')
       const stats = {
-        lineDevice: res.lineDevice || 0,
-        allDevice: res.allDevice || 0,
-        warningDevice: res.warningDevice || 0,
+        lineDevice: res.onlineDevices || 0,
+        allDevice: res.totalDevices || 0,
+        warningDevice: res.alarmDevices || 0,
       }
       commit('SET_DEVICE_STATS', stats)
       return { success: true, stats }
@@ -118,9 +130,9 @@ const actions = {
   },
 
   // 更新单个设备
-  updateDevice({ commit }, device) {
-    commit('UPDATE_DEVICE', device)
-  },
+//   updateDevice({ commit }, device) {
+//     commit('UPDATE_DEVICE', device)
+//   },
 
   // 清空设备列表
   clearDeviceList({ commit }) {

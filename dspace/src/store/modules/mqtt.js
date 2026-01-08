@@ -48,18 +48,18 @@ const mutations = {
   },
 
   // 更新设备数据
-  UPDATE_DEVICE_DATA(state, { deviceId, data }) {
+  // UPDATE_DEVICE_DATA(state, { deviceId, data }) {
     
-    if (!state.deviceDataMap[deviceId]) {
-      state.deviceDataMap[deviceId] = {};
-    }
-    state.deviceDataMap[deviceId] = {
-      ...state.deviceDataMap[deviceId],
-      ...data,
-      timestamp: new Date().getTime(),
-    };
-    state.lastUpdateTime = new Date().getTime();
-  },
+  //   if (!state.deviceDataMap[deviceId]) {
+  //     state.deviceDataMap[deviceId] = {};
+  //   }
+  //   state.deviceDataMap[deviceId] = {
+  //     ...state.deviceDataMap[deviceId],
+  //     ...data,
+  //     timestamp: new Date().getTime(),
+  //   };
+  //   state.lastUpdateTime = new Date().getTime();
+  // },
 
   // 更新设备状态
   UPDATE_DEVICE_STATUS(state, { deviceId, status }) {
@@ -201,47 +201,58 @@ const actions = {
   /**
    * 处理接收到的消息
    */
-  async handleMessage({ commit }, { topic, message }) {
-    // 匹配设备数据主题：device/{deviceId}/data
-    if (topic.startsWith('device/') ) {
+  async handleMessage({ commit, dispatch }, { topic, message }) {
+    // 匹配设备数据主题：wxapi/{deviceId}
+    if (topic.startsWith('wxapi/') ) {
       const deviceId = topic.split('/')[1];
-      try {
-        const data = typeof message === 'string' ? JSON.parse(message) : message;
-        commit('UPDATE_DEVICE_DATA', {
-          deviceId,
-          data: {
-            sensorCode: data.sensorCode || deviceId,
-            temperature: data.temperature,
-            humidity: data.humidity,
-            pressure: data.pressure,
-            status: data.status,
-            // 其他设备数据字段
-            ...data,
-          },
-        });
-      } catch (error) {
-        console.error('[Store] Error parsing device data:', error);
-      }
+
+
+      // 更新设备首页信息
+      dispatch('device/updateDeviceHome', {
+        id: deviceId,
+        message: message,
+      }, { root: true });
+
+
+
+
+      // try {
+      //   const data = typeof message === 'string' ? JSON.parse(message) : message;
+      //   commit('UPDATE_DEVICE_DATA', {
+      //     deviceId,
+      //     data: {
+      //       sensorCode: data.sensorCode || deviceId,
+      //       temperature: data.temperature,
+      //       humidity: data.humidity,
+      //       pressure: data.pressure,
+      //       status: data.status,
+      //       // 其他设备数据字段
+      //       ...data,
+      //     },
+      //   });
+      // } catch (error) {
+      //   console.error('[Store] Error parsing device data:', error);
+      // }
     }
 
     // 匹配设备状态主题：device/{deviceId}/status
-    if (topic.startsWith('device/') && topic.endsWith('/status')) {
-      const deviceId = topic.split('/')[1];
-      try {
-        const status = typeof message === 'string' ? JSON.parse(message) : message;
-        commit('UPDATE_DEVICE_STATUS', {
-          deviceId,
-          status: {
-            online: status.online,
-            signal: status.signal,
-            lastSeen: status.lastSeen,
-            ...status,
-          },
-        });
-      } catch (error) {
-        console.error('[Store] Error parsing device status:', error);
-      }
-    }
+    // if (topic.startsWith('device/') && topic.endsWith('/status')) {
+    //   const deviceId = topic.split('/')[1];
+    //   try {
+    //     const status = typeof message === 'string' ? JSON.parse(message) : message;
+    //     commit('UPDATE_DEVICE_STATUS', {
+    //       deviceId,
+    //       status: {
+    //         online: status.online,
+    //         signal: status.signal,
+    //         lastSeen: status.lastSeen,
+    //         ...status,
+    //       },
+    //     });
+    //   } catch (error) {
+    //     console.error('[Store] Error parsing device status:', error);
+    //   }
+    // }
 
     // 系统消息
     if (topic.startsWith('system/')) {
@@ -309,10 +320,16 @@ const actions = {
     try {
       const idArray = Array.isArray(deviceId) ? deviceId : [deviceId];
       const topics = idArray.map(id=>{
-        return `device/${id}`;
+        // 小程序不正直接订阅设备消息，只订阅 wxapi 主题，由后端转发
+        return `wxapi/${id}`;
       })
-      await mqttClient.subscribe(topics, { qos: 1 });
-      commit('SET_SUBSCRIPTIONS', mqttClient.getSubscriptions());
+      // 如果 subscriptions 中没有该主题，则订阅
+      const currentSubscriptions = state.subscriptions;
+      const newTopics = topics.filter(topic => !currentSubscriptions.includes(topic));
+      if (newTopics.length > 0) {
+        await mqttClient.subscribe(newTopics, { qos: 1 });
+        commit('SET_SUBSCRIPTIONS', mqttClient.getSubscriptions());
+      }
     } catch (error) {
       console.error('[Store] Failed to subscribe device:', error);
       throw error;
