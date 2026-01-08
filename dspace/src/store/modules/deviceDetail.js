@@ -1,4 +1,6 @@
 
+import request from '../../utils/request.js'
+
 const state = {
   currentFrequencyMotor: null, // 当前选中的变频器信息
   currentSensor: null, // 当前选中的传感器信息
@@ -44,7 +46,23 @@ const mutations = {
 }
 
 const actions = {
-  
+  // 获取设备详情并保存到仓库
+  async fetchDeviceInfo({ commit }, deviceId) {
+    try {
+      const res = await request.get(`/device/detail/${deviceId}`)
+      const deviceInfo = res || {}
+
+      // 确保数组字段存在
+      if (!deviceInfo.sensors) deviceInfo.sensors = []
+      if (!deviceInfo.motorFans) deviceInfo.motorFans = []
+      if (!deviceInfo.frequencyMotors) deviceInfo.frequencyMotors = []
+
+      commit('SET_DEVICE_INFO', deviceInfo)
+      return { success: true, deviceInfo }
+    } catch (err) {
+      throw err
+    }
+  }
 }
 
 export default {

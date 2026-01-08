@@ -183,20 +183,25 @@
 import request from "@/utils/request.js";
 import SvgIcon from "@/components/SvgIcon.vue";
 import FanControl from "@/components/FanControl.vue";
+import { mapState } from 'vuex'
 
 export default {
   name: "EquipmentDetails",
   components: { SvgIcon, FanControl },
   data() {
     return {
-      deviceInfo: {
-        motorFans: [], // 初始化为空数组，确保响应式
-      },
+      // deviceInfo 从 Vuex 仓库读取，移除本地初始化
       deviceId: "",
       deviceType: "",
       deviceModel: "",
       fanUpdateTimer: null, // 风扇状态更新定时器
     };
+  },
+
+  computed: {
+    ...mapState('deviceDetail', {
+      deviceInfo: state => state.deviceInfo || {}
+    })
   },
   onLoad(options) {
     if (options.deviceId) {
@@ -214,32 +219,14 @@ export default {
     this.stopFanStatusUpdate();
   },
   methods: {
-    // 获取设备信息
+    // 获取设备信息（通过 Vuex action）
     async getDeviceInfo() {
       try {
-        const res = await request.get(`/device/detail/${this.deviceId}`);
-        console.log("设备详情API响应:", res);
-        // request.js 已经解析了 data.data，直接使用 res
-        this.deviceInfo = res || {};
-        // 确保数组字段存在
-        if (!this.deviceInfo.sensors) {
-          this.$set(this.deviceInfo, "sensors", []);
-        }
-        if (!this.deviceInfo.motorFans) {
-          this.$set(this.deviceInfo, "motorFans", []);
-        }
-        if (!this.deviceInfo.frequencyMotors) {
-          this.$set(this.deviceInfo, "frequencyMotors", []);
-        }
-        console.log("设置后的 deviceInfo:", this.deviceInfo);
-        // 将设备信息存入仓库
-        this.$store.commit("deviceDetail/SET_DEVICE_INFO", this.deviceInfo);
+        const res = await this.$store.dispatch('deviceDetail/fetchDeviceInfo', this.deviceId)
+        console.log('设备详情API响应（已保存到仓库）:', res)
       } catch (err) {
-        console.log("获取设备信息失败", err);
-        uni.showToast({
-          title: "获取设备信息失败",
-          icon: "none",
-        });
+        console.log('获取设备信息失败', err)
+        uni.showToast({ title: '获取设备信息失败', icon: 'none' })
       }
     },
 
