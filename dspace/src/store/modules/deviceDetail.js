@@ -6,9 +6,13 @@ const state = {
   currentSensor: null, // 当前选中的传感器信息
   currentMotorFan: null, // 当前选中的风机信息
   deviceInfo: null, // 设备信息
+  currDevice: null,
 }
 
 const mutations = {
+  SET_CURR_DEVICE(state, device) {
+    state.currDevice = device
+  },
   // 设置当前变频器
   SET_CURRENT_FREQUENCY_MOTOR(state, motor) {
     state.currentFrequencyMotor = motor
@@ -47,8 +51,9 @@ const mutations = {
 
 const actions = {
   // 获取设备详情并保存到仓库
-  async fetchDeviceInfo({ commit }, deviceId) {
+  async fetchDeviceInfo({ commit, state }) {
     try {
+      const deviceId = state.currDevice.id
       const res = await request.get(`/device/detail/${deviceId}`)
       const deviceInfo = res || {}
 

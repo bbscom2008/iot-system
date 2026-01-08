@@ -365,13 +365,16 @@ export default {
     },
     // 跳转详情
     todate(item) {
+
+      this.$store.commit('deviceDetail/SET_CURR_DEVICE', item);
+
       if (item.deviceType == 0) {
         uni.navigateTo({
           url: `/pages/particulars/particulars?deviceId=${item.id}`,
         });
       } else if (item.deviceType == 1) {
         uni.navigateTo({
-          url: `/pages/equipmentDetails/equipmentDetails?deviceId=${item.id}&deviceType=${item.deviceType}&deviceModel=${item.deviceModel}`,
+          url: `/pages/equipmentDetails/equipmentDetails`,
         });
       }
     },

@@ -61,6 +61,7 @@ const actions = {
         if(message.payload == "UPDATE_DEVICES"){
             dispatch('fetchDeviceList', false)
             dispatch('fetchDeviceStats')
+            dispatch('deviceDetail/fetchDeviceInfo', null, { root: true })
         }
     },
 

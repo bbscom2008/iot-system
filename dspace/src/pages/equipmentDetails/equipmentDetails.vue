@@ -191,38 +191,28 @@ export default {
   data() {
     return {
       // deviceInfo 从 Vuex 仓库读取，移除本地初始化
-      deviceId: "",
-      deviceType: "",
-      deviceModel: "",
       fanUpdateTimer: null, // 风扇状态更新定时器
     };
   },
 
   computed: {
     ...mapState('deviceDetail', {
-      deviceInfo: state => state.deviceInfo || {}
+      deviceInfo: state => state.deviceInfo || {},
+      deviceId: state => state.currDevice.id
     })
   },
   onLoad(options) {
-    if (options.deviceId) {
-      this.deviceId = options.deviceId;
-      this.deviceType = options.deviceType;
-      this.deviceModel = options.deviceModel;
-      this.getDeviceInfo();
-
-      // 启动风扇状态随机更新（模拟 WebSocket）
-      // this.startFanStatusUpdate();
-    }
+    this.getDeviceInfo();
   },
   onUnload() {
     // 页面卸载时清除定时器
-    this.stopFanStatusUpdate();
+    // this.stopFanStatusUpdate();
   },
   methods: {
     // 获取设备信息（通过 Vuex action）
     async getDeviceInfo() {
       try {
-        const res = await this.$store.dispatch('deviceDetail/fetchDeviceInfo', this.deviceId)
+        const res = await this.$store.dispatch('deviceDetail/fetchDeviceInfo')
         console.log('设备详情API响应（已保存到仓库）:', res)
       } catch (err) {
         console.log('获取设备信息失败', err)
