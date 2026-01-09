@@ -4,6 +4,7 @@ import com.example.demo.dto.DeviceListDTO;
 import com.example.demo.entity.Device;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
@@ -90,11 +91,15 @@ public interface DeviceMapper {
 
     /**
      * 更新设备状态,
+     * 
      * @param deviceNum
      * @param onlineState
-     * @param alarmState
+     * @param warningStatus
      * @return
      */
-    int updateDeviceState(@Param("deviceNum") String deviceNum, @Param("onlineState") Integer onlineState, @Param("warningStatus") Integer warningStatus);
-}
+    int updateDeviceState(@Param("deviceNum") String deviceNum, @Param("onlineState") Integer onlineState,
+            @Param("warningStatus") Integer warningStatus);
 
+    @Update("UPDATE devices SET device_line_state = 0, warning_status = 0, updated_time = NOW()")
+    int resetAllDeviceStates();
+}

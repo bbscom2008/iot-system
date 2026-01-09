@@ -19,6 +19,11 @@ import com.example.demo.util.DtoConverter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class DeviceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeviceService.class);
 
     private final DeviceMapper deviceMapper;
     private final SensorMapper sensorMapper;
@@ -45,7 +54,7 @@ public class DeviceService {
      * @param userId 用户ID，为null时查询所有设备
      */
     public PageResult<Device> getDeviceList(Long userId, Integer pageNum, Integer pageSize,
-                                            String search, Integer deviceType) {
+            String search, Integer deviceType) {
         Map<String, Object> params = new HashMap<>();
         // userId为null时不添加过滤条件，查询所有设备
         if (userId != null) {
@@ -122,9 +131,9 @@ public class DeviceService {
      * 获取设备列表 DTO（批量查询传感器）
      */
     public PageResult<DeviceListDTO> getDeviceListDTO(Long userId, Integer pageNum, Integer pageSize,
-                                                      String deviceName, String deviceNum,
-                                                      String userName, String userPhone,
-                                                      Integer warningStatus) {
+            String deviceName, String deviceNum,
+            String userName, String userPhone,
+            Integer warningStatus) {
         Map<String, Object> params = new HashMap<>();
         // userId为null时不添加过滤条件，查询所有设备
         if (userId != null) {
@@ -258,8 +267,54 @@ public class DeviceService {
         deviceMapper.updateDeviceOnlineState(deviceNum, state);
     }
 
+    // 在应用启动完成后，将所有设备的在线状态和报警状态初始化为 0，并更新 updated_time
+    @EventListener(ApplicationReadyEvent.class)
+    public void initDeviceStatesOnStartup() {
+        try {
+            deviceMapper.resetAllDeviceStates();
+            logger.info("Reset all device states on startup (device_line_state=0, warning_status=0, updated_time=now)");
+        } catch (Exception e) {
+            logger.error("Failed to reset device states on startup", e);
+        }
+    }
+
+    // 每 10 分钟检测一次设备更新时间，超过 1 分钟则标记为离线
+    @Scheduled(fixedRate = 10 * 60 * 1000)
+    public void scheduledCheckDeviceOnlineStatus() {
+        try {
+            List<Device> devices = deviceMapper.findList(new HashMap<>());
+            LocalDateTime now = LocalDateTime.now();
+            for (Device d : devices) {
+                LocalDateTime updated = d.getUpdatedTime();
+                int state = 0;
+                if (updated != null) {
+                    Duration diff = Duration.between(updated, now);
+                    if (Math.abs(diff.getSeconds()) <= 60) {
+                        state = 1;
+                    } else {
+                        state = 0;
+                    }
+                } else {
+                    state = 0;
+                }
+
+                try {
+                    // 如果新状态和原状态不同，就更新状态
+                    if (!Objects.equals(d.getDeviceLineState(), state)) {
+                        deviceMapper.updateDeviceOnlineState(d.getDeviceNum(), state);
+                    }
+                } catch (Exception ex) {
+                    logger.error("Failed to update device online state for deviceNum={}", d.getDeviceNum(), ex);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to check device online status", e);
+        }
+    }
+
     /**
      * 更新设备状态，包含在线状态和报警状态
+     * 
      * @param device
      * @param node
      */
@@ -268,15 +323,14 @@ public class DeviceService {
         // 在线状态此时为 1 （因为刚收到消息）
         Integer onlineState = 1;
         // 报警状态，根据 node 中的温度数据，和 device 中的阈值比较，
-        // 温度数据有 ts1   ts2  ts3  ts4 四个温度传感器
+        // 温度数据有 ts1 ts2 ts3 ts4 四个温度传感器
         Integer warningStatus = 0; // 默认正常
 
         List<JsonNode> tempNodes = List.of(
                 node.get("ts1"),
                 node.get("ts2"),
                 node.get("ts3"),
-                node.get("ts4")
-        );  
+                node.get("ts4"));
         // 只要四个温度有一个超过阈值，就设置为报警状态，不需要全部判断4个
         for (JsonNode tempNode : tempNodes) {
             if (tempNode != null && tempNode.isNumber()) {
@@ -294,4 +348,3 @@ public class DeviceService {
         return deviceMapper.findByDeviceNum(deviceNum);
     }
 }
-
