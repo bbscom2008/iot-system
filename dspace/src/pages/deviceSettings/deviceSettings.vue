@@ -228,7 +228,7 @@ export default {
   },
   computed: {
     deviceInfo() {
-      return this.$store.state.app.deviceInfo || {};
+      return this.$store.state.deviceDetail.deviceInfo || {};
     },
     // 设备基本信息
     deviceName: {

@@ -86,6 +86,15 @@ public interface DeviceMapper {
      */
     Long countWarning();
 
-    int markOnlineByDeviceNum(@Param("deviceNum") String deviceNum);
+    int updateDeviceOnlineState(@Param("deviceNum") String deviceNum, @Param("state") Integer state);
+
+    /**
+     * 更新设备状态,
+     * @param deviceNum
+     * @param onlineState
+     * @param alarmState
+     * @return
+     */
+    int updateDeviceState(@Param("deviceNum") String deviceNum, @Param("onlineState") Integer onlineState, @Param("warningStatus") Integer warningStatus);
 }
 

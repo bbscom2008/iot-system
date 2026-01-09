@@ -16,6 +16,8 @@ import com.example.demo.mapper.MotorFanMapper;
 import com.example.demo.mapper.SensorMapper;
 import com.example.demo.mapper.SensorDataMapper;
 import com.example.demo.util.DtoConverter;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -252,8 +254,40 @@ public class DeviceService {
         deviceMapper.deleteById(deviceId);
     }
 
-    public void markDeviceOnline(String deviceNum) {
-        deviceMapper.markOnlineByDeviceNum(deviceNum);
+    public void updateDeviceOnlineState(String deviceNum, int state) {
+        deviceMapper.updateDeviceOnlineState(deviceNum, state);
+    }
+
+    /**
+     * 更新设备状态，包含在线状态和报警状态
+     * @param deviceNum
+     * @param node
+     */
+    public void updateDeviceState(Device device, JsonNode node) {
+
+        // 在线状态此时为 1 （因为刚收到消息）
+        Integer onlineState = 1;
+        // 报警状态，根据 node 中的温度数据，和 device 中的阈值比较，
+        // 温度数据有 ts1   ts2  ts3  ts4 四个温度传感器
+        Integer warningStatus = 0; // 默认正常
+
+        List<JsonNode> tempNodes = List.of(
+                node.get("ts1"),
+                node.get("ts2"),
+                node.get("ts3"),
+                node.get("ts4")
+        );  
+        // 只要四个温度有一个超过阈值，就设置为报警状态，不需要全部判断4个
+        for (JsonNode tempNode : tempNodes) {
+            if (tempNode != null && tempNode.isNumber()) {
+                double tempValue = tempNode.asDouble();
+                if (tempValue > device.getTempUpperLimit() || tempValue < device.getTempLowerLimit()) {
+                    warningStatus = 1; // 报警
+                    break;
+                }
+            }
+        }
+        deviceMapper.updateDeviceState(device.getDeviceNum(), onlineState, warningStatus);
     }
 
     public Device findByDeviceNum(String deviceNum) {

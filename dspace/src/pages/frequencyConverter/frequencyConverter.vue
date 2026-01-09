@@ -442,19 +442,19 @@ export default {
   },
   computed: {
     currMotor() {
-      return this.$store.state.app.currentFrequencyMotor;
+      return this.$store.state.deviceDetail.currentFrequencyMotor;
     },
     // 温度传感器列表
     temperatureSensors() {
-      return this.$store.state.app.deviceInfo.sensors.filter(sensor => sensor.sensorTypeId === 5);
+      return this.$store.state.deviceDetail.deviceInfo.sensors.filter(sensor => sensor.sensorTypeId === 5);
     },
     // 湿度传感器
     humiditySensor() {
-      return this.$store.state.app.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 6);
+      return this.$store.state.deviceDetail.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 6);
     },
     // 气体传感器
     gasSensor() {
-      return this.$store.state.app.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 7);
+      return this.$store.state.deviceDetail.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 7);
     },
     
   },

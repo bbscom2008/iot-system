@@ -560,11 +560,11 @@ export default {
   },
   computed: {
     currFan() {
-      return this.$store.state.app.currentMotorFan || {};
+      return this.$store.state.deviceDetail.currentMotorFan || {};
     },
     temperatureSensors() {
       // 从设备信息中获取温度传感器列表
-      const deviceInfo = this.$store.state.app.deviceInfo;
+      const deviceInfo = this.$store.state.deviceDetail.deviceInfo;
       if (deviceInfo && deviceInfo.sensors) {
         return deviceInfo.sensors.filter(sensor => sensor.sensorTypeId === 5);
       }

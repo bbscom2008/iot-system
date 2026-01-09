@@ -20,8 +20,7 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.entity.Device;
-import com.example.demo.service.FrequencyMotorService;
-import com.example.demo.service.MqttMessageDataService;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,8 +119,9 @@ public class MqttService implements MqttCallback {
 
                 Device device = deviceService.findByDeviceNum(deviceNum);
                 if (device != null) {
-                    // 更新设备为在线状态
-                    deviceService.markDeviceOnline(deviceNum);
+                    // 更新设备在线状态和报警状态
+                    deviceService.updateDeviceState(device, node);
+
                     Long parentId = device.getId();
 
                     //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器

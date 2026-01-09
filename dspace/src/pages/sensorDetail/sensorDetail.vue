@@ -22,7 +22,7 @@
         
         <view class="setting-item">
           <view class="setting-label">所属设备:</view>
-          <view class="readonly-value">{{ $store.state.app.deviceInfo.deviceName || '--' }}</view>
+          <view class="readonly-value">{{ $store.state.deviceDetail.deviceInfo.deviceName || '--' }}</view>
         </view>
       </view>
     </view>
@@ -94,7 +94,7 @@ export default {
   name: "SensorDetail",
   computed: {
     sensorInfo() {
-      return this.$store.state.app.currentSensor;
+      return this.$store.state.deviceDetail.currentSensor;
     },
   },
   methods: {
