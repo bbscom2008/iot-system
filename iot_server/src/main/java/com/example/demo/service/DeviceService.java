@@ -260,7 +260,7 @@ public class DeviceService {
 
     /**
      * 更新设备状态，包含在线状态和报警状态
-     * @param deviceNum
+     * @param device
      * @param node
      */
     public void updateDeviceState(Device device, JsonNode node) {

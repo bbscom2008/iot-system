@@ -5,7 +5,6 @@ import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.PageResult;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
-import com.example.demo.entity.UserRole;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.mapper.UserRoleMapper;
 import com.example.demo.util.JwtUtil;

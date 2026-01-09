@@ -7,7 +7,6 @@ import com.example.demo.mapper.DeviceMapper;
 import com.example.demo.mapper.SensorDataMapper;
 import com.example.demo.mapper.SensorMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
