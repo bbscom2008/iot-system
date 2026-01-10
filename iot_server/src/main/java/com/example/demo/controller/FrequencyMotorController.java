@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/frequency-motor")
+@RequestMapping("/frequencyMotor")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class FrequencyMotorController {
