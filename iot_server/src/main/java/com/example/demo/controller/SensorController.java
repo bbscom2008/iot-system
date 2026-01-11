@@ -88,8 +88,8 @@ public class SensorController {
      * PUT /sensor/update
      */
     @PutMapping("/update")
-    public ApiResponse<String> updateSensor(@RequestBody Long deviceId, @RequestBody Sensor sensor) {
-        sensorService.updateSensor(deviceId, sensor);
+    public ApiResponse<String> updateSensor( @RequestBody Sensor sensor) {
+        sensorService.updateSensor( sensor);
         return ApiResponse.success("传感器更新成功");
     }
 

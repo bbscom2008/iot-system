@@ -20,6 +20,7 @@ const state = {
   
   // 错误信息
   error: null,
+  currUpdateDeviceNum: null,
 }
 
 const mutations = {
@@ -55,10 +56,11 @@ const mutations = {
 const actions = {
 
     // 更新设备首页信息
-    updateDeviceHome({ commit, dispatch }, {id,message}) {
+    updateDeviceHome({ commit, dispatch, state }, {id,message}) {
         console.log('---更新设备首页信息---',id, message);
         // 更新设备信息后，重新获取设备列表
         if(message.payload == "UPDATE_DEVICES"){
+          state.currUpdateDeviceNum = id
             dispatch('fetchDeviceList', false)
             dispatch('fetchDeviceStats')
             dispatch('deviceDetail/fetchDeviceInfo', null, { root: true })

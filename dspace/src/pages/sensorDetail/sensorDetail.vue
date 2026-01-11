@@ -17,7 +17,8 @@
         
         <view class="setting-item">
           <view class="setting-label">传感器编码:</view>
-          <input class="setting-input" v-model="sensorInfo.sensorCode" placeholder="请输入传感器编码" />
+          <!-- <input class="setting-input" v-model="sensorInfo.sensorCode" placeholder="请输入传感器编码" /> -->
+          <view class="readonly-value">{{ sensorInfo.sensorCode || '--' }}</view>
         </view>
         
         <view class="setting-item">
@@ -94,7 +95,9 @@ export default {
   name: "SensorDetail",
   computed: {
     sensorInfo() {
-      return this.$store.state.deviceDetail.currentSensor;
+      return this.$store.state.deviceDetail.deviceInfo.sensors.find(
+        (sensor) => sensor.id === this.$store.state.deviceDetail.currentSensorId
+      );
     },
   },
   methods: {
@@ -105,7 +108,7 @@ export default {
       
       // 保留两位小数
       this.sensorInfo.adjustValue = newValue.toFixed(2);
-      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR", this.sensorInfo);
+      // this.$store.commit("deviceDetail/SET_CURRENT_SENSOR", this.sensorInfo);
     },
     
     // 保存传感器信息

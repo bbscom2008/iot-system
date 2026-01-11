@@ -201,12 +201,26 @@ export default {
       deviceId: state => state.currDevice.id
     })
   },
+  // watch: {
+  //   // 监听 currUpdateDeviceNum 的变化
+  //   '$store.state.device.currUpdateDeviceNum':{
+  //     handler(newVal, oldVal) {
+  //       console.log('-----watch----currUpdateDeviceNum--', newVal);
+  //       if(newVal == this.$store.state.deviceDetail.currDevice.deviceNum){
+  //         console.log('设备详情页检测到设备更新，重新获取设备信息')
+  //         this.getDeviceInfo();
+  //       }
+  //     },
+  //   },
+  // },
   onLoad(options) {
     this.getDeviceInfo();
   },
   onUnload() {
     // 页面卸载时清除定时器
     // this.stopFanStatusUpdate();
+    // 清空
+    this.$store.state.deviceDetail.currDevice = null;
   },
   methods: {
     // 获取设备信息（通过 Vuex action）
@@ -301,7 +315,7 @@ export default {
     },
     // 跳转到传感器详情页面
     goToSensorDetail(sensor) {
-      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR", sensor);
+      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR_ID", sensor.id);
       uni.navigateTo({
         url: `/pages/sensorDetail/sensorDetail`,
       });
@@ -318,6 +332,9 @@ export default {
                 title: "删除成功",
                 icon: "success",
               });
+              // 获取设备列表更新 Vuex
+              this.$store.dispatch('device/fetchDeviceList')
+
               uni.navigateBack();
             });
           }

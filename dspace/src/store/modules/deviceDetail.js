@@ -3,7 +3,8 @@ import request from '../../utils/request.js'
 
 const state = {
   currentFrequencyMotor: null, // 当前选中的变频器信息
-  currentSensor: null, // 当前选中的传感器信息
+  // currentSensor: null, // 当前选中的传感器信息
+  currentSensorId: null, // 当前选中的传感器ID
   currentMotorFan: null, // 当前选中的风机信息
   deviceInfo: null, // 设备信息
   currDevice: null,
@@ -32,7 +33,12 @@ const mutations = {
 
   // 设置当前传感器
   SET_CURRENT_SENSOR(state, sensor) {
-    state.currentSensor = sensor
+    // state.deviceInfo.sensors.find(
+    //     (sensor) => sensor.id === state.currentSensorId
+    // );
+  },
+  SET_CURRENT_SENSOR_ID(state, currSensorId) {
+    state.currentSensorId = currSensorId
   },
 
   // 设置当前风机
@@ -51,7 +57,13 @@ const mutations = {
 
 const actions = {
   // 获取设备详情并保存到仓库
-  async fetchDeviceInfo({ commit, state }) {
+  async fetchDeviceInfo({ rootState,commit, state }) {
+    console.log('-----fetchDeviceInfo -----');
+    
+    if(!state.currDevice || rootState.device.currUpdateDeviceNum != state.currDevice.deviceNum){
+      return 
+    }
+
     try {
       const deviceId = state.currDevice.id
       const res = await request.get(`/device/detail/${deviceId}`)

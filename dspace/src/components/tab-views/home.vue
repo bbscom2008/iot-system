@@ -229,6 +229,7 @@ export default {
       warningDevice: state => state.deviceStats.warningDevice,
     })
   },
+  
   mounted() {
     this.getSwiperList();
     this.equipmentState();
@@ -399,8 +400,6 @@ export default {
         const bNum = parseInt(b.sensorCode.replace("ts", ""));
         return aNum - bNum;
       });
-      console.log(sortSensors);
-      
       return sortSensors;
     },
     // 获取其他传感器（sensor_type_id != 5）

@@ -146,7 +146,7 @@
 
     <!-- 删除父设备的所有变频电机 -->
     <delete id="deleteByParentId">
-        DELETE FROM frequency_motor WHERE parent_id = #{deviceId}
+        DELETE FROM frequency_motor WHERE device_id = #{deviceId}
     </delete>
 
     

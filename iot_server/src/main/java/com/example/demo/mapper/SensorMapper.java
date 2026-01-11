@@ -77,6 +77,8 @@ public interface SensorMapper {
      */
     Sensor findBySensorCode(@Param("parentId") Long parentId, @Param("sensorCode") String sensorCode);
 
+    Sensor findSensorById(@Param("id") Long id);
+
     int updateValueByParentAndCode(@Param("parentId") Long parentId,
                                    @Param("sensorCode") String sensorCode,
                                    @Param("sensorValue") Double sensorValue);

@@ -102,6 +102,11 @@
         WHERE parent_id = #{parentId} AND sensor_code = #{sensorCode}
     </select>
 
+    <select id="findSensorById" resultMap="BaseResultMap">
+        SELECT * FROM sensors
+        WHERE id = #{id} 
+    </select>
+
     <update id="updateValueByParentAndCode">
         UPDATE sensors
         SET sensor_value = #{sensorValue}, updated_at = NOW()
