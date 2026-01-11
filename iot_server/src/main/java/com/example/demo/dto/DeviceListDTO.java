@@ -16,28 +16,39 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeviceListDTO {
-    
+
     private Long id;
     private Long userId;
-    private String userName;         // 用户名称
-    private String userPhone;        // 用户手机号
+    private String userName; // 用户名称
+    private String userPhone; // 用户手机号
     private String deviceNum;
     private String deviceName;
-    private Integer deviceType;      // 设备类型ID
+    private Integer deviceType; // 设备类型ID
     private Integer deviceLineState; // 0-离线 1-在线
-    private Integer signal;          // 信号强度
+    private Integer signal; // 信号强度
     private Integer electricQuantity; // 电量（0-100）
-    private Integer warningStatus;   // 报警状态：0-正常 1-报警
-    
-    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
-    private LocalDateTime createdTime;      // 创建时间
-    
-    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
-    private LocalDateTime updatedTime;      // 更新时间
-    
-    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
-    private LocalDateTime lastOfflineTime;  // 最后离线时间
-    
-    private List<SensorDTO> sensors; // 传感器列表
-}
+    private Integer warningStatus; // 报警状态：0-正常 1-报警
 
+    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
+    private LocalDateTime createdTime; // 创建时间
+
+    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
+    private LocalDateTime updatedTime; // 更新时间
+
+    @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
+    private LocalDateTime lastOfflineTime; // 最后离线时间
+
+    private List<SensorDTO> sensors; // 传感器列表
+
+    // 温度上下限
+    private java.math.BigDecimal tempUpperLimit; // 温度上限（°C）
+    private java.math.BigDecimal tempLowerLimit; // 温度下限（°C）
+
+    // 湿度上下限
+    private java.math.BigDecimal humidityUpperLimit; // 湿度上限（%）
+    private java.math.BigDecimal humidityLowerLimit; // 湿度下限（%）
+
+    // 气体上下限
+    private Integer gasUpperLimit; // 气体上限（ppm）
+    private Integer gasLowerLimit; // 气体下限（ppm）
+}

@@ -49,12 +49,21 @@
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
         <result column="last_offline_time" property="lastOfflineTime" jdbcType="TIMESTAMP"/>
+        <result column="temp_upper_limit" property="tempUpperLimit" jdbcType="DECIMAL"/>
+        <result column="temp_lower_limit" property="tempLowerLimit" jdbcType="DECIMAL"/>
+        <result column="humidity_upper_limit" property="humidityUpperLimit" jdbcType="DECIMAL"/>
+        <result column="humidity_lower_limit" property="humidityLowerLimit" jdbcType="DECIMAL"/>
+        <result column="gas_upper_limit" property="gasUpperLimit" jdbcType="INTEGER"/>
+        <result column="gas_lower_limit" property="gasLowerLimit" jdbcType="INTEGER"/>
     </resultMap>
 
     <!-- 查询设备列表（包含用户信息） -->
     <select id="findListWithUser" resultMap="DeviceListResultMap">
         SELECT 
-            d.*,
+            d.id, d.user_id, d.device_num, d.device_name, d.device_type, d.device_line_state, 
+            d.signal, d.electric_quantity, d.warning_status, d.created_time, d.updated_time, 
+            d.last_offline_time, d.temp_upper_limit, d.temp_lower_limit, d.humidity_upper_limit, 
+            d.humidity_lower_limit, d.gas_upper_limit, d.gas_lower_limit,
             u.nike_name as user_name,
             u.phone as user_phone
         FROM devices d

@@ -88,6 +88,9 @@
           <view class="device-info">
             <!-- 设备编号 -->
             <view class="base-info">
+              <view v-if="hasAnyOutOfRange(item)" class="alarm-icon">
+                <SvgIcon name="alarm" size="18" color="#cda109" />
+              </view>
               <view class="device-number">{{ item.deviceName }}</view>
               <view class="device-number">编号: {{ item.deviceNum }}</view>
             </view>
@@ -154,8 +157,8 @@
                 :key="sensor.id"
               >
                 <text class="sensor-label">{{ sensor.sensorName }}</text>
-                <text class="sensor-text"
-                  >{{ sensor.sensorValue || "--" }}°C</text
+                <text class="sensor-text" :class="{ 'out-of-range': item.deviceLineState == 1 && isTemperatureOutOfRange(sensor, item) }"
+                  >{{ item.deviceLineState == 1 ? (sensor.sensorValue || "--") : "--" }}°C</text
                 >
               </view>
             </view>
@@ -170,8 +173,11 @@
                 :key="sensor.id"
               >
                 <text class="sensor-label">{{ sensor.sensorName }}</text>
-                <text class="sensor-text"
-                  >{{ sensor.sensorValue || "--" }}{{ sensor.unit }}</text
+                <text class="sensor-text" 
+                  :class="{ 
+                    'out-of-range': item.deviceLineState == 1 && (isHumidityOutOfRange(sensor, item) || isGasOutOfRange(sensor, item))
+                  }"
+                  >{{ item.deviceLineState == 1 ? (sensor.sensorValue || "--") : "--" }}{{ sensor.unit }}</text
                 >
               </view>
             </view>
@@ -402,6 +408,81 @@ export default {
       if (!sensors || !Array.isArray(sensors)) return [];
       return sensors.filter((s) => s.sensorTypeId !== 5);
     },
+    // 判断温度是否超过上下限
+    isTemperatureOutOfRange(sensor, device) {
+      if (!sensor || sensor.sensorTypeId !== 5) return false;
+      if (!device) return false;
+      
+      const sensorValue = parseFloat(sensor.sensorValue);
+      if (isNaN(sensorValue)) return false;
+      
+      const upperLimit = parseFloat(device.tempUpperLimit);
+      const lowerLimit = parseFloat(device.tempLowerLimit);
+      
+      // 如果上下限都设置为0，表示未设置限制
+      if (upperLimit === 0 && lowerLimit === 0) return false;
+      
+      // 超过上限或低于下限
+      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
+        return true;
+      }
+      return false;
+    },
+    // 判断湿度是否超过上下限
+    isHumidityOutOfRange(sensor, device) {
+      if (!sensor || sensor.sensorTypeId !== 6) return false;
+      if (!device) return false;
+      
+      const sensorValue = parseFloat(sensor.sensorValue);
+      if (isNaN(sensorValue)) return false;
+      
+      const upperLimit = parseFloat(device.humidityUpperLimit);
+      const lowerLimit = parseFloat(device.humidityLowerLimit);
+      
+      // 如果上下限都设置为0，表示未设置限制
+      if (upperLimit === 0 && lowerLimit === 0) return false;
+      
+      // 超过上限或低于下限
+      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
+        return true;
+      }
+      return false;
+    },
+    // 判断气体是否超过上下限
+    isGasOutOfRange(sensor, device) {
+      if (!sensor || sensor.sensorTypeId !== 7) return false;
+      if (!device) return false;
+      
+      const sensorValue = parseFloat(sensor.sensorValue);
+      if (isNaN(sensorValue)) return false;
+      
+      const upperLimit = parseInt(device.gasUpperLimit);
+      const lowerLimit = parseInt(device.gasLowerLimit);
+      
+      // 如果上下限都设置为0，表示未设置限制
+      if (upperLimit === 0 && lowerLimit === 0) return false;
+      
+      // 超过上限或低于下限
+      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
+        return true;
+      }
+      return false;
+    },
+    // 判断设备是否有任何传感器超出限制
+    hasAnyOutOfRange(device) {
+      if (!device || device.deviceLineState !== 1) return false;
+      if (!device.sensors || !Array.isArray(device.sensors)) return false;
+      
+      // 检查是否有任何传感器超出限制
+      for (let sensor of device.sensors) {
+        if (this.isTemperatureOutOfRange(sensor, device) ||
+            this.isHumidityOutOfRange(sensor, device) ||
+            this.isGasOutOfRange(sensor, device)) {
+          return true;
+        }
+      }
+      return false;
+    },
   },
 };
 </script>
@@ -575,6 +656,14 @@ export default {
 .device-info .base-info {
     display: flex;
     align-items: center;
+    margin-bottom: 20rpx;
+}
+
+.alarm-icon {
+  margin-right: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 /* 设备卡片 */
 .device-card {
@@ -590,7 +679,6 @@ export default {
   color: var(--text-primary);
   font-size: 30rpx;
   font-weight: 500;
-  margin-bottom: 20rpx;
 }
 
 /* 状态指示器 */
@@ -676,6 +764,10 @@ export default {
   font-size: 26rpx;
   font-weight: bold;
   color: var(--success-color);
+}
+
+.sensor-text.out-of-range {
+  color: #ff3333;
 }
 
 .sensor-label {
