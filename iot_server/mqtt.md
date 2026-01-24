@@ -40,7 +40,20 @@ imt1: 变频电机1的动行状态，从 0% 到 100% 最大功率运行
 
 收到mqtt消息以后，在MqttService.java中批量更新电机运行状态，之后，还要根据规则，管理延时消息控制电机的开关状态。
 现在先做
-第一步： 添加对延时消息对列RabbitMQ的支持。
+第一步： 添加延时消息对列RabbitMQ
 第二步：读取数据库从表 motor_fan 中获得相关电机的的配置信息，
 1、先根据auto_mode 来确定 这个电机手工控制还是自动控制
 2、如果是自动控制，再根据control_mode 来选择控制模式，根据模式规则对电机进行控制
+
+
+
+# 在 docker 中创建 rabbitmq 的命令
+
+docker run -d   --name rabbitmq   -p 5672:5672   -p 15672:15672   -e RABBITMQ_DEFAULT_USER=admin   -e RABBITMQ_DEFAULT_PASS=admin123   rabbitmq:3.9-management
+
+
+# EMQX 
+页面登录地址：
+http://192.168.56.128:18083/
+admin
+test123123

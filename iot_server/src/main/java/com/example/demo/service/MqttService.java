@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.demo.entity.Device;
+import com.example.demo.entity.MotorFan;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,7 @@ public class MqttService implements MqttCallback {
     private final MotorFanService motorFanService;
     private final FrequencyMotorService frequencyMotorService;
     private final MqttMessageDataService mqttMessageDataService;
+    private final MotorControlRuleEngineService motorControlRuleEngineService;
 
     @PostConstruct
     public void init() {
@@ -138,8 +140,10 @@ public class MqttService implements MqttCallback {
                     // 如果有需要更新的值，调用批量更新方法
                     frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
 
+                    // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
+                    processMotorControlRules(device.getId(), node, sensorValues);
 
-                    // 发布消息给前端
+                    // 数据已经更新，发消息给前端更新数据
                     Map<String, Object> messageMap = new HashMap<>();
                     messageMap.put("topic", topic);
                     messageMap.put("payload", "UPDATE_DEVICES");
@@ -156,7 +160,111 @@ public class MqttService implements MqttCallback {
         }
     }
 
+    /**
+     * 处理设备所有电机的控制规则
+     * 从motor_fan表读取电机配置并应用控制规则
+     * @param deviceId 设备ID
+     * @param mqttNode 包含传感器数据的MQTT消息节点
+     * @param sensorValues 来自MQTT消息的传感器值
+     */
+    private void processMotorControlRules(Long deviceId, JsonNode mqttNode, 
+                                         List<JsonUtils.KV<Double>> sensorValues) {
+        try {
+            // 获取该设备的所有电机
+            List<MotorFan> motors = motorFanService.findByParentId(deviceId);
+            
+            if (motors == null || motors.isEmpty()) {
+                return;
+            }
+
+            // 获取温度传感器数据 (ts1-ts4)
+            Double ts1 = extractSensorValue(sensorValues, "ts1");
+            Double ts2 = extractSensorValue(sensorValues, "ts2");
+            Double ts3 = extractSensorValue(sensorValues, "ts3");
+            Double ts4 = extractSensorValue(sensorValues, "ts4");
+
+            // 为每个电机处理控制规则
+            for (MotorFan motor : motors) {
+                try {
+                    // 获取该电机的探头传感器
+                    Long probeSensorId = motor.getProbeSensorId();
+                    Double currentSensorValue = null;
+
+                    if (probeSensorId != null) {
+                        // 根据探头传感器ID获取传感器值
+                        currentSensorValue = getSensorValueById(probeSensorId, ts1, ts2, ts3, ts4);
+                    } else {
+                        // 默认使用第一个温度传感器
+                        currentSensorValue = ts1;
+                    }
+
+                    // 应用控制规则
+                    motorControlRuleEngineService.processMotorControl(motor.getId(), currentSensorValue);
+
+                } catch (Exception e) {
+                    log.error("处理电机控制规则错误: motorId={}", motor.getId(), e);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("处理电机控制规则错误: deviceId={}", deviceId, e);
+        }
+    }
+
+    /**
+     * 从传感器值列表中提取传感器值
+     * @param sensorValues 传感器值列表
+     * @param key 传感器键（ts1, ts2等）
+     * @return 传感器值或null
+     */
+    private Double extractSensorValue(List<JsonUtils.KV<Double>> sensorValues, String key) {
+        if (sensorValues == null) {
+            return null;
+        }
+        return sensorValues.stream()
+                .filter(kv -> key.equals(kv.getKey()))
+                .map(JsonUtils.KV::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * 根据探头传感器ID获取传感器值
+     * 对于此实现，我们假设：
+     * - 传感器ID 1, 2, 3, 4 映射到温度传感器 ts1, ts2, ts3, ts4
+     * 如果需要，可以扩展为从数据库查询
+     * @param probeSensorId 探头传感器ID
+     * @param ts1 温度传感器1的值
+     * @param ts2 温度传感器2的值
+     * @param ts3 温度传感器3的值
+     * @param ts4 温度传感器4的值
+     * @return 传感器值或null
+     */
+    private Double getSensorValueById(Long probeSensorId, Double ts1, Double ts2, 
+                                     Double ts3, Double ts4) {
+        if (probeSensorId == null) {
+            return ts1;
+        }
+
+        // 将传感器ID映射到实际传感器值
+        // 这假设probe_sensor_id与数据库中的传感器ID相对应
+        // 根据实际数据库模式调整映射
+        switch (probeSensorId.intValue()) {
+            case 1:
+                return ts1;
+            case 2:
+                return ts2;
+            case 3:
+                return ts3;
+            case 4:
+                return ts4;
+            default:
+                return ts1; // 默认使用第一个传感器
+        }
+    }
+
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
     }
 }
+
