@@ -165,6 +165,22 @@ public class SensorService {
     }
 
     /**
+     * 根据传感器ID获取传感器值
+     * @param sensorId 传感器ID
+     * @return 传感器值或null
+     */
+    public Double getSensorValueById(Long sensorId) {
+        if (sensorId == null) {
+            return null;
+        }
+        Sensor sensor = sensorMapper.findById(sensorId);
+        if (sensor != null && sensor.getSensorValue() != null) {
+            return sensor.getSensorValue().doubleValue();
+        }
+        return null;
+    }
+
+    /**
      * 根据 parentId ts1  value 创建 sensor 对象
      * @param parentId
      * @param tsKey

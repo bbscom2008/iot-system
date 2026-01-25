@@ -40,12 +40,16 @@ public class MotorControlRuleEngineService {
             // 第一步：检查自动模式
             // 1 = 自动模式, 2 = 始终开启, 3 = 始终关闭
             if (motorFan.getAutoMode() == 2) {
-                // Always on
-                sendMotorControlMessage(motorFan, 1, 1000);
+                // 如果当前状态不是运行，则发送开启命令
+                if (motorFan.getIsRunning() != 1) {
+                    sendMotorControlMessage(motorFan, 1, 0);
+                }
                 return;
             } else if (motorFan.getAutoMode() == 3) {
-                // Always off
-                sendMotorControlMessage(motorFan, 0, 2000);
+                // 如果当前状态不是停止，则发送关闭命令
+                if (motorFan.getIsRunning() != 0) {
+                    sendMotorControlMessage(motorFan, 0, 0);
+                }
                 return;
             } else if (motorFan.getAutoMode() != 1) {
                 log.warn("无效的自动模式: motorId={}, autoMode={}", motorId, motorFan.getAutoMode());
@@ -65,19 +69,21 @@ public class MotorControlRuleEngineService {
             switch (controlMode) {
                 case 1:
                     // Temperature control
-                    newState = processTemperatureControl(motorFan, currentSensorValue);
+                    if(currentSensorValue != null){
+                        newState = processTemperatureControl(motorFan, currentSensorValue);
+                    }
                     break;
                 case 2:
                     // Cycle control (run/pause cycle)
                     newState = processCycleControl(motorFan);
                     break;
                 case 3:
-                    // Humidity control
-                    newState = processHumidityControl(motorFan, currentSensorValue);
+                    // Humidity control 、 目前还没有 湿度传感器
+//                    newState = processHumidityControl(motorFan, currentSensorValue);
                     break;
                 case 4:
-                    // Gas control
-                    newState = processGasControl(motorFan, currentSensorValue);
+                    // Gas control // 目前还没有 气体传感器
+//                    newState = processGasControl(motorFan, currentSensorValue);
                     break;
                 case 5:
                     // Timer control
