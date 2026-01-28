@@ -34,6 +34,11 @@ public class MotorControlMessage implements Serializable {
     private String deviceNum;
 
     /**
+     * 父设备编号
+     */
+    private String parentDeviceNum;
+
+    /**
      * 电机状态: 0 = 停止, 1 = 运行
      */
     private Integer state;

@@ -33,14 +33,18 @@ public class MotorControlProducerService {
                         // 使用rabbitmq-delayed-message-exchange插件支持
                         if (motorControlMessage.getDelayTime() != null && motorControlMessage.getDelayTime() > 0) {
                             message.getMessageProperties().setHeader("x-delay", motorControlMessage.getDelayTime());
+                            log.info("【生产者】发送延时电机控制消息: motorId={}, delay={}ms, state={}", 
+                                    motorControlMessage.getMotorId(), motorControlMessage.getDelayTime(),
+                                    motorControlMessage.getState());
+                        } else {
+                            log.info("【生产者】发送电机控制消息（延时0）: motorId={}, state={}", 
+                                    motorControlMessage.getMotorId(), motorControlMessage.getState());
                         }
                         return message;
                     }
             );
-            log.info("发送延时电机控制消息: motorId={}, delay={}", 
-                    motorControlMessage.getMotorId(), motorControlMessage.getDelayTime());
         } catch (Exception e) {
-            log.error("发送延时电机控制消息错误: motorId={}", 
+            log.error("【生产者】发送延时电机控制消息错误: motorId={}", 
                     motorControlMessage.getMotorId(), e);
         }
     }
@@ -56,10 +60,12 @@ public class MotorControlProducerService {
                     RabbitMqConfig.MOTOR_CONTROL_ROUTING_KEY,
                     motorControlMessage
             );
-            log.info("发送电机控制消息: motorId={}, state={}", 
-                    motorControlMessage.getMotorId(), motorControlMessage.getState());
+            log.info("【生产者】发送电机控制消息到处理队列: motorId={}, state={}, exchange={}, routingKey={}", 
+                    motorControlMessage.getMotorId(), motorControlMessage.getState(),
+                    RabbitMqConfig.MOTOR_CONTROL_EXCHANGE,
+                    RabbitMqConfig.MOTOR_CONTROL_ROUTING_KEY);
         } catch (Exception e) {
-            log.error("发送电机控制消息错误: motorId={}", 
+            log.error("【生产者】发送电机控制消息错误: motorId={}", 
                     motorControlMessage.getMotorId(), e);
         }
     }

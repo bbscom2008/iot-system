@@ -144,7 +144,7 @@ public class MqttService implements MqttCallback {
                     frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
 
                     // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
-                    processMotorControlRules(device.getId());
+                    processMotorControlRules(device.getId(), device.getDeviceNum());
 
                     // 数据已经更新，发消息给前端更新数据
                     Map<String, Object> messageMap = new HashMap<>();
@@ -167,9 +167,10 @@ public class MqttService implements MqttCallback {
      * 处理设备所有电机的控制规则
      * 从数据库读取传感器和电机配置，应用控制规则
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
+     * @param deviceNum
      */
-    private void processMotorControlRules(Long deviceId) {
+    private void processMotorControlRules(Long deviceId, String deviceNum) {
         try {
             // 获取该设备的所有电机
             List<MotorFan> motors = motorFanService.findByParentId(deviceId);
@@ -201,13 +202,12 @@ public class MqttService implements MqttCallback {
                         // 从内存中的 sensorMap 获取传感器，避免多次数据库查询
                         Sensor sensor = sensorMap.get(probeSensorId);
                         if (sensor != null && sensor.getSensorValue() != null) {
-                            currentSensorValue = sensor.getSensorValue().doubleValue();
+                            currentSensorValue = sensor.getSensorValue();
                         }
-
-                        // 应用控制规则
-                        motorControlRuleEngineService.processMotorControl(motor.getId(), currentSensorValue);
-
                     }
+                    // 应用控制规则
+                    motorControlRuleEngineService.processMotorControl(motor, currentSensorValue, deviceNum);
+
                 } catch (Exception e) {
                     log.error("处理电机控制规则错误: motorId={}", motor.getId(), e);
                 }
@@ -221,6 +221,77 @@ public class MqttService implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
+    }
+
+    /**
+     * 发送 MQTT 消息到指定主题
+     *
+     * @param topic   消息主题
+     * @param payload 消息内容（对象会被序列化为 JSON）
+     * @param qos     服务质量等级 (0, 1, 2)，默认为 1
+     * @return 发送是否成功
+     */
+    public boolean publishMessage(String topic, Object payload, int qos) {
+        try {
+            if (!client.isConnected()) {
+                log.warn("MQTT client is not connected, attempting to reconnect");
+                client.connect();
+            }
+
+            byte[] payloadBytes;
+            if (payload instanceof String) {
+                payloadBytes = ((String) payload).getBytes(StandardCharsets.UTF_8);
+            } else {
+                payloadBytes = objectMapper.writeValueAsBytes(payload);
+            }
+
+            MqttMessage message = new MqttMessage(payloadBytes);
+            message.setQos(Math.min(qos, 2)); // QoS 范围：0-2
+            message.setRetained(false);
+
+            client.publish(topic, message);
+            log.info("MQTT message published: topic={}, qos={}, payloadSize={} bytes",
+                    topic, qos, payloadBytes.length);
+            return true;
+
+        } catch (MqttException e) {
+            log.error("Failed to publish MQTT message to topic: {}", topic, e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error serializing MQTT payload for topic: {}", topic, e);
+            return false;
+        }
+    }
+
+    /**
+     * 发送 MQTT 消息到指定主题 (QoS 默认为 1)
+     *
+     * @param topic   消息主题
+     * @param payload 消息内容
+     * @return 发送是否成功
+     */
+    public boolean publishMessage(String topic, Object payload) {
+        return publishMessage(topic, payload, 1);
+    }
+
+    /**
+     * 发送 MQTT 消息到指定主题 (消息为字符串，QoS 默认为 1)
+     *
+     * @param topic   消息主题
+     * @param message 消息内容（字符串）
+     * @return 发送是否成功
+     */
+    public boolean publishString(String topic, String message) {
+        return publishMessage(topic, message, 1);
+    }
+
+    /**
+     * 检查 MQTT 连接状态
+     *
+     * @return 如果连接则返回 true，否则返回 false
+     */
+    public boolean isConnected() {
+        return client != null && client.isConnected();
     }
 }
 

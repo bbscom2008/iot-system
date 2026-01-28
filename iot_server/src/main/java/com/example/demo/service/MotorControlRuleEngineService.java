@@ -26,33 +26,36 @@ public class MotorControlRuleEngineService {
 
     /**
      * 根据配置和传感器数据处理电机控制
-     * @param motorId 电机ID
+     *
+     * @param motorFan           电机
      * @param currentSensorValue 当前传感器数值（温度、湿度或气体）
+     * @param deviceNum
      */
-    public void processMotorControl(Long motorId, Double currentSensorValue) {
+    public void processMotorControl(MotorFan motorFan, Double currentSensorValue, String deviceNum) {
         try {
-            MotorFan motorFan = motorFanService.findById(motorId);
             if (motorFan == null) {
-                log.warn("未找到电机: motorId={}", motorId);
+                log.warn("未找到电机: motorId");
                 return;
             }
+
+            log.warn("电机: motorId={}， model={}", motorFan.getDeviceId(), motorFan.getAutoMode());
 
             // 第一步：检查自动模式
             // 1 = 自动模式, 2 = 始终开启, 3 = 始终关闭
             if (motorFan.getAutoMode() == 2) {
                 // 如果当前状态不是运行，则发送开启命令
                 if (motorFan.getIsRunning() != 1) {
-                    sendMotorControlMessage(motorFan, 1, 0);
+                    sendMotorControlMessage(motorFan, 1, 0, deviceNum);
                 }
                 return;
             } else if (motorFan.getAutoMode() == 3) {
                 // 如果当前状态不是停止，则发送关闭命令
                 if (motorFan.getIsRunning() != 0) {
-                    sendMotorControlMessage(motorFan, 0, 0);
+                    sendMotorControlMessage(motorFan, 0, 0, deviceNum);
                 }
                 return;
             } else if (motorFan.getAutoMode() != 1) {
-                log.warn("无效的自动模式: motorId={}, autoMode={}", motorId, motorFan.getAutoMode());
+                log.warn("无效的自动模式: motorId={}, autoMode={}", motorFan.getDeviceId(), motorFan.getAutoMode());
                 return;
             }
 
@@ -60,7 +63,7 @@ public class MotorControlRuleEngineService {
             Integer controlMode = motorFan.getControlMode();
             
             if (controlMode == null) {
-                log.warn("未设置控制模式: motorId={}", motorId);
+                log.warn("未设置控制模式: motorId={}", motorFan.getDeviceId());
                 return;
             }
 
@@ -90,17 +93,19 @@ public class MotorControlRuleEngineService {
                     newState = processTimerControl(motorFan);
                     break;
                 default:
-                    log.warn("未知的控制模式: motorId={}, controlMode={}", motorId, controlMode);
+                    log.warn("未知的控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
                     return;
             }
 
             // 如果状态改变，发送控制消息
             if (!newState.equals(motorFan.getIsRunning())) {
-                sendMotorControlMessage(motorFan, newState, 2000);
+                sendMotorControlMessage(motorFan, newState, 2000, deviceNum);
             }
 
         } catch (Exception e) {
-            log.error("处理电机控制错误: motorId={}", motorId, e);
+            if (motorFan != null) {
+                log.error("处理电机控制错误: motorId={}", motorFan.getDeviceId(), e);
+            }
         }
     }
 
@@ -288,15 +293,18 @@ public class MotorControlRuleEngineService {
 
     /**
      * 发送电机控制消息到RabbitMQ
-     * @param motorFan 电机配置
-     * @param newState 新电机状态
+     *
+     * @param motorFan  电机配置
+     * @param newState  新电机状态
      * @param delayTime 延时时间（毫秒）
+     * @param deviceNum
      */
-    private void sendMotorControlMessage(MotorFan motorFan, Integer newState, Integer delayTime) {
+    private void sendMotorControlMessage(MotorFan motorFan, Integer newState, Integer delayTime, String deviceNum) {
         MotorControlMessage message = MotorControlMessage.builder()
                 .motorId(motorFan.getId())
                 .deviceId(motorFan.getDeviceId())
                 .deviceNum(motorFan.getDeviceNum())
+                .parentDeviceNum(deviceNum)
                 .state(newState)
                 .controlMode(motorFan.getControlMode())
                 .autoMode(motorFan.getAutoMode())
