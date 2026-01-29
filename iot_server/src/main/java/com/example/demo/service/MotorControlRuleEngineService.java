@@ -70,26 +70,26 @@ public class MotorControlRuleEngineService {
             Integer newState = 0;
 
             switch (controlMode) {
-                case 1:
-                    // Temperature control
-                    if(currentSensorValue != null){
-                        newState = processTemperatureControl(motorFan, currentSensorValue);
+                case 1: // 温控
+                    if(currentSensorValue == null){
+                        log.warn("当前电机没有设置传感器：motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
+                        break;
                     }
+                    newState = processTemperatureControl(motorFan, currentSensorValue);
                     break;
-                case 2:
-                    // Cycle control (run/pause cycle)
+                case 2: // 循环
                     newState = processCycleControl(motorFan);
                     break;
                 case 3:
-                    // Humidity control 、 目前还没有 湿度传感器
-//                    newState = processHumidityControl(motorFan, currentSensorValue);
+                    //  目前还没有 湿度传感器
+                    log.warn("目前还没有温度控制模式: motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
                     break;
                 case 4:
-                    // Gas control // 目前还没有 气体传感器
-//                    newState = processGasControl(motorFan, currentSensorValue);
+                    // 目前还没有 气体传感器
+                    log.warn("目前还没有气体控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
                     break;
                 case 5:
-                    // Timer control
+                    // 定时
                     newState = processTimerControl(motorFan);
                     break;
                 default:
