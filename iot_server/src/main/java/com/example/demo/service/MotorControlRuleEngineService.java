@@ -138,6 +138,11 @@ public class MotorControlRuleEngineService {
         }
         // 否则，保持当前状态
         else {
+            // 实时温度在温度上限与温度下限之间，设备按照运行时间和暂停时间循环工作
+            Integer runTime = motorFan.getRunTime(); // 运行多少 秒
+            Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒 
+            
+
             return motorFan.getIsRunning();
         }
     }
