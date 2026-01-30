@@ -2,12 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.dto.MotorControlMessage;
 import com.example.demo.entity.MotorFan;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 电机控制规则引擎服务
@@ -21,6 +25,10 @@ public class MotorControlRuleEngineService {
     private final MotorFanService motorFanService;
     private final SensorService sensorService;
     private final MotorControlProducerService motorControlProducerService;
+
+    private final ObjectMapper objectMapper;
+
+    private final MqttService mqttService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -45,13 +53,13 @@ public class MotorControlRuleEngineService {
             if (motorFan.getAutoMode() == 2) {
                 // 如果当前状态不是运行，则发送开启命令
                 if (motorFan.getIsRunning() != 1) {
-                    sendMotorControlMessage(motorFan, 1, 0, deviceNum);
+                    updateMotorFanState(motorFan.getDeviceNum(), 1, deviceNum);
                 }
                 return;
             } else if (motorFan.getAutoMode() == 3) {
                 // 如果当前状态不是停止，则发送关闭命令
                 if (motorFan.getIsRunning() != 0) {
-                    sendMotorControlMessage(motorFan, 0, 0, deviceNum);
+                    updateMotorFanState(motorFan.getDeviceNum(), 0, deviceNum);
                 }
                 return;
             } else if (motorFan.getAutoMode() != 1) {
@@ -61,7 +69,7 @@ public class MotorControlRuleEngineService {
 
             // 第二步：按控制模式处理（仅当autoMode = 1时）
             Integer controlMode = motorFan.getControlMode();
-            
+
             if (controlMode == null) {
                 log.warn("未设置控制模式: motorId={}", motorFan.getDeviceId());
                 return;
@@ -71,7 +79,7 @@ public class MotorControlRuleEngineService {
 
             switch (controlMode) {
                 case 1: // 温控
-                    if(currentSensorValue == null){
+                    if (currentSensorValue == null) {
                         log.warn("当前电机没有设置传感器：motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
                         break;
                     }
@@ -99,7 +107,7 @@ public class MotorControlRuleEngineService {
 
             // 如果状态改变，发送控制消息
             if (!newState.equals(motorFan.getIsRunning())) {
-                sendMotorControlMessage(motorFan, newState, 2000, deviceNum);
+                updateMotorFanState(motorFan.getDeviceNum(), newState, deviceNum);
             }
 
         } catch (Exception e) {
@@ -111,7 +119,8 @@ public class MotorControlRuleEngineService {
 
     /**
      * 处理温度控制模式
-     * @param motorFan 电机配置
+     *
+     * @param motorFan    电机配置
      * @param currentTemp 当前温度
      * @return 新电机状态 (0 = 停止, 1 = 运行)
      */
@@ -141,7 +150,7 @@ public class MotorControlRuleEngineService {
             // 实时温度在温度上限与温度下限之间，设备按照运行时间和暂停时间循环工作
             Integer runTime = motorFan.getRunTime(); // 运行多少 秒
             Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒 
-            
+
 
             return motorFan.getIsRunning();
         }
@@ -149,6 +158,7 @@ public class MotorControlRuleEngineService {
 
     /**
      * 处理循环控制模式（运行X秒，然后暂停Y秒）
+     *
      * @param motorFan 电机配置
      * @return 新电机状态
      */
@@ -169,7 +179,8 @@ public class MotorControlRuleEngineService {
 
     /**
      * 处理湿度控制模式
-     * @param motorFan 电机配置
+     *
+     * @param motorFan        电机配置
      * @param currentHumidity 当前湿度值
      * @return 新电机状态
      */
@@ -202,7 +213,8 @@ public class MotorControlRuleEngineService {
 
     /**
      * 处理气体控制模式
-     * @param motorFan 电机配置
+     *
+     * @param motorFan   电机配置
      * @param currentGas 当前气体值（ppm）
      * @return 新电机状态
      */
@@ -236,6 +248,7 @@ public class MotorControlRuleEngineService {
     /**
      * 处理定时控制模式
      * 检查多个定时器并确定最终状态
+     *
      * @param motorFan 电机配置
      * @return 新电机状态
      */
@@ -269,9 +282,10 @@ public class MotorControlRuleEngineService {
 
     /**
      * 检查当前时间是否在指定范围内
+     *
      * @param currentTime 当前时间
-     * @param startTime 开始时间（HH:mm格式）
-     * @param endTime 结束时间（HH:mm格式）
+     * @param startTime   开始时间（HH:mm格式）
+     * @param endTime     结束时间（HH:mm格式）
      * @return 如果在范围内返回true
      */
     private boolean isTimeInRange(LocalTime currentTime, String startTime, String endTime) {
@@ -297,12 +311,40 @@ public class MotorControlRuleEngineService {
     }
 
     /**
+     * 发送mqtt消息更新 motorFan 的状态
+     *
+     * @param motorNum  如   mt1  mt2 mt3
+     * @param state     新状态  0 1
+     * @param driverNum 设置名称  d002  d004
+     */
+    public void updateMotorFanState(String motorNum, Integer state, String driverNum) {
+
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("id", driverNum);
+        jsonMap.put(motorNum, state);
+
+        String payload = null;
+        try {
+            payload = objectMapper.writeValueAsString(jsonMap);
+            // 发送 MQTT 消息
+            boolean publishSuccess = mqttService.publishString("device-ctrl/" + driverNum, payload);
+            if (!publishSuccess) {
+                log.warn("MQTT消息发送失败: driverNum={}, motorNum={}", driverNum, motorNum);
+            }
+            log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", driverNum, motorNum);
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 发送电机控制消息到RabbitMQ
      *
      * @param motorFan  电机配置
      * @param newState  新电机状态
      * @param delayTime 延时时间（毫秒）
-     * @param deviceNum
+     * @param deviceNum 设备编号  d002 等。
      */
     private void sendMotorControlMessage(MotorFan motorFan, Integer newState, Integer delayTime, String deviceNum) {
         MotorControlMessage message = MotorControlMessage.builder()
