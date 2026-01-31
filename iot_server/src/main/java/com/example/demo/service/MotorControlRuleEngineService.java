@@ -6,12 +6,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * 电机控制规则引擎服务
@@ -28,7 +31,12 @@ public class MotorControlRuleEngineService {
 
     private final ObjectMapper objectMapper;
 
-    private final MqttService mqttService;
+    // 延迟获取 MqttService 以打破启动时的循环依赖
+//    private final ObjectProvider<MqttService> mqttServiceProvider;
+
+    @Lazy
+    @Autowired
+    private MqttService mqttService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -315,23 +323,27 @@ public class MotorControlRuleEngineService {
      *
      * @param motorNum  如   mt1  mt2 mt3
      * @param state     新状态  0 1
-     * @param driverNum 设置名称  d002  d004
+     * @param deviceNum 设置名称  d002  d004
      */
-    public void updateMotorFanState(String motorNum, Integer state, String driverNum) {
+    public void updateMotorFanState(String motorNum, Integer state, String deviceNum) {
 
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("id", driverNum);
+        jsonMap.put("id", deviceNum);
         jsonMap.put(motorNum, state);
 
         String payload = null;
         try {
             payload = objectMapper.writeValueAsString(jsonMap);
-            // 发送 MQTT 消息
-            boolean publishSuccess = mqttService.publishString("device-ctrl/" + driverNum, payload);
-            if (!publishSuccess) {
-                log.warn("MQTT消息发送失败: driverNum={}, motorNum={}", driverNum, motorNum);
+            // 发送 MQTT 消息（延迟获取 mqttService）
+            if (mqttService != null) {
+                boolean publishSuccess = mqttService.publishString(MqttService.DEVICE_CTRL(deviceNum), payload);
+                if (!publishSuccess) {
+                    log.warn("MQTT消息发送失败: driverNum={}, motorNum={}", deviceNum, motorNum);
+                }
+                log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
+            } else {
+                log.warn("MQTT服务不可用，无法发送消息: driverNum={}, motorNum={}", deviceNum, motorNum);
             }
-            log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", driverNum, motorNum);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

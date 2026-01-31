@@ -34,6 +34,24 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MqttService implements MqttCallback {
 
+
+    /**
+     * 设备向服务器发送 mqtt 消息时的 topic
+     * 如  device/d002
+     */
+    public static final String DEVICE_REPORT = "device/";
+    /**
+     * 服务器向设备发送 mqtt时的 topic
+     */
+    public static String DEVICE_CTRL(String deviceNum){
+        return  "device-ctrl/"+deviceNum;
+    };
+
+    /**
+     * 服务器向 前端 发送更新通知的 topic
+     */
+    public static final String WX_CTRL = "";
+
     @Value("${mqtt.broker}")
     private String broker;
 
