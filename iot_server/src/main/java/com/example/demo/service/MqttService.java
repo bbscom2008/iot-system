@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.util.JsonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -40,17 +41,21 @@ public class MqttService implements MqttCallback {
      * 如  device/d002
      */
     public static final String DEVICE_REPORT = "device/";
+
     /**
      * 服务器向设备发送 mqtt时的 topic
      */
-    public static String DEVICE_CTRL(String deviceNum){
-        return  "device-ctrl/"+deviceNum;
-    };
+    public static String DEVICE_CTRL(String deviceNum) {
+        return "device-ctrl/" + deviceNum;
+    }
+
+    ;
 
     /**
      * 服务器向 前端 发送更新通知的 topic
+     * 如  wxapi/d002
      */
-    public static final String WX_CTRL = "";
+    public static final String WX_CTRL = "wxapi/";
 
     @Value("${mqtt.broker}")
     private String broker;
@@ -165,14 +170,7 @@ public class MqttService implements MqttCallback {
                     processMotorControlRules(device.getId(), device.getDeviceNum());
 
                     // 数据已经更新，发消息给前端更新数据
-                    Map<String, Object> messageMap = new HashMap<>();
-                    messageMap.put("topic", topic);
-                    messageMap.put("payload", "UPDATE_DEVICES");
-                    // qos 1 确保消息到达
-                    MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
-                    mqttMessage.setQos(1);
-                    client.publish("wxapi/" + deviceNum, mqttMessage);
-
+                    notifyToUpdate(deviceNum);
                 }
             }
 
@@ -180,6 +178,27 @@ public class MqttService implements MqttCallback {
             log.error("MQTT payload parse error", e);
         }
     }
+
+    /**
+     * 通知前端 更新页面
+     *
+     * @param deviceNum
+     */
+    public void notifyToUpdate(String deviceNum) {
+        try {
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("topic", MqttService.DEVICE_REPORT + deviceNum);
+            messageMap.put("payload", "UPDATE_DEVICES");
+            // qos 1 确保消息到达
+            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
+            mqttMessage.setQos(1);
+            client.publish(MqttService.WX_CTRL + deviceNum, mqttMessage);
+        } catch (MqttException | JsonProcessingException e) {
+            log.warn("notifyToUpdate 出错了");
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * 处理设备所有电机的控制规则

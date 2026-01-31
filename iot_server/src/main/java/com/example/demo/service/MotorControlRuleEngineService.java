@@ -376,7 +376,7 @@ public class MotorControlRuleEngineService {
 
         try {
             payload = objectMapper.writeValueAsString(jsonMap);
-            // 发送 MQTT 消息（延迟获取 mqttService）
+            // 发送 MQTT 消息 更新硬件状态
             if (mqttService != null) {
                 boolean publishSuccess = mqttService.publishString(MqttService.DEVICE_CTRL(deviceNum), payload);
                 if (!publishSuccess) {
@@ -385,6 +385,10 @@ public class MotorControlRuleEngineService {
                 // 更新数据库，当前电机状态已经更新
                 motorFanService.updateRunningStatusByParentAndCode( device.getId(), motorNum, state);
                 log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
+
+                // 通知前端页面，更新状态
+                mqttService.notifyToUpdate(deviceNum);
+
             } else {
                 log.warn("MQTT服务不可用，无法发送消息: driverNum={}, motorNum={}", deviceNum, motorNum);
             }
