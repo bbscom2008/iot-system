@@ -32,7 +32,9 @@ public class MotorControlProducerService {
                         // 设置延迟时间（毫秒）
                         // 使用rabbitmq-delayed-message-exchange插件支持
                         if (motorControlMessage.getDelayTime() != null && motorControlMessage.getDelayTime() > 0) {
+
                             message.getMessageProperties().setHeader("x-delay", motorControlMessage.getDelayTime());
+
                             log.info("【生产者】发送延时电机控制消息: motorId={}, delay={}ms, state={}", 
                                     motorControlMessage.getMotorId(), motorControlMessage.getDelayTime(),
                                     motorControlMessage.getState());

@@ -15,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.ObjectProvider;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 电机控制规则引擎服务
@@ -39,6 +41,9 @@ public class MotorControlRuleEngineService {
     private MqttService mqttService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
+    // 跟踪为电机调度的延时切换，键格式：motorNum:parentDeviceNum
+    private final ConcurrentMap<String, Long> scheduledUntil = new ConcurrentHashMap<>();
 
     /**
      * 根据配置和传感器数据处理电机控制
@@ -91,7 +96,7 @@ public class MotorControlRuleEngineService {
                         log.warn("当前电机没有设置传感器：motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
                         break;
                     }
-                    newState = processTemperatureControl(motorFan, currentSensorValue);
+                    newState = processTemperatureControl(motorFan, currentSensorValue, deviceNum);
                     break;
                 case 2: // 循环
                     newState = processCycleControl(motorFan);
@@ -132,7 +137,7 @@ public class MotorControlRuleEngineService {
      * @param currentTemp 当前温度
      * @return 新电机状态 (0 = 停止, 1 = 运行)
      */
-    private Integer processTemperatureControl(MotorFan motorFan, Double currentTemp) {
+    private Integer processTemperatureControl(MotorFan motorFan, Double currentTemp, String deviceNum) {
         if (currentTemp == null) {
             return motorFan.getIsRunning();
         }
@@ -153,14 +158,42 @@ public class MotorControlRuleEngineService {
         else if (currentTemp <= lower) {
             return 0;
         }
-        // 否则，保持当前状态
+        // 否则，保持当前状态，并按照运行/暂停时间进行循环调度
         else {
-            // 实时温度在温度上限与温度下限之间，设备按照运行时间和暂停时间循环工作
             Integer runTime = motorFan.getRunTime(); // 运行多少 秒
             Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒 
 
+            if (runTime == null || pauseTime == null || runTime <= 0 || pauseTime <= 0) {
+                log.warn("循环时间未设置或无效: motorId={}", motorFan.getId());
+                return motorFan.getIsRunning();
+            }
 
-            return motorFan.getIsRunning();
+            String key = deviceNum + ":" + motorFan.getDeviceNum();
+            long now = System.currentTimeMillis();
+
+            // 如果当前正在运行，排期在 runTime 秒后停止；如果当前停止，排期在 pauseTime 秒后启动
+            if (motorFan.getIsRunning() != null && motorFan.getIsRunning() == 1) {
+                long scheduledTs = scheduledUntil.getOrDefault(key, 0L);
+                if (scheduledTs > now) {
+                    // 已经有排程，跳过重复排队
+                    return 1;
+                }
+
+                int delayMs = runTime * 1000;
+                scheduledUntil.put(key, now + delayMs);
+                sendMotorControlMessage(motorFan, 0, delayMs, deviceNum);
+                return 1;
+            } else {
+                long scheduledTs = scheduledUntil.getOrDefault(key, 0L);
+                if (scheduledTs > now) {
+                    return 0;
+                }
+
+                int delayMs = pauseTime * 1000;
+                scheduledUntil.put(key, now + delayMs);
+                sendMotorControlMessage(motorFan, 1, delayMs, deviceNum);
+                return 0;
+            }
         }
     }
 
@@ -347,6 +380,16 @@ public class MotorControlRuleEngineService {
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        }
+
+        // 清理该电机(父设备)的排程标记，允许重新排程
+        try {
+            if (motorNum != null && deviceNum != null) {
+                String key = motorNum + ":" + deviceNum;
+                scheduledUntil.remove(key);
+            }
+        } catch (Exception e) {
+            log.warn("清理调度标记失败: motorNum={}, deviceNum={}", motorNum, deviceNum, e);
         }
     }
 
