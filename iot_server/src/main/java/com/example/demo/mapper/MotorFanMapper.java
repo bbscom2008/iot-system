@@ -43,7 +43,7 @@ public interface MotorFanMapper {
      */
     int updateRunningStatus(Long id, Integer isRunning);
 
-    int updateRunningStatusByParentAndCode(Long deviceId, String fanCode, Integer isRunning);
+    int updateRunningStatusByParentAndCode(@Param("deviceId") Long deviceId, @Param("deviceNum") String fanCode, @Param("isRunning") Integer isRunning);
 
     /**
      * 批量更新风机运行状态

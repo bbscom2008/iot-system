@@ -143,4 +143,23 @@ public class MotorFanService {
         fan.setFanName(name);
         return fan;
     }
+
+    public MotorFan findByDeviceIdAndMotorNum(Long deviceId, String deviceNum) {
+        if (deviceId == null || deviceNum == null) {
+            return null;
+        }
+
+        List<MotorFan> list = motorFanMapper.findByParentId(deviceId);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+
+        for (MotorFan mf : list) {
+            if (deviceNum.equals(mf.getDeviceNum())) {
+                return mf;
+            }
+        }
+
+        return null;
+    }
 }

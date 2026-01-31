@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.MotorControlMessage;
+import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +34,8 @@ public class MotorControlRuleEngineService {
 
     private final ObjectMapper objectMapper;
 
+    private final DeviceService deviceService;
+
     // 延迟获取 MqttService 以打破启动时的循环依赖
 //    private final ObjectProvider<MqttService> mqttServiceProvider;
 
@@ -49,7 +52,7 @@ public class MotorControlRuleEngineService {
      * 根据配置和传感器数据处理电机控制
      *
      * @param motorFan           电机
-     * @param currentSensorValue 当前传感器数值（温度、湿度或气体）
+     * @param currentSensorValue 当前传感器数值 温度
      * @param deviceNum
      */
     public void processMotorControl(MotorFan motorFan, Double currentSensorValue, String deviceNum) {
@@ -92,10 +95,6 @@ public class MotorControlRuleEngineService {
 
             switch (controlMode) {
                 case 1: // 温控
-                    if (currentSensorValue == null) {
-                        log.warn("当前电机没有设置传感器：motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
-                        break;
-                    }
                     newState = processTemperatureControl(motorFan, currentSensorValue, deviceNum);
                     break;
                 case 2: // 循环
@@ -134,12 +133,20 @@ public class MotorControlRuleEngineService {
      * 处理温度控制模式
      *
      * @param motorFan    电机配置
-     * @param currentTemp 当前温度
+     * @param currentTemp 当前温度 可以为空
      * @return 新电机状态 (0 = 停止, 1 = 运行)
      */
     private Integer processTemperatureControl(MotorFan motorFan, Double currentTemp, String deviceNum) {
         if (currentTemp == null) {
-            return motorFan.getIsRunning();
+            // 根据 motorFan 绑定的温度传感器，去查询 当前温度值
+            Long sensorId = motorFan.getProbeSensorId();
+            if (sensorId != null) {
+                currentTemp = sensorService.getSensorValueById(sensorId);
+                log.info("获取传感器温度: sensorId={}, temperature={}", sensorId, currentTemp);
+            }else{
+                log.info("当前电机没有设置 温度传感器: motorFanId={}, sensorId={}", motorFan.getDeviceId(), sensorId);
+                return motorFan.getIsRunning();
+            }
         }
 
         Double upper = motorFan.getTempUpper();
@@ -168,7 +175,7 @@ public class MotorControlRuleEngineService {
                 return motorFan.getIsRunning();
             }
 
-            String key = deviceNum + ":" + motorFan.getDeviceNum();
+            String key = motorFan.getDeviceNum() + ":" + deviceNum;
             long now = System.currentTimeMillis();
 
             // 如果当前正在运行，排期在 runTime 秒后停止；如果当前停止，排期在 pauseTime 秒后启动
@@ -365,6 +372,8 @@ public class MotorControlRuleEngineService {
         jsonMap.put(motorNum, state);
 
         String payload = null;
+        Device device = deviceService.findByDeviceNum(deviceNum);
+
         try {
             payload = objectMapper.writeValueAsString(jsonMap);
             // 发送 MQTT 消息（延迟获取 mqttService）
@@ -373,6 +382,8 @@ public class MotorControlRuleEngineService {
                 if (!publishSuccess) {
                     log.warn("MQTT消息发送失败: driverNum={}, motorNum={}", deviceNum, motorNum);
                 }
+                // 更新数据库，当前电机状态已经更新
+                motorFanService.updateRunningStatusByParentAndCode( device.getId(), motorNum, state);
                 log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
             } else {
                 log.warn("MQTT服务不可用，无法发送消息: driverNum={}, motorNum={}", deviceNum, motorNum);
@@ -387,6 +398,15 @@ public class MotorControlRuleEngineService {
             if (motorNum != null && deviceNum != null) {
                 String key = motorNum + ":" + deviceNum;
                 scheduledUntil.remove(key);
+                // 开始新一轮排程
+                // 根据 deviceId 和 motorNum 获得 motorFan 对象
+                if (device != null) {
+                    MotorFan motorFan = motorFanService.findByDeviceIdAndMotorNum(device.getId(), motorNum);
+                    if (motorFan != null) {
+                        processMotorControl(motorFan, null, deviceNum);
+                    }
+                }
+
             }
         } catch (Exception e) {
             log.warn("清理调度标记失败: motorNum={}, deviceNum={}", motorNum, deviceNum, e);
