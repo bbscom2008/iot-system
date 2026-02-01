@@ -384,6 +384,7 @@ public class MotorControlRuleEngineService {
                 }
                 // 更新数据库，当前电机状态已经更新
                 motorFanService.updateRunningStatusByParentAndCode( device.getId(), motorNum, state);
+
                 log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
 
                 // 通知前端页面，更新状态
@@ -396,12 +397,29 @@ public class MotorControlRuleEngineService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    /**
+     * 发送mqtt消息更新 motorFan 的状态
+     *
+     * @param motorNum  如   mt1  mt2 mt3
+     * @param state     新状态  0 1
+     * @param deviceNum 设置名称  d002  d004
+     */
+    public void updateMotorFanStateByDelayMessage(String motorNum, Integer state, String deviceNum) {
+
+        // 如果延时消息，没有被覆盖，则执行状态更新
+        String key = motorNum + ":" + deviceNum;
+        Long time = scheduledUntil.getOrDefault(key, 0L);
+
+        // 更新状态
+        updateMotorFanState(motorNum, state, deviceNum);
+        
+        Device device = deviceService.findByDeviceNum(deviceNum);
         // 清理该电机(父设备)的排程标记，允许重新排程
         try {
             if (motorNum != null && deviceNum != null) {
-                String key = motorNum + ":" + deviceNum;
-                scheduledUntil.remove(key);
+                removeScheduleKey(motorNum, deviceNum);
                 // 开始新一轮排程
                 // 根据 deviceId 和 motorNum 获得 motorFan 对象
                 if (device != null) {
@@ -416,6 +434,17 @@ public class MotorControlRuleEngineService {
             log.warn("清理调度标记失败: motorNum={}, deviceNum={}", motorNum, deviceNum, e);
         }
     }
+
+    /**
+     * 清除延时任务的 KEY
+     * @param motorNum motorFan 的 num
+     * @param deviceNum device的 num
+     */
+    private void removeScheduleKey(String motorNum, String deviceNum) {
+        String key = motorNum + ":" + deviceNum;
+        scheduledUntil.remove(key);
+    }
+
 
     /**
      * 发送电机控制消息到RabbitMQ

@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 电机控制消息消费者服务
@@ -57,7 +55,7 @@ public class MotorControlConsumerService {
                     message.getMotorId(), message.getState(), message.getTimestamp());
 
             // 将到期的延时消息视为普通控制消息进行处理
-            motorControlService.updateMotorFanState(message.getDeviceNum(),
+            motorControlService.updateMotorFanStateByDelayMessage(message.getDeviceNum(),
                     message.getState(), message.getParentDeviceNum());
 
         } catch (Exception e) {
