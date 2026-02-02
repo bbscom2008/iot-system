@@ -347,4 +347,8 @@ public class DeviceService {
     public Device findByDeviceNum(String deviceNum) {
         return deviceMapper.findByDeviceNum(deviceNum);
     }
+
+    public Device findByDeviceId(Long deviceId) {
+        return deviceMapper.findById(deviceId);
+    }
 }

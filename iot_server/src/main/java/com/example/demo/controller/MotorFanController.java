@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.MotorFanListDTO;
 import com.example.demo.entity.MotorFan;
+import com.example.demo.service.MotorControlRuleEngineService;
 import com.example.demo.service.MotorFanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import java.util.Map;
 public class MotorFanController {
 
     private final MotorFanService motorFanService;
+
+    private final MotorControlRuleEngineService motorControlProducerService;
 
     /**
      * 获取所有风机列表（关联设备和用户信息）
@@ -112,6 +115,8 @@ public class MotorFanController {
         }
         
         motorFanService.update(motorFan);
+        // 使用新的规则控制电机
+        motorControlProducerService.processMotorControl(motorFan, null, null);
         return ApiResponse.success("更新成功");
     }
 

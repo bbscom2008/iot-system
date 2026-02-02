@@ -62,6 +62,12 @@ public class MotorControlRuleEngineService {
                 return;
             }
 
+            if(deviceNum == null){
+                Long deviceId = motorFan.getDeviceId();
+                Device device = deviceService.findByDeviceId(deviceId);
+                deviceNum = device.getDeviceNum();
+            }
+
             log.warn("电机: motorId={}， model={}", motorFan.getDeviceId(), motorFan.getAutoMode());
 
             // 第一步：检查自动模式
