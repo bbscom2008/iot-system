@@ -1,4 +1,9 @@
 
+# 在 docker 中创建 rabbitmq 的命令
+
+docker run -d   --name rabbitmq   -p 5672:5672   -p 15672:15672   -e RABBITMQ_DEFAULT_USER=admin   -e RABBITMQ_DEFAULT_PASS=admin123   rabbitmq:3.9-management
+
+
 # rabbitmq 面板 
 
 http://192.168.56.128:15672/

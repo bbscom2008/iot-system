@@ -67,12 +67,15 @@ public class MotorControlRuleEngineService {
             // 第一步：检查自动模式
             // 1 = 自动模式, 2 = 始终开启, 3 = 始终关闭
             if (motorFan.getAutoMode() == 2) {
+                removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
                 // 如果当前状态不是运行，则发送开启命令
                 if (motorFan.getIsRunning() != 1) {
+                    // 清除定时任务 标记
                     updateMotorFanState(motorFan.getDeviceNum(), 1, deviceNum);
                 }
                 return;
             } else if (motorFan.getAutoMode() == 3) {
+                removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
                 // 如果当前状态不是停止，则发送关闭命令
                 if (motorFan.getIsRunning() != 0) {
                     updateMotorFanState(motorFan.getDeviceNum(), 0, deviceNum);
@@ -118,7 +121,7 @@ public class MotorControlRuleEngineService {
             }
 
             // 如果状态改变，发送控制消息
-            if (!newState.equals(motorFan.getIsRunning())) {
+            if (newState != null && !newState.equals(motorFan.getIsRunning())) {
                 updateMotorFanState(motorFan.getDeviceNum(), newState, deviceNum);
             }
 
@@ -159,10 +162,12 @@ public class MotorControlRuleEngineService {
 
         // 如果当前温度 >= 上限，则开启
         if (currentTemp >= upper) {
+            removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
             return 1;
         }
         // 如果当前温度 <= 下限，则关闭
         else if (currentTemp <= lower) {
+            removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
             return 0;
         }
         // 否则，保持当前状态，并按照运行/暂停时间进行循环调度
@@ -394,6 +399,9 @@ public class MotorControlRuleEngineService {
                 log.warn("MQTT服务不可用，无法发送消息: driverNum={}, motorNum={}", deviceNum, motorNum);
             }
 
+            // 清除延时任务标记
+            removeScheduleKey(motorNum, deviceNum);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -411,7 +419,10 @@ public class MotorControlRuleEngineService {
         // 如果延时消息，没有被覆盖，则执行状态更新
         String key = motorNum + ":" + deviceNum;
         Long time = scheduledUntil.getOrDefault(key, 0L);
-
+        // 判断延时任务是否已被取消。
+        if(time == 0){
+            return ;
+        }
         // 更新状态
         updateMotorFanState(motorNum, state, deviceNum);
         
@@ -419,7 +430,6 @@ public class MotorControlRuleEngineService {
         // 清理该电机(父设备)的排程标记，允许重新排程
         try {
             if (motorNum != null && deviceNum != null) {
-                removeScheduleKey(motorNum, deviceNum);
                 // 开始新一轮排程
                 // 根据 deviceId 和 motorNum 获得 motorFan 对象
                 if (device != null) {
@@ -442,6 +452,7 @@ public class MotorControlRuleEngineService {
      */
     private void removeScheduleKey(String motorNum, String deviceNum) {
         String key = motorNum + ":" + deviceNum;
+        log.warn("removeScheduleKey : "+key);
         scheduledUntil.remove(key);
     }
 
