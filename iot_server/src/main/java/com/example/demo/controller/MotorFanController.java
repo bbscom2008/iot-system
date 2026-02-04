@@ -116,7 +116,7 @@ public class MotorFanController {
         
         motorFanService.update(motorFan);
         // 使用新的规则控制电机
-        motorControlProducerService.processMotorControl(motorFan, null, null);
+        motorControlProducerService.processMotorControl(existFan, null, null);
         return ApiResponse.success("更新成功");
     }
 

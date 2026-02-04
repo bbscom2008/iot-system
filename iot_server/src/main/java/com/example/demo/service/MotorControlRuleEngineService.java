@@ -64,7 +64,9 @@ public class MotorControlRuleEngineService {
 
             if(deviceNum == null){
                 Long deviceId = motorFan.getDeviceId();
+                log.warn("deviceId : "+deviceId);
                 Device device = deviceService.findByDeviceId(deviceId);
+                log.warn("device : "+device);
                 deviceNum = device.getDeviceNum();
             }
 
