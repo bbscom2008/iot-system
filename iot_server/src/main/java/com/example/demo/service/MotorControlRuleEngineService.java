@@ -15,7 +15,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.ObjectProvider;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -64,9 +63,7 @@ public class MotorControlRuleEngineService {
 
             if(deviceNum == null){
                 Long deviceId = motorFan.getDeviceId();
-                log.warn("deviceId : "+deviceId);
                 Device device = deviceService.findByDeviceId(deviceId);
-                log.warn("device : "+device);
                 deviceNum = device.getDeviceNum();
             }
 
@@ -121,7 +118,7 @@ public class MotorControlRuleEngineService {
                     break;
                 case 5:
                     // 定时
-                    newState = processTimerControl(motorFan);
+                    newState = processTimerControl(motorFan,deviceNum);
                     break;
                 default:
                     log.warn("未知的控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
@@ -310,10 +307,11 @@ public class MotorControlRuleEngineService {
      * 处理定时控制模式
      * 检查多个定时器并确定最终状态
      *
-     * @param motorFan 电机配置
+     * @param motorFan  电机配置
+     * @param deviceNum
      * @return 新电机状态
      */
-    private Integer processTimerControl(MotorFan motorFan) {
+    private Integer processTimerControl(MotorFan motorFan, String deviceNum) {
         LocalTime currentTime = LocalTime.now();
         int resultState = 0;
 
