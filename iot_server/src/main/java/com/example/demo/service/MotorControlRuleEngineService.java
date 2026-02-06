@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.MotorControlMessage;
 import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
+import com.example.demo.entity.MotorFanTimerTask;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static com.example.demo.entity.MotorFanTimerTask.TIME_FORMATTER;
 
 /**
  * 电机控制规则引擎服务
@@ -42,7 +45,6 @@ public class MotorControlRuleEngineService {
     @Autowired
     private MqttService mqttService;
 
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     // 跟踪为电机调度的延时切换，键格式：motorNum:parentDeviceNum
     private final ConcurrentMap<String, Long> scheduledUntil = new ConcurrentHashMap<>();
@@ -309,34 +311,74 @@ public class MotorControlRuleEngineService {
      *
      * @param motorFan  电机配置
      * @param deviceNum
-     * @return 新电机状态
+     * @return 新电机状态 null 异步处理了，  1 或 0 ，立刻更新
      */
     private Integer processTimerControl(MotorFan motorFan, String deviceNum) {
         LocalTime currentTime = LocalTime.now();
         int resultState = 0;
 
-        // 检查定时器1
-        if (motorFan.getTimer1Enabled() == 1) {
-            if (isTimeInRange(currentTime, motorFan.getTimer1StartTime(), motorFan.getTimer1EndTime())) {
-                resultState = 1;
+        // 获得所有的定时任务
+        List<MotorFanTimerTask> taskList = getAllEnableTask(motorFan);
+        // 对 taskList 按开始时间 排序
+        Collections.sort(taskList);
+
+        // 找到要处理的时间点
+        LocalTime now = LocalTime.now();
+//        LocalTime now = LocalTime.parse("0:00", TIME_FORMATTER);
+        MotorFanTimerTask processTimeTask = null;
+
+        for (MotorFanTimerTask task : taskList) {
+            String startTime = task.getStartTime();
+            String endTime = task.getEndTime();
+            if (now.isBefore(LocalTime.parse(startTime, TIME_FORMATTER))
+                    || isTimeInRange(now, startTime, endTime)) {
+                processTimeTask = task;
+                break;
             }
+        }
+        if (processTimeTask == null) {
+            return null;
         }
 
-        // 检查定时器2
-        if (motorFan.getTimer2Enabled() == 1) {
-            if (isTimeInRange(currentTime, motorFan.getTimer2StartTime(), motorFan.getTimer2EndTime())) {
-                resultState = 1;
-            }
+        // 时间还没到，发送定时任务，到时候再执行
+        LocalTime processStartTime = LocalTime.parse(processTimeTask.getStartTime(), TIME_FORMATTER);
+        if (now.isBefore(processStartTime)) {
+            // 现在到指定时间还有多少秒
+            long secondsDiff = now.until(processStartTime, ChronoUnit.SECONDS);
+            System.out.println("到开始时间还有: " + secondsDiff + "秒");
+        } else {
+            // 当前时间在指定时间段内,
+
+
         }
 
-        // 检查定时器3
-        if (motorFan.getTimer3Enabled() == 1) {
-            if (isTimeInRange(currentTime, motorFan.getTimer3StartTime(), motorFan.getTimer3EndTime())) {
-                resultState = 1;
-            }
-        }
 
         return resultState;
+    }
+
+    /**
+     * 获得所有定时任务
+     * @param motorFan
+     * @return
+     */
+    private List<MotorFanTimerTask> getAllEnableTask(MotorFan motorFan) {
+
+        List<MotorFanTimerTask> taskList = new ArrayList<>();
+        // 总共 3 个传感器
+        if (motorFan.getTimer1Enabled() == 1) {
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer1Enabled(), motorFan.getTimer1StartTime(), motorFan.getTimer1EndTime(),
+             motorFan.getTimer1ProbeSensorId(), motorFan.getTimer1StartTemp(), motorFan.getTimer1StopTemp()));
+        }
+        if (motorFan.getTimer2Enabled() == 1) {
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer2Enabled(), motorFan.getTimer2StartTime(), motorFan.getTimer2EndTime(),
+                    motorFan.getTimer2ProbeSensorId(), motorFan.getTimer2StartTemp(), motorFan.getTimer2StopTemp()));
+        }
+        if (motorFan.getTimer3Enabled() == 1) {
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer3Enabled(), motorFan.getTimer3StartTime(), motorFan.getTimer3EndTime(),
+                    motorFan.getTimer3ProbeSensorId(), motorFan.getTimer3StartTemp(), motorFan.getTimer3StopTemp()));
+        }
+
+        return taskList;
     }
 
     /**
