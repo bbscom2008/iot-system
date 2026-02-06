@@ -29,7 +29,7 @@ public class MotorControlMessage implements Serializable {
     private Long deviceId;
 
     /**
-     * 设备编号
+     * 设备编号  如  mt1  mt2   imt1  imt2
      */
     private String deviceNum;
 
@@ -61,9 +61,14 @@ public class MotorControlMessage implements Serializable {
     private Integer delayTime;
 
     /**
-     * 消息时间戳
+     * 消息时间戳 , 单位毫秒，表示消息生成的时间
      */
     private Long timestamp;
+
+    /**
+     * 运行时间，单位毫秒，表示计划执行的时间
+     */
+    private Long runningTime;
 
     /**
      * 备注信息

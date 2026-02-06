@@ -39,15 +39,73 @@ public class MotorControlRuleEngineService {
     private final DeviceService deviceService;
 
     // 延迟获取 MqttService 以打破启动时的循环依赖
-//    private final ObjectProvider<MqttService> mqttServiceProvider;
+    // private final ObjectProvider<MqttService> mqttServiceProvider;
 
     @Lazy
     @Autowired
     private MqttService mqttService;
 
+    // 1 = 温度控制, 2 = 循环, 3 = 湿度控制, 4 = 气体控制, 5 = 定时
 
-    // 跟踪为电机调度的延时切换，键格式：motorNum:parentDeviceNum
+    /**
+     * 电机调度的延时切换，KEY : 格式：temp:motorNum:parentDeviceNum
+     * 定时任务标记，防止重复排队 key : timer:motorNum:parentDeviceNum
+     * value : 计划执行的时间戳（毫秒）如果为 0 表示已经取消
+     */
     private final ConcurrentMap<String, Long> scheduledUntil = new ConcurrentHashMap<>();
+
+    /**
+     * 生成延时消息的 KEY
+     * @param controlMode
+     * @param motorNum
+     * @param deviceNum
+     * @return
+     */
+    private String getMapKey(int controlMode, String motorNum, String deviceNum) {
+        String type = null;
+        if (controlMode == 1) {
+            type = "temp";
+        } else if (controlMode == 5) {
+            type = "timer";
+        } else {
+            log.error("未知的控制模式: controlMode={}, motorNum={}, deviceNum={}", controlMode, motorNum, deviceNum);
+            throw new IllegalArgumentException("未知的控制模式: " + controlMode);
+        }
+
+        return type + ":" + motorNum + ":" + deviceNum;
+    }
+
+    /**
+     * 生成延时消息的 KEY
+      * @param controlMode
+     * @param motorFan
+     * @param deviceNum
+     * @return
+     */
+    private String getMapKey(MotorFan motorFan, String deviceNum) {
+        return getMapKey(motorFan.getControlMode(), motorFan.getDeviceNum(), deviceNum);
+    }
+
+    /**
+     * 清除延时任务的 KEY
+     * @param controlMode
+     * @param motorNum
+     * @param deviceNum
+     */
+    private void removeScheduleKey(Integer controlMode, String motorNum, String deviceNum) {
+        String key = getMapKey(controlMode, motorNum, deviceNum);
+        scheduledUntil.remove(key);
+        log.warn("removeScheduleKey : " + key);
+    }
+
+    /**
+     * 清除延时任务的 KEY
+     * @param motorFan
+     * @param deviceNum
+     */
+    private void removeScheduleKey(MotorFan motorFan, String deviceNum) {
+        removeScheduleKey(motorFan.getControlMode(), motorFan.getDeviceNum(), deviceNum);
+    }
 
     /**
      * 根据配置和传感器数据处理电机控制
@@ -63,7 +121,7 @@ public class MotorControlRuleEngineService {
                 return;
             }
 
-            if(deviceNum == null){
+            if (deviceNum == null) {
                 Long deviceId = motorFan.getDeviceId();
                 Device device = deviceService.findByDeviceId(deviceId);
                 deviceNum = device.getDeviceNum();
@@ -74,7 +132,7 @@ public class MotorControlRuleEngineService {
             // 第一步：检查自动模式
             // 1 = 自动模式, 2 = 始终开启, 3 = 始终关闭
             if (motorFan.getAutoMode() == 2) {
-                removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
+                removeScheduleKey(motorFan, deviceNum);
                 // 如果当前状态不是运行，则发送开启命令
                 if (motorFan.getIsRunning() != 1) {
                     // 清除定时任务 标记
@@ -82,7 +140,7 @@ public class MotorControlRuleEngineService {
                 }
                 return;
             } else if (motorFan.getAutoMode() == 3) {
-                removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
+                removeScheduleKey(motorFan, deviceNum);
                 // 如果当前状态不是停止，则发送关闭命令
                 if (motorFan.getIsRunning() != 0) {
                     updateMotorFanState(motorFan.getDeviceNum(), 0, deviceNum);
@@ -111,7 +169,7 @@ public class MotorControlRuleEngineService {
                     newState = processCycleControl(motorFan);
                     break;
                 case 3:
-                    //  目前还没有 湿度传感器
+                    // 目前还没有 湿度传感器
                     log.warn("目前还没有温度控制模式: motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
                     break;
                 case 4:
@@ -120,7 +178,7 @@ public class MotorControlRuleEngineService {
                     break;
                 case 5:
                     // 定时
-                    newState = processTimerControl(motorFan,deviceNum);
+                    newState = processTimerControl(motorFan, deviceNum);
                     break;
                 default:
                     log.warn("未知的控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
@@ -130,6 +188,8 @@ public class MotorControlRuleEngineService {
             // 如果状态改变，发送控制消息
             if (newState != null && !newState.equals(motorFan.getIsRunning())) {
                 updateMotorFanState(motorFan.getDeviceNum(), newState, deviceNum);
+                // 清除定时任务 标记
+                removeScheduleKey(motorFan, deviceNum);
             }
 
         } catch (Exception e) {
@@ -153,7 +213,7 @@ public class MotorControlRuleEngineService {
             if (sensorId != null) {
                 currentTemp = sensorService.getSensorValueById(sensorId);
                 log.info("获取传感器温度: sensorId={}, temperature={}", sensorId, currentTemp);
-            }else{
+            } else {
                 log.info("当前电机没有设置 温度传感器: motorFanId={}, sensorId={}", motorFan.getDeviceId(), sensorId);
                 return motorFan.getIsRunning();
             }
@@ -169,25 +229,25 @@ public class MotorControlRuleEngineService {
 
         // 如果当前温度 >= 上限，则开启
         if (currentTemp >= upper) {
-            removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
+            removeScheduleKey(motorFan, deviceNum);
             return 1;
         }
         // 如果当前温度 <= 下限，则关闭
         else if (currentTemp <= lower) {
-            removeScheduleKey(motorFan.getDeviceNum(), deviceNum);
+            removeScheduleKey(motorFan, deviceNum);
             return 0;
         }
         // 否则，保持当前状态，并按照运行/暂停时间进行循环调度
         else {
             Integer runTime = motorFan.getRunTime(); // 运行多少 秒
-            Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒 
+            Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒
 
             if (runTime == null || pauseTime == null || runTime <= 0 || pauseTime <= 0) {
                 log.warn("循环时间未设置或无效: motorId={}", motorFan.getId());
                 return motorFan.getIsRunning();
             }
 
-            String key = motorFan.getDeviceNum() + ":" + deviceNum;
+            String key = getMapKey(motorFan, deviceNum);
             long now = System.currentTimeMillis();
 
             // 如果当前正在运行，排期在 runTime 秒后停止；如果当前停止，排期在 pauseTime 秒后启动
@@ -200,7 +260,7 @@ public class MotorControlRuleEngineService {
 
                 int delayMs = runTime * 1000;
                 scheduledUntil.put(key, now + delayMs);
-                sendMotorControlMessage(motorFan, 0, delayMs, deviceNum);
+                sendMotorControlMessage(motorFan, 0, delayMs, deviceNum, now + delayMs);
                 return 1;
             } else {
                 long scheduledTs = scheduledUntil.getOrDefault(key, 0L);
@@ -210,7 +270,7 @@ public class MotorControlRuleEngineService {
 
                 int delayMs = pauseTime * 1000;
                 scheduledUntil.put(key, now + delayMs);
-                sendMotorControlMessage(motorFan, 1, delayMs, deviceNum);
+                sendMotorControlMessage(motorFan, 1, delayMs, deviceNum, now + delayMs);
                 return 0;
             }
         }
@@ -311,7 +371,7 @@ public class MotorControlRuleEngineService {
      *
      * @param motorFan  电机配置
      * @param deviceNum
-     * @return 新电机状态 null 异步处理了，  1 或 0 ，立刻更新
+     * @return 新电机状态 null 异步处理了， 1 或 0 ，立刻更新
      */
     private Integer processTimerControl(MotorFan motorFan, String deviceNum) {
         LocalTime currentTime = LocalTime.now();
@@ -324,7 +384,7 @@ public class MotorControlRuleEngineService {
 
         // 找到要处理的时间点
         LocalTime now = LocalTime.now();
-//        LocalTime now = LocalTime.parse("0:00", TIME_FORMATTER);
+        // LocalTime now = LocalTime.parse("0:00", TIME_FORMATTER);
         MotorFanTimerTask processTimeTask = null;
 
         for (MotorFanTimerTask task : taskList) {
@@ -346,18 +406,26 @@ public class MotorControlRuleEngineService {
             // 现在到指定时间还有多少秒
             long secondsDiff = now.until(processStartTime, ChronoUnit.SECONDS);
             System.out.println("到开始时间还有: " + secondsDiff + "秒");
+
+            long runningTime = System.currentTimeMillis() + secondsDiff * 1000;
+            scheduledUntil.put(
+                    getMapKey(motorFan, deviceNum),
+                    runningTime);
+
+            // 发送延时消息
+            sendMotorControlMessage(motorFan, null, (int) (secondsDiff * 1000), deviceNum, runningTime);
+            return null;
         } else {
             // 当前时间在指定时间段内,
 
-
         }
-
 
         return resultState;
     }
 
     /**
      * 获得所有定时任务
+     * 
      * @param motorFan
      * @return
      */
@@ -366,15 +434,18 @@ public class MotorControlRuleEngineService {
         List<MotorFanTimerTask> taskList = new ArrayList<>();
         // 总共 3 个传感器
         if (motorFan.getTimer1Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer1Enabled(), motorFan.getTimer1StartTime(), motorFan.getTimer1EndTime(),
-             motorFan.getTimer1ProbeSensorId(), motorFan.getTimer1StartTemp(), motorFan.getTimer1StopTemp()));
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer1Enabled(), motorFan.getTimer1StartTime(),
+                    motorFan.getTimer1EndTime(),
+                    motorFan.getTimer1ProbeSensorId(), motorFan.getTimer1StartTemp(), motorFan.getTimer1StopTemp()));
         }
         if (motorFan.getTimer2Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer2Enabled(), motorFan.getTimer2StartTime(), motorFan.getTimer2EndTime(),
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer2Enabled(), motorFan.getTimer2StartTime(),
+                    motorFan.getTimer2EndTime(),
                     motorFan.getTimer2ProbeSensorId(), motorFan.getTimer2StartTemp(), motorFan.getTimer2StopTemp()));
         }
         if (motorFan.getTimer3Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer3Enabled(), motorFan.getTimer3StartTime(), motorFan.getTimer3EndTime(),
+            taskList.add(new MotorFanTimerTask(motorFan.getTimer3Enabled(), motorFan.getTimer3StartTime(),
+                    motorFan.getTimer3EndTime(),
                     motorFan.getTimer3ProbeSensorId(), motorFan.getTimer3StartTemp(), motorFan.getTimer3StopTemp()));
         }
 
@@ -412,11 +483,11 @@ public class MotorControlRuleEngineService {
     }
 
     /**
-     * 发送mqtt消息更新 motorFan 的状态
+     * 立刻发送mqtt消息更新 motorFan 的状态
      *
-     * @param motorNum  如   mt1  mt2 mt3
-     * @param state     新状态  0 1
-     * @param deviceNum 设置名称  d002  d004
+     * @param motorNum  如 mt1 mt2 mt3 
+     * @param state     新状态 0 1
+     * @param deviceNum 设置名称 d004  102154874521025
      */
     public void updateMotorFanState(String motorNum, Integer state, String deviceNum) {
 
@@ -424,86 +495,67 @@ public class MotorControlRuleEngineService {
         jsonMap.put("id", deviceNum);
         jsonMap.put(motorNum, state);
 
-        String payload = null;
         Device device = deviceService.findByDeviceNum(deviceNum);
 
         try {
-            payload = objectMapper.writeValueAsString(jsonMap);
+            String payload = objectMapper.writeValueAsString(jsonMap);
             // 发送 MQTT 消息 更新硬件状态
-            if (mqttService != null) {
-                boolean publishSuccess = mqttService.publishString(MqttService.DEVICE_CTRL(deviceNum), payload);
-                if (!publishSuccess) {
-                    log.warn("MQTT消息发送失败: driverNum={}, motorNum={}", deviceNum, motorNum);
-                }
-                // 更新数据库，当前电机状态已经更新
-                motorFanService.updateRunningStatusByParentAndCode( device.getId(), motorNum, state);
+            mqttService.publishString(MqttService.DEVICE_CTRL(deviceNum), payload);
+            // 更新数据库，当前电机状态已经更新
+            motorFanService.updateRunningStatusByParentAndCode(device.getId(), motorNum, state);
 
-                log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
+            log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
 
-                // 通知前端页面，更新状态
-                mqttService.notifyToUpdate(deviceNum);
-
-            } else {
-                log.warn("MQTT服务不可用，无法发送消息: driverNum={}, motorNum={}", deviceNum, motorNum);
-            }
-
-            // 清除延时任务标记
-            removeScheduleKey(motorNum, deviceNum);
-
+            // 通知前端页面，更新状态
+            mqttService.notifyToUpdate(deviceNum);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * 发送mqtt消息更新 motorFan 的状态
+     * 执行延时消息更新 motorFan 的状态
      *
-     * @param motorNum  如   mt1  mt2 mt3
-     * @param state     新状态  0 1
-     * @param deviceNum 设置名称  d002  d004
+     * @param motorNum  如 mt1 mt2 mt3
+     * @param state     新状态 0 1
+     * @param deviceNum 设置名称 d004  102154874521025
      */
-    public void updateMotorFanStateByDelayMessage(String motorNum, Integer state, String deviceNum) {
+    public void updateMotorFanStateByDelayMessage(MotorControlMessage message) {
+
+        String motorNum = message.getDeviceNum();
+        String deviceNum = message.getParentDeviceNum();
+        // 控制模式: 1 = 温度控制, 2 = 循环, 3 = 湿度控制, 4 = 气体控制, 5 = 定时
+        Integer controlMode = message.getControlMode();
+
+        String key = getMapKey(controlMode, motorNum, deviceNum);
 
         // 如果延时消息，没有被覆盖，则执行状态更新
-        String key = motorNum + ":" + deviceNum;
         Long time = scheduledUntil.getOrDefault(key, 0L);
         // 判断延时任务是否已被取消。
-        if(time == 0){
-            return ;
+        if (time == 0) {
+            return;
         }
         // 更新状态
-        updateMotorFanState(motorNum, state, deviceNum);
-        
-        Device device = deviceService.findByDeviceNum(deviceNum);
+        updateMotorFanState(motorNum, message.getState(), deviceNum);
+
+        // 清理排程标记，允许下一轮排程
+        removeScheduleKey(controlMode, motorNum, deviceNum);
+
+        // Device device = deviceService.findByDeviceNum(deviceNum);
         // 清理该电机(父设备)的排程标记，允许重新排程
         try {
-            if (motorNum != null && deviceNum != null) {
-                // 开始新一轮排程
-                // 根据 deviceId 和 motorNum 获得 motorFan 对象
-                if (device != null) {
-                    MotorFan motorFan = motorFanService.findByDeviceIdAndMotorNum(device.getId(), motorNum);
-                    if (motorFan != null) {
-                        processMotorControl(motorFan, null, deviceNum);
-                    }
-                }
-
+            // 开始新一轮排程 根据 deviceId 和 motorNum 获得 motorFan 对象
+            MotorFan motorFan = motorFanService.findByDeviceNumAndMotorNum(deviceNum, motorNum);
+            if (motorFan != null) {
+                processMotorControl(motorFan, null, deviceNum);
             }
+
         } catch (Exception e) {
             log.warn("清理调度标记失败: motorNum={}, deviceNum={}", motorNum, deviceNum, e);
         }
     }
 
-    /**
-     * 清除延时任务的 KEY
-     * @param motorNum motorFan 的 num
-     * @param deviceNum device的 num
-     */
-    private void removeScheduleKey(String motorNum, String deviceNum) {
-        String key = motorNum + ":" + deviceNum;
-        log.warn("removeScheduleKey : "+key);
-        scheduledUntil.remove(key);
-    }
-
+    
 
     /**
      * 发送电机控制消息到RabbitMQ
@@ -511,9 +563,10 @@ public class MotorControlRuleEngineService {
      * @param motorFan  电机配置
      * @param newState  新电机状态
      * @param delayTime 延时时间（毫秒）
-     * @param deviceNum 设备编号  d002 等。
+     * @param deviceNum 设备编号 d002 等。
      */
-    private void sendMotorControlMessage(MotorFan motorFan, Integer newState, Integer delayTime, String deviceNum) {
+    private void sendMotorControlMessage(MotorFan motorFan, Integer newState, Integer delayTime, String deviceNum,
+            Long runningTime) {
         MotorControlMessage message = MotorControlMessage.builder()
                 .motorId(motorFan.getId())
                 .deviceId(motorFan.getDeviceId())
@@ -523,7 +576,8 @@ public class MotorControlRuleEngineService {
                 .controlMode(motorFan.getControlMode())
                 .autoMode(motorFan.getAutoMode())
                 .delayTime(delayTime)
-                .timestamp(System.currentTimeMillis())
+                .timestamp(System.currentTimeMillis()) // 当前时间戳
+                .runningTime(runningTime) // 计划执行的时间，与 hashMap 中的时间配合使用
                 .build();
 
         if (delayTime != null && delayTime > 0) {

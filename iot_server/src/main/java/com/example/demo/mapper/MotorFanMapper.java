@@ -34,6 +34,14 @@ public interface MotorFanMapper {
     MotorFan findById(Long id);
 
     /**
+     * 根据父设备编号和电机编号查询电机风扇
+     * @param deviceNum
+     * @param motorNum
+     * @return
+     */
+    MotorFan findByDeviceNumAndMotorNum(@Param("deviceNum") String deviceNum, @Param("motorNum") String motorNum);
+
+    /**
      * 新增风扇
      */
     int insert(MotorFan motorFan);

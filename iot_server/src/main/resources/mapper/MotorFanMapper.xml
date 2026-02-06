@@ -149,6 +149,11 @@
         SELECT * FROM motor_fan WHERE id = #{id}
     </select>
 
+    <!-- 根据设备ID 和 电机编号查询风扇 -->
+    <select id="findByDeviceNumAndMotorNum" resultMap="BaseResultMap">
+        SELECT * FROM motor_fan WHERE device_num = #{deviceNum} AND motor_num = #{motorNum}
+    </select>
+
     <!-- 新增风扇 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, control_mode, auto_mode, created_time, updated_time)

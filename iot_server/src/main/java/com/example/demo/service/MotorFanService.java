@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.MotorFanListDTO;
+import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.mapper.MotorFanMapper;
 import com.example.demo.util.JsonUtils;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class MotorFanService {
 
     private final MotorFanMapper motorFanMapper;
+    private final DeviceService deviceService;
 
     /**
      * 根据父设备ID查询所有风扇
@@ -44,10 +47,10 @@ public class MotorFanService {
     /**
      * 查询所有风扇
      */
-    public List<MotorFan> findAll() {
-        // 注意：这个方法返回的是MotorFan实体，不包含关联信息
-        return List.of();
-    }
+    // public List<MotorFan> findAll() {
+    //     // 注意：这个方法返回的是MotorFan实体，不包含关联信息
+    //     return List.of();
+    // }
 
     /**
      * 根据ID查询风扇
@@ -55,6 +58,22 @@ public class MotorFanService {
     public MotorFan findById(Long id) {
         return motorFanMapper.findById(id);
     }
+
+      /**
+     * 根据父设备编号和电机编号查询电机风扇
+     * 
+     * @param parentDeviceNum 父设备编号 (如 "d004", "102154874521025")
+     * @param motorNum 电机编号 (如 "mt1", "mt2", "mt3")
+     * @return 找到的电机风扇，如果未找到返回null
+     */
+    public MotorFan findByDeviceNumAndMotorNum(String deviceNum, String motorNum) {
+        if (deviceNum == null || motorNum == null) {
+            return null;
+        }
+        // 根据设备ID和电机编号查找电机风扇
+        return motorFanMapper.findByDeviceNumAndMotorNum(deviceNum,motorNum);
+    }
+
 
     /**
      * 新增风扇
@@ -162,4 +181,6 @@ public class MotorFanService {
 
         return null;
     }
+
+  
 }

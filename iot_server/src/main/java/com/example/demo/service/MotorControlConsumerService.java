@@ -55,8 +55,7 @@ public class MotorControlConsumerService {
                     message.getMotorId(), message.getState(), message.getTimestamp());
 
             // 将到期的延时消息视为普通控制消息进行处理
-            motorControlService.updateMotorFanStateByDelayMessage(message.getDeviceNum(),
-                    message.getState(), message.getParentDeviceNum());
+            motorControlService.updateMotorFanStateByDelayMessage(message);
 
         } catch (Exception e) {
             log.error("【延时消费者】处理延时电机控制消息错误: {}",
