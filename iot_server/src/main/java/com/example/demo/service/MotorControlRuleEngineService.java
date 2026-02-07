@@ -56,6 +56,7 @@ public class MotorControlRuleEngineService {
 
     /**
      * 生成延时消息的 KEY
+     * 
      * @param controlMode
      * @param motorNum
      * @param deviceNum
@@ -77,7 +78,8 @@ public class MotorControlRuleEngineService {
 
     /**
      * 生成延时消息的 KEY
-      * @param controlMode
+     * 
+     * @param controlMode
      * @param motorFan
      * @param deviceNum
      * @return
@@ -88,6 +90,7 @@ public class MotorControlRuleEngineService {
 
     /**
      * 清除延时任务的 KEY
+     * 
      * @param controlMode
      * @param motorNum
      * @param deviceNum
@@ -100,6 +103,7 @@ public class MotorControlRuleEngineService {
 
     /**
      * 清除延时任务的 KEY
+     * 
      * @param motorFan
      * @param deviceNum
      */
@@ -374,7 +378,6 @@ public class MotorControlRuleEngineService {
      * @return 新电机状态 null 异步处理了， 1 或 0 ，立刻更新
      */
     private Integer processTimerControl(MotorFan motorFan, String deviceNum) {
-        LocalTime currentTime = LocalTime.now();
         int resultState = 0;
 
         // 获得所有的定时任务
@@ -408,18 +411,41 @@ public class MotorControlRuleEngineService {
             System.out.println("到开始时间还有: " + secondsDiff + "秒");
 
             long runningTime = System.currentTimeMillis() + secondsDiff * 1000;
-            scheduledUntil.put(
-                    getMapKey(motorFan, deviceNum),
-                    runningTime);
 
+            String key = getMapKey(motorFan, deviceNum);
+            // 记录定时任务标记
+            long scheduledTime = scheduledUntil.getOrDefault(key, 0L);
+            if (scheduledTime >= runningTime) {
+                // 已经有更早的排程，跳过重复排队
+                return null;
+            }
+            scheduledUntil.put(key, runningTime);
             // 发送延时消息
             sendMotorControlMessage(motorFan, null, (int) (secondsDiff * 1000), deviceNum, runningTime);
             return null;
         } else {
             // 当前时间在指定时间段内,
-
+            // 检查传感器温度，决定是否开启或关闭电机
+            Long sensorId = processTimeTask.getProbeSensorId();
+            Double sensorValue = sensorService.getSensorValueById(sensorId);
+            Double startTemp = processTimeTask.getStartTemp();
+            Double stopTemp = processTimeTask.getStopTemp();  
+            
+            if (sensorValue != null) {
+                if (sensorValue >= startTemp) {
+                    resultState = 1;
+                } else if (sensorValue <= stopTemp) {
+                    resultState = 0;
+                } else {
+                    // 温度在启动和停止之间，保持当前状态
+                    resultState = motorFan.getIsRunning();
+                }
+            } else {
+                log.warn("未获取到传感器数据: sensorId={}", sensorId);
+                // 保持当前状态
+                resultState = motorFan.getIsRunning();
+            }
         }
-
         return resultState;
     }
 
@@ -485,11 +511,16 @@ public class MotorControlRuleEngineService {
     /**
      * 立刻发送mqtt消息更新 motorFan 的状态
      *
-     * @param motorNum  如 mt1 mt2 mt3 
+     * @param motorNum  如 mt1 mt2 mt3
      * @param state     新状态 0 1
-     * @param deviceNum 设置名称 d004  102154874521025
+     * @param deviceNum 设置名称 d004 102154874521025
      */
     public void updateMotorFanState(String motorNum, Integer state, String deviceNum) {
+
+        if(state == null){
+            log.warn("更新电机状态失败，状态不能为空: motorNum={}, deviceNum={}", motorNum, deviceNum);
+            return;
+        }
 
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("id", deviceNum);
@@ -518,7 +549,7 @@ public class MotorControlRuleEngineService {
      *
      * @param motorNum  如 mt1 mt2 mt3
      * @param state     新状态 0 1
-     * @param deviceNum 设置名称 d004  102154874521025
+     * @param deviceNum 设置名称 d004 102154874521025
      */
     public void updateMotorFanStateByDelayMessage(MotorControlMessage message) {
 
@@ -533,18 +564,24 @@ public class MotorControlRuleEngineService {
         Long time = scheduledUntil.getOrDefault(key, 0L);
         // 判断延时任务是否已被取消。
         if (time == 0) {
+            log.warn("延时消息已被取消，跳过执行: key={}", key);
             return;
         }
-        // 更新状态
-        updateMotorFanState(motorNum, message.getState(), deviceNum);
+        if (message.getRunningTime() == null || !message.getRunningTime().equals(time)) {
+            log.warn("延时消息已被覆盖，跳过执行: key={}, scheduledTime={}, messageTime={}",
+                    key, time, message.getRunningTime());
+            return;
+        }
 
-        // 清理排程标记，允许下一轮排程
-        removeScheduleKey(controlMode, motorNum, deviceNum);
+        if(message.getState() != null){
+            // 更新状态
+            updateMotorFanState(motorNum, message.getState(), deviceNum);
+        }
 
-        // Device device = deviceService.findByDeviceNum(deviceNum);
-        // 清理该电机(父设备)的排程标记，允许重新排程
         try {
-            // 开始新一轮排程 根据 deviceId 和 motorNum 获得 motorFan 对象
+            // 清理排程标记，检测状态，开始下一轮排程
+            removeScheduleKey(controlMode, motorNum, deviceNum);
+
             MotorFan motorFan = motorFanService.findByDeviceNumAndMotorNum(deviceNum, motorNum);
             if (motorFan != null) {
                 processMotorControl(motorFan, null, deviceNum);
@@ -554,8 +591,6 @@ public class MotorControlRuleEngineService {
             log.warn("清理调度标记失败: motorNum={}, deviceNum={}", motorNum, deviceNum, e);
         }
     }
-
-    
 
     /**
      * 发送电机控制消息到RabbitMQ
