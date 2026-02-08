@@ -863,11 +863,17 @@ export default {
         },
       ];
     },
+    realtimeTemp(){
+      if (this.probeIndex >= 0 && this.temperatureSensors[this.probeIndex]) {
+        return this.temperatureSensors[this.probeIndex].sensorValue;
+      }
+      return '--';
+    }
+    
   },
   data() {
     return {
       currentTimerGroup: 1,
-      realtimeTemp: 19.3,
     };
   },
   onLoad() {
@@ -965,6 +971,9 @@ export default {
           title: "保存成功",
           icon: "success",
         });
+
+        uni.navigateBack();
+
       } catch (error) {
         console.error('保存失败:', error);
         uni.showToast({
