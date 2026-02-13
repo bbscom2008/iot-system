@@ -18,10 +18,10 @@ const MQTT_CONFIG = {
     clean: true, // 是否清除会话
     qos: 1, // 默认 QoS 等级 (0, 1, 2)
   },
-  // 生产环境配置
+  // 生产环境配置, nginx 和 java 服务器在 同一台机器上，使用内网地址
   prod: {
-    broker: 'ws://192.168.56.128:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
-    brokerWx: 'ws://192.168.56.128:8083/mqtt', // TCP 连接地址
+    broker: 'ws://127.0.0.1:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
+    brokerWx: 'ws://127.0.0.1:8083/mqtt', // TCP 连接地址
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
     username: '', // 用户名
     password: '', // 密码
