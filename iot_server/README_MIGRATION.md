@@ -106,6 +106,32 @@ GET /api/dict-data/role-type/list/mobile
 GET /api/dict-data/role-type/list/web
 ```
 
+```
+https://121.41.131.103:8088/14378d0f
+user
+baotadQ1hL3u
+
+
+emqx 面板：
+http://121.41.131.103:18083/#/dashboard/overview
+admin
+test123123
+
+
+
+mysql 数据库
+iot_system
+WXpWm7e4thW3YAkH
+
+
+root
+Lxe2LkM32Cds5kFr
+
+
+/www/server/java/jdk-17.0.8/bin/java -jar /www/wwwroot/iot_server/iot_server.jar --spring.config.location=file:/www/wwwroot/iot_server/application.properties
+
+```
+
 ## 注意事项
 
 1. ✅ 手机端显示逻辑不受影响 - 通过 `platform=mobile` 过滤
