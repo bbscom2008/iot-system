@@ -8,6 +8,7 @@ import com.example.demo.dto.DeviceStatistics;
 import com.example.demo.dto.PageResult;
 import com.example.demo.entity.Device;
 import com.example.demo.service.DeviceService;
+import com.example.demo.service.MqttService;
 import com.example.demo.util.DtoConverter;
 import com.example.demo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class DeviceController {
     private final DeviceService deviceService;
     private final JwtUtil jwtUtil;
     private final DtoConverter dtoConverter;
+    private final MqttService mqttService;
 
     /**
      * 获取设备列表
@@ -75,7 +77,16 @@ public class DeviceController {
     @GetMapping("/detail/{id}")
     public ApiResponse<DeviceDetailDTO> getDeviceDetail(@PathVariable Long id) {
         DeviceDetailDTO deviceDetailDTO = deviceService.getDeviceDetailDTO(id);
+
         return ApiResponse.success(deviceDetailDTO);
+    }
+
+
+    @PostMapping("/notifyUpdateStatus")
+    public ApiResponse<String> notifyUpdateStatus( @RequestBody String deviceNum){
+        // 通知设备，让设备上报数据
+        mqttService.queryDeviceStatus(deviceNum);
+        return ApiResponse.success("通知成功");
     }
 
     /**

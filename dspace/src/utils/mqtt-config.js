@@ -7,8 +7,8 @@
 const MQTT_CONFIG = {
   // 开发环境配置
   dev: {
-    broker: 'ws://192.168.56.128:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
-    brokerWx: 'ws://192.168.56.128:8083/mqtt', // TCP 连接地址
+    broker: 'ws://121.41.131.103:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
+    brokerWx: 'ws://121.41.131.103:8083/mqtt', // TCP 连接地址
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
     username: '', // 用户名
     password: '', // 密码

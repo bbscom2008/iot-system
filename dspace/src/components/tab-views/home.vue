@@ -380,6 +380,14 @@ export default {
           url: `/pages/particulars/particulars?deviceId=${item.id}`,
         });
       } else if (item.deviceType == 1) {
+        // 进入设备详情
+        // 通知更新设备数据
+
+        request.post("/device/notifyUpdateStatus", {
+          deviceNum: item.deviceNum,
+        });
+
+
         uni.navigateTo({
           url: `/pages/equipmentDetails/equipmentDetails`,
         });

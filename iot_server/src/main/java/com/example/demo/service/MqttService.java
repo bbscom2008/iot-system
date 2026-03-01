@@ -37,16 +37,26 @@ public class MqttService implements MqttCallback {
 
 
     /**
-     * 设备向服务器发送 mqtt 消息时的 topic
-     * 如  device/d002
+     * 温控仪数据上报 topic
+     * 如  device/report/123123123
      */
-    public static final String DEVICE_REPORT = "device/";
+    public static final String DEVICE_REPORT = "device/report/";
 
     /**
-     * 服务器向设备发送 mqtt时的 topic
+     * 服务器查询温控仪数据
+     * @param deviceNum
+     * @return
+     */
+    public static String QUERY_DEVICE_STATUS(String deviceNum) {
+        return "device/query-status/" + deviceNum;
+    }
+
+    /**
+     * 服务器向温控仪发送控制指令 topic
+     * 如 ： device/ctrl/123123123
      */
     public static String DEVICE_CTRL(String deviceNum) {
-        return "device-ctrl/" + deviceNum;
+        return "device/ctrl/" + deviceNum;
     }
 
     ;
@@ -198,6 +208,30 @@ public class MqttService implements MqttCallback {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 通知前端 更新页面
+     *
+     * @param deviceNum
+     */
+    public void queryDeviceStatus(String deviceNum) {
+//        try {
+//            Map<String, Object> messageMap = new HashMap<>();
+//            messageMap.put("topic", MqttService.QUERY_DEVICE_STATUS(deviceNum));
+//            messageMap.put("payload", "QUERY_DEVICE_STATUS");
+//            // qos 1 确保消息到达
+//            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
+//            mqttMessage.setQos(1);
+//            client.publish(MqttService.QUERY_DEVICE_STATUS(deviceNum), mqttMessage);
+
+            this.publishString(MqttService.QUERY_DEVICE_STATUS(deviceNum), "QUERY_DEVICE_STATUS");
+
+//        } catch (MqttException e) {
+//            log.warn("notifyToUpdate 出错了");
+//            throw new RuntimeException(e);
+//        }
+    }
+
 
 
     /**
