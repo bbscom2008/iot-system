@@ -1,17 +1,41 @@
 // 网络请求工具
 // 根据环境变量设置不同的 BASE_URL
-const BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'http://121.41.131.103:8080' // 生产环境，nginx 与服务器 在同一台机器上，使用内网地址
-  : 'http://127.0.0.1:8080'   // 开发环境
+const PROD_BASE_URL = 'http://121.41.131.103:8080'
+// const DEV_BASE_URL = 'http://127.0.0.1:8080'
+const DEV_BASE_URL = 'http://121.41.131.103:8080'
+
+function isMiniProgram() {
+	return typeof wx !== 'undefined'
+}
+
+function getBaseUrl() {
+	if (process.env.NODE_ENV === 'production') {
+		return PROD_BASE_URL
+	}
+
+	// 微信小程序里 127.0.0.1 指向的是当前运行环境自身，不是本机后端服务
+	// 开发阶段默认走可访问的服务地址
+	if (isMiniProgram()) {
+		return PROD_BASE_URL
+	}
+
+	return DEV_BASE_URL
+}
+
+const BASE_URL = getBaseUrl()
 
 
 // const BASE_URL = 'http://127.0.0.1:8080'
 
-console.log('当前环境:', process.env.NODE_ENV, 'BASE_URL:', BASE_URL)
+console.log('当前环境:', process.env.NODE_ENV, 'BASE_URL:', BASE_URL, 'isMiniProgram:', isMiniProgram())
 
 
 let requestCount = 0
 let isNavigatingToLogin = false // 防止重复跳转登录页
+
+function normalizeUrl(url = '') {
+	return url.replace(/^\//, '')
+}
 
 /**
  * 清除用户数据并跳转到登录页
@@ -74,7 +98,7 @@ export const request = (options) => {
 		'user/sendResetPasswordCode',
 		'user/changePasswordByPhone'
 	];
-	const needToken = !noTokenUrls.includes(options.url);
+	const needToken = !noTokenUrls.includes(normalizeUrl(options.url));
 	
 	if (needToken) {
 		// 获得 token 

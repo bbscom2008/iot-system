@@ -8,7 +8,7 @@ const MQTT_CONFIG = {
   // 开发环境配置
   dev: {
     broker: 'ws://121.41.131.103:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
-    brokerWx: 'ws://121.41.131.103:8083/mqtt', // TCP 连接地址
+    brokerWx: 'wx://121.41.131.103:8083/mqtt', // 微信小程序连接地址
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
     username: '', // 用户名
     password: '', // 密码
@@ -21,7 +21,7 @@ const MQTT_CONFIG = {
   // 生产环境配置, nginx 和 java 服务器在 同一台机器上，使用内网地址
   prod: {
     broker: 'ws://121.41.131.103:8083/mqtt', // WebSocket 连接地址（H5 和小程序支持）
-    brokerWx: 'ws://121.41.131.103:8083/mqtt', // TCP 连接地址
+    brokerWx: 'wx://121.41.131.103:8083/mqtt', // 微信小程序连接地址
     clientId: 'dspace-' + Math.random().toString(36).substr(2, 9), // 客户端 ID
     username: '', // 用户名
     password: '', // 密码
@@ -58,12 +58,32 @@ export function getbrokerUrl() {
   
   // 判断是否为小程序环境
   if (typeof wx !== 'undefined') {
-    // 微信小程序环境 - 使用 TCP 协议
-    return config.brokerWx;
+    // 微信小程序环境 - 使用 mqtt.js 的 wx/wxs 协议适配器
+    return normalizeMiniProgramBrokerUrl(config.brokerWx || config.broker);
   } 
   
   // H5 环境 - 使用 WebSocket 协议
   return config.broker;
+}
+
+function normalizeMiniProgramBrokerUrl(url) {
+  if (!url) {
+    return url;
+  }
+
+  if (url.startsWith('wx://') || url.startsWith('wxs://')) {
+    return url;
+  }
+
+  if (url.startsWith('wss://')) {
+    return url.replace('wss://', 'wxs://');
+  }
+
+  if (url.startsWith('ws://')) {
+    return url.replace('ws://', 'wx://');
+  }
+
+  return url;
 }
 
 /**

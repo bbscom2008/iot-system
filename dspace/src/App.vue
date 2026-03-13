@@ -328,8 +328,11 @@
 		background-color: #04041A;
 	}
 	
-	/* 全局颜色变量 */
-	:root {
+	/* 全局颜色变量
+	 * 注意：微信小程序端 :root 可能不生效，需同时定义在 page 上
+	 */
+	:root,
+	page {
 		--primary-bg: #04041A;
 		--secondary-bg: #0A0A2E;
 		--card-bg: #1A1A3A;

@@ -1,5 +1,10 @@
 <template>
   <view class="svg-icon" :class="iconClass" :style="iconStyle">
+    <!-- #ifdef MP-WEIXIN -->
+    <text class="mp-icon" :style="mpIconStyle">{{ mpIconText }}</text>
+    <!-- #endif -->
+
+    <!-- #ifndef MP-WEIXIN -->
     <!-- 设备 -->
     <view v-if="name === 'devices'" class="icon-content">
       <svg
@@ -472,6 +477,7 @@
         <line x1="2" x2="22" y1="2" y2="22"></line>
       </svg>
     </view>
+    <!-- #endif -->
   </view>
 </template>
 
@@ -507,6 +513,35 @@ export default {
         color: this.color,
       };
     },
+    mpIconText() {
+      const iconMap = {
+        devices: '▣',
+        timer: '◷',
+        recycle: '↻',
+        gas: '◌',
+        humidity: '💧',
+        temperature: '🌡',
+        fan: '✦',
+        wifi: '📶',
+        alarm: '⚠',
+        home: '⌂',
+        'power-empty': '▭',
+        'power-full': '▮',
+        user: '👤',
+        signal: '▂',
+        eye: '◉',
+        'eye-off': '⊘',
+      };
+
+      return iconMap[this.name] || '•';
+    },
+    mpIconStyle() {
+      return {
+        color: this.color,
+        fontSize: this.size + 'px',
+        lineHeight: this.size + 'px',
+      };
+    },
   },
 };
 </script>
@@ -529,5 +564,14 @@ export default {
 .icon-content svg {
   width: 100%;
   height: 100%;
+}
+
+.mp-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>
