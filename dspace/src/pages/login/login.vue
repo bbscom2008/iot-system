@@ -39,7 +39,7 @@
 					<view class="password-toggle" @tap="togglePassword">
 						<SvgIcon 
 							:name="showPassword ? 'eye-off' : 'eye'" 
-							size="18" 
+							:size="18" 
 						/>
 					</view>
 				</view>

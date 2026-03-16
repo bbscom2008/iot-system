@@ -24,7 +24,7 @@
           <view class="stat-number">{{ allDevice || "0" }}</view>
           <view class="stat-bottom">
             <view class="stat-icon">
-              <SvgIcon name="devices" size="18" />
+              <SvgIcon name="devices" :size="18" />
             </view>
             <view class="stat-label">总设备</view>
           </view>
@@ -33,7 +33,7 @@
           <view class="stat-number">{{ lineDevice || "0" }}</view>
           <view class="stat-bottom">
             <view class="stat-icon">
-              <SvgIcon name="wifi" size="18" color="#05df72" />
+              <SvgIcon name="wifi" :size="18" color="#05df72" />
             </view>
             <view class="stat-label">在线设备</view>
           </view>
@@ -42,7 +42,7 @@
           <view class="stat-number">{{ warningDevice || "0" }}</view>
           <view class="stat-bottom">
             <view class="stat-icon">
-              <SvgIcon name="alarm" size="18" color="#cda109" />
+              <SvgIcon name="alarm" :size="18" color="#cda109" />
             </view>
             <view class="stat-label">报警设备</view>
           </view>
@@ -89,7 +89,7 @@
             <!-- 设备编号 -->
             <view class="base-info">
               <view v-if="hasAnyOutOfRange(item)" class="alarm-icon">
-                <SvgIcon name="alarm" size="18" color="#cda109" />
+                <SvgIcon name="alarm" :size="18" color="#cda109" />
               </view>
               <view class="device-number">{{ item.deviceName }}</view>
               <view class="device-number">编号: {{ item.deviceNum }}</view>
@@ -102,7 +102,7 @@
                   class="status-icon wifi-icon"
                   :class="{ active: item.signal > 1 }"
                 >
-                  <SvgIcon name="wifi" size="18" />
+                  <SvgIcon name="wifi" :size="18" />
                 </view>
                 <text
                   class="status-text"
@@ -118,9 +118,9 @@
                   <SvgIcon
                     v-if="item.electricQuantity > 20"
                     name="power-full"
-                    size="18"
+                    :size="18"
                   />
-                  <SvgIcon v-else name="power-empty" size="18" />
+                  <SvgIcon v-else name="power-empty" :size="18" />
                 </view>
                 <text
                   class="status-text"

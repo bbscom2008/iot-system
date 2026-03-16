@@ -20,7 +20,7 @@
 				
 				<!-- 角色 -->
 				<view class="form-item">
-					<SvgIcon name="user" size="18" class="form-icon" />
+					<SvgIcon name="user" :size="18" class="form-icon" />
 					<picker 
 						@change="onRoleChange" 
 						:value="roleIndex" 
@@ -65,7 +65,7 @@
 					<view class="password-toggle" @tap="togglePassword">
 						<SvgIcon 
 							:name="showPassword ? 'eye-off' : 'eye'" 
-							size="18" 
+							:size="18" 
 						/>
 					</view>
 				</view>

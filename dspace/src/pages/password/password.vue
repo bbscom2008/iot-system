@@ -20,7 +20,7 @@
 						<view class="eye-icon" @tap="toggleOldPassword">
 							<SvgIcon 
 								:name="showOldPassword ? 'eye-off' : 'eye'" 
-								size="18" 
+								:size="18" 
 							/>
 						</view>
 					</view>
@@ -39,7 +39,7 @@
 						<view class="eye-icon" @tap="toggleNewPassword1">
 							<SvgIcon 
 								:name="showNewPassword1 ? 'eye-off' : 'eye'" 
-								size="18" 
+								:size="18" 
 							/>
 						</view>
 					</view>
@@ -101,7 +101,7 @@
 						<view class="eye-icon" @tap="toggleNewPassword2">
 							<SvgIcon 
 								:name="showNewPassword2 ? 'eye-off' : 'eye'" 
-								size="18" 
+								:size="18" 
 							/>
 						</view>
 					</view>
