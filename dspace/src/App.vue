@@ -329,7 +329,8 @@
 	}
 	
 	/* 全局颜色变量 */
-	:root {
+	:root,
+	page {
 		--primary-bg: #04041A;
 		--secondary-bg: #0A0A2E;
 		--card-bg: #1A1A3A;
