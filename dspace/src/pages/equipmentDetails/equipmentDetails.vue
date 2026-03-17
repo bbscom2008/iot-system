@@ -153,7 +153,8 @@
           class="grid-item"
           v-for="fan in deviceInfo.motorFans || []"
           :key="fan.id"
-          @tap="handleFanToggle(fan)"
+          :data-id="fan.id"
+          @tap="handleFanToggle"
         >
           <FanControl
             :device-id="fan.id"
@@ -167,7 +168,8 @@
           v-for="motor in deviceInfo.frequencyMotors || []"
           :key="motor.id"
           class="grid-item control-item"
-          @tap="handleFrequencyMotorClick(motor)"
+          :data-id="motor.id"
+          @tap="handleFrequencyMotorClick"
         >
           <view class="frequency-circle">
             <text class="circle-value">{{ motor.value || "--" }}</text>
@@ -235,9 +237,14 @@ export default {
     },
 
     // 处理风机点击事件 - 跳转到风机详情页面
-    handleFanToggle(fan) {
-      // 将风机完整对象存入 Vuex
-      this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", fan);
+    handleFanToggle(e) {
+      // 通过 data-id 取值（小程序跨线程安全方式），再查找展开为纯对象
+      const fanId = e.currentTarget.dataset.id;
+      const fans = this.deviceInfo.motorFans || [];
+      const found = fans.find(f => f.id === fanId);
+      if (!found) return;
+      const plainFan = { ...found };
+      this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", plainFan);
 
       // 跳转到风机详情页面
       uni.navigateTo({
@@ -298,9 +305,14 @@ export default {
     //   }
     // },
     // 处理变频器点击事件
-    handleFrequencyMotorClick(motor) {
-      // 将变频器完整对象存入 Vuex
-      this.$store.commit("deviceDetail/SET_CURRENT_FREQUENCY_MOTOR", motor);
+    handleFrequencyMotorClick(e) {
+      // 通过 data-id 取值（小程序跨线程安全方式），再查找展开为纯对象
+      const motorId = e.currentTarget.dataset.id;
+      const motors = this.deviceInfo.frequencyMotors || [];
+      const found = motors.find(m => m.id === motorId);
+      if (!found) return;
+      const plainMotor = { ...found };
+      this.$store.commit("deviceDetail/SET_CURRENT_FREQUENCY_MOTOR", plainMotor);
 
       // 跳转到变频器详情页面
       uni.navigateTo({

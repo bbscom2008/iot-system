@@ -37,6 +37,7 @@ export default {
   .fan-control {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: row;
     gap: 12rpx;
     height: 100%;
