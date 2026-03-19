@@ -30,6 +30,10 @@ export default {
       type: String,
       default: '#4ea3ff',
     },
+    fill: {
+      type: String,
+      default: 'none',
+    },
   },
   computed: {
     iconClass() {
@@ -46,7 +50,7 @@ export default {
       if (!raw) return '';
       return raw
         .replace(/stroke="currentColor"/g, `stroke="${this.color}"`)
-        .replace(/fill="currentColor"/g, `fill="${this.color}"`);
+        .replace(/fill="currentColor"/g, `fill="${this.fill}"`);
     },
     // 小程序使用 data URI，将颜色直接编码进 SVG
     svgDataUri() {

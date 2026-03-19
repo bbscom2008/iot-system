@@ -10,8 +10,8 @@
         <view class="control-icon temp-icon">
           <SvgIcon
             name="temperature"
-            :color="controlMode === 1 ? 'red' : '#CCCCCC'"
-            :fill="controlMode === 1 ? 'red' : '#CCCCCC'"
+            :color="controlMode === 1 ? 'red' : 'white'"
+            :fill="controlMode === 1 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">温控</text>
@@ -25,8 +25,8 @@
         <view class="control-icon fire-icon">
           <SvgIcon
             name="recycle"
-            :color="controlMode === 2 ? '#00ff00' : '#CCCCCC'"
-            :fill="controlMode === 2 ? '#00ff00' : '#CCCCCC'"
+            :color="controlMode === 2 ? 'red' : 'white'"
+            :fill="controlMode === 2 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">循环</text>
@@ -40,8 +40,8 @@
         <view class="control-icon humidity-icon">
           <SvgIcon
             name="humidity"
-            :color="controlMode === 3 ? '#FFA500' : '#CCCCCC'"
-            :fill="controlMode === 3 ? '#FFA500' : '#CCCCCC'"
+            :color="controlMode === 3 ? 'red' : 'white'"
+            :fill="controlMode === 3 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">湿控</text>
@@ -55,8 +55,8 @@
         <view class="control-icon gas-icon">
           <SvgIcon
             name="gas"
-            :color="controlMode === 4 ? '#87CEEB' : '#CCCCCC'"
-            :fill="controlMode === 4 ? '#87CEEB' : '#CCCCCC'"
+            :color="controlMode === 4 ? 'red' : 'white'"
+            :fill="controlMode === 4 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">气体</text>
@@ -70,8 +70,8 @@
         <view class="control-icon timer-icon">
           <SvgIcon
             name="timer"
-            :color="controlMode === 5 ? '#9370DB' : '#CCCCCC'"
-            :fill="controlMode === 5 ? '#9370DB' : '#CCCCCC'"
+            :color="controlMode === 5 ? 'red' : 'white'"
+            :fill="controlMode === 5 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">定时</text>
@@ -456,7 +456,7 @@
         <input
           class="form-input-small"
           :value="timerGroups[currentTimerGroup - 1].startHour"
-          @input="updateTimerField(currentTimerGroup, 'startTime', `${$event.detail.value}:${timerGroups[currentTimerGroup - 1].startMinute}`)"
+          @input="onTimerStartHourInput"
           type="number"
           placeholder="5"
         />
@@ -464,7 +464,7 @@
         <input
           class="form-input-small"
           :value="timerGroups[currentTimerGroup - 1].startMinute"
-          @input="updateTimerField(currentTimerGroup, 'startTime', `${timerGroups[currentTimerGroup - 1].startHour}:${$event.detail.value}`)"
+          @input="onTimerStartMinuteInput"
           type="number"
           placeholder="5"
         />
@@ -477,7 +477,7 @@
         <input
           class="form-input-small"
           :value="timerGroups[currentTimerGroup - 1].endHour"
-          @input="updateTimerField(currentTimerGroup, 'endTime', `${$event.detail.value}:${timerGroups[currentTimerGroup - 1].endMinute}`)"
+          @input="onTimerEndHourInput"
           type="number"
           placeholder="6"
         />
@@ -485,7 +485,7 @@
         <input
           class="form-input-small"
           :value="timerGroups[currentTimerGroup - 1].endMinute"
-          @input="updateTimerField(currentTimerGroup, 'endTime', `${timerGroups[currentTimerGroup - 1].endHour}:${$event.detail.value}`)"
+          @input="onTimerEndMinuteInput"
           type="number"
           placeholder="6"
         />
@@ -516,7 +516,7 @@
         <input
           class="form-input"
           :value="timerGroups[currentTimerGroup - 1].startTemp"
-          @input="updateTimerField(currentTimerGroup, 'startTemp', parseFloat($event.detail.value) || 0)"
+          @input="onTimerStartTempInput"
           type="number"
           placeholder="20"
         />
@@ -529,7 +529,7 @@
         <input
           class="form-input"
           :value="timerGroups[currentTimerGroup - 1].stopTemp"
-          @input="updateTimerField(currentTimerGroup, 'stopTemp', parseFloat($event.detail.value) || 0)"
+          @input="onTimerStopTempInput"
           type="number"
           placeholder="30"
         />
@@ -914,6 +914,32 @@ export default {
         field,
         value,
       });
+    },
+    onTimerStartHourInput(e) {
+      const hour = e.detail.value;
+      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
+      this.updateTimerField(this.currentTimerGroup, "startTime", `${hour}:${timer.startMinute || 0}`);
+    },
+    onTimerStartMinuteInput(e) {
+      const minute = e.detail.value;
+      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
+      this.updateTimerField(this.currentTimerGroup, "startTime", `${timer.startHour || 0}:${minute}`);
+    },
+    onTimerEndHourInput(e) {
+      const hour = e.detail.value;
+      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
+      this.updateTimerField(this.currentTimerGroup, "endTime", `${hour}:${timer.endMinute || 0}`);
+    },
+    onTimerEndMinuteInput(e) {
+      const minute = e.detail.value;
+      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
+      this.updateTimerField(this.currentTimerGroup, "endTime", `${timer.endHour || 0}:${minute}`);
+    },
+    onTimerStartTempInput(e) {
+      this.updateTimerField(this.currentTimerGroup, "startTemp", parseFloat(e.detail.value) || 0);
+    },
+    onTimerStopTempInput(e) {
+      this.updateTimerField(this.currentTimerGroup, "stopTemp", parseFloat(e.detail.value) || 0);
     },
     async handleSave() {
       if (!this.currFan.id) {
