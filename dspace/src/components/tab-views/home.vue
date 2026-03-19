@@ -83,7 +83,7 @@
           class="device-card"
           v-for="(item) in deviceList"
           :key="item.id"
-          @tap="todate(item)"
+          @tap="toDetail(item)"
         >
           <view class="device-info">
             <!-- 设备编号 -->
@@ -371,7 +371,7 @@ export default {
       }
     },
     // 跳转详情
-    todate(item) {
+    toDetail(item) {
 
       this.$store.commit('deviceDetail/SET_CURR_DEVICE', item);
 

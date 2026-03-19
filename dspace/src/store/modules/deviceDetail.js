@@ -60,9 +60,9 @@ const actions = {
   async fetchDeviceInfo({ rootState,commit, state }) {
     console.log('-----fetchDeviceInfo -----');
     
-    if(!state.currDevice || rootState.device.currUpdateDeviceNum != state.currDevice.deviceNum){
-      return 
-    }
+    // if(!state.currDevice || rootState.device.currUpdateDeviceNum != state.currDevice.deviceNum){
+    //   return 
+    // }
 
     try {
       const deviceId = state.currDevice.id
