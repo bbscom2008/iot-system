@@ -267,50 +267,9 @@ public class DeviceService {
         deviceMapper.updateDeviceOnlineState(deviceNum, state);
     }
 
-    // 在应用启动完成后，将所有设备的在线状态和报警状态初始化为 0，并更新 updated_time
-    @EventListener(ApplicationReadyEvent.class)
-    public void initDeviceStatesOnStartup() {
-        try {
-            deviceMapper.resetAllDeviceStates();
-            logger.info("Reset all device states on startup (device_line_state=0, warning_status=0, updated_time=now)");
-        } catch (Exception e) {
-            logger.error("Failed to reset device states on startup", e);
-        }
-    }
 
-    // 每 10 分钟检测一次设备更新时间，超过 1 分钟则标记为离线
-    @Scheduled(fixedRate = 10 * 60 * 1000)
-    public void scheduledCheckDeviceOnlineStatus() {
-        try {
-            List<Device> devices = deviceMapper.findList(new HashMap<>());
-            LocalDateTime now = LocalDateTime.now();
-            for (Device d : devices) {
-                LocalDateTime updated = d.getUpdatedTime();
-                int state = 0;
-                if (updated != null) {
-                    Duration diff = Duration.between(updated, now);
-                    if (Math.abs(diff.getSeconds()) <= 60) {
-                        state = 1;
-                    } else {
-                        state = 0;
-                    }
-                } else {
-                    state = 0;
-                }
 
-                try {
-                    // 如果新状态和原状态不同，就更新状态
-                    if (!Objects.equals(d.getDeviceLineState(), state)) {
-                        deviceMapper.updateDeviceOnlineState(d.getDeviceNum(), state);
-                    }
-                } catch (Exception ex) {
-                    logger.error("Failed to update device online state for deviceNum={}", d.getDeviceNum(), ex);
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to check device online status", e);
-        }
-    }
+
 
     /**
      * 更新设备状态，包含在线状态和报警状态

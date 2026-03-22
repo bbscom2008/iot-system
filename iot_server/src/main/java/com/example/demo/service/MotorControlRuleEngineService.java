@@ -547,9 +547,6 @@ public class MotorControlRuleEngineService {
     /**
      * 执行延时消息更新 motorFan 的状态
      *
-     * @param motorNum  如 mt1 mt2 mt3
-     * @param state     新状态 0 1
-     * @param deviceNum 设置名称 d004 102154874521025
      */
     public void updateMotorFanStateByDelayMessage(MotorControlMessage message) {
 

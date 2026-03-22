@@ -177,7 +177,8 @@ public class MqttService implements MqttCallback {
                     frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
 
                     // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
-                    processMotorControlRules(device.getId(), device.getDeviceNum());
+                    // 服务器只接收和发送数据，不对数据进行逻辑处理
+//                    processMotorControlRules(device.getId(), device.getDeviceNum());
 
                     // 数据已经更新，发消息给前端更新数据
                     notifyToUpdate(deviceNum);

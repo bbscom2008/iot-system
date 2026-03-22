@@ -62,7 +62,7 @@ public class MotorFanService {
       /**
      * 根据父设备编号和电机编号查询电机风扇
      * 
-     * @param parentDeviceNum 父设备编号 (如 "d004", "102154874521025")
+     * @param deviceNum 父设备编号 (如 "d004", "102154874521025")
      * @param motorNum 电机编号 (如 "mt1", "mt2", "mt3")
      * @return 找到的电机风扇，如果未找到返回null
      */

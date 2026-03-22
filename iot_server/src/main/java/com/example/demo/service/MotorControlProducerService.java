@@ -8,7 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * 电机控制消息生产者服务
+ * 电机控制延时消息生产者服务
  * 向RabbitMQ发送电机控制消息
  */
 @Slf4j
