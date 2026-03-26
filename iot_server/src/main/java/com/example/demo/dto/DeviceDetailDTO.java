@@ -20,6 +20,8 @@ public class DeviceDetailDTO {
     private Long id;
     private Long userId;
     private String deviceNum;
+    private String imei;
+    private String iccid;
     private String deviceName;
     private Integer deviceType;      // 设备类型ID
     private Integer deviceLineState; // 0-离线 1-在线

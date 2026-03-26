@@ -1,0 +1,4 @@
+-- 为现有 devices 表新增 IMEI 与 ICCID 字段
+ALTER TABLE `devices`
+  ADD COLUMN `imei` VARCHAR(20) NULL DEFAULT NULL COMMENT '设备IMEI' AFTER `device_num`,
+  ADD COLUMN `iccid` VARCHAR(30) NULL DEFAULT NULL COMMENT '设备ICCID' AFTER `imei`;

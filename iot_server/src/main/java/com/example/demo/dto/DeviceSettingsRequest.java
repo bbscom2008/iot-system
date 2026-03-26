@@ -18,6 +18,8 @@ public class DeviceSettingsRequest {
     @NotBlank(message = "设备名称不能为空")
     private String deviceName;           // 设备名称
     private String deviceNum;            // 设备编号
+//    private String imei;                 // IMEI
+//    private String iccid;                // ICCID
 
     private Integer levelTime;           // 阶梯时间（秒）
     

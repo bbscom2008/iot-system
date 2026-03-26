@@ -8,6 +8,8 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="iccid" property="iccid" jdbcType="VARCHAR"/>
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
         <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
         <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
@@ -40,6 +42,8 @@
         <result column="user_name" property="userName" jdbcType="VARCHAR"/>
         <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
+        <result column="imei" property="imei" jdbcType="VARCHAR"/>
+        <result column="iccid" property="iccid" jdbcType="VARCHAR"/>
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
         <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
         <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
@@ -60,7 +64,7 @@
     <!-- 查询设备列表（包含用户信息） -->
     <select id="findListWithUser" resultMap="DeviceListResultMap">
         SELECT 
-            d.id, d.user_id, d.device_num, d.device_name, d.device_type, d.device_line_state, 
+            d.id, d.user_id, d.device_num, d.imei, d.iccid, d.device_name, d.device_type, d.device_line_state, 
             d.signal, d.electric_quantity, d.warning_status, d.created_time, d.updated_time, 
             d.last_offline_time, d.temp_upper_limit, d.temp_lower_limit, d.humidity_upper_limit, 
             d.humidity_lower_limit, d.gas_upper_limit, d.gas_lower_limit,
@@ -171,8 +175,8 @@
 
     <!-- 绑定设备 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO devices (user_id, device_num, device_name, device_type, created_time)
-        VALUES (#{userId}, #{deviceNum}, #{deviceName}, #{deviceType}, NOW())
+        INSERT INTO devices (user_id, device_num, imei, iccid, device_name, device_type, created_time)
+        VALUES (#{userId}, #{deviceNum}, #{imei}, #{iccid}, #{deviceName}, #{deviceType}, NOW())
     </insert>
 
     <!-- 解绑设备 -->
@@ -185,6 +189,8 @@
         UPDATE devices
         <set>
             <if test="deviceNum != null">device_num = #{deviceNum},</if>
+            <if test="imei != null">imei = #{imei},</if>
+            <if test="iccid != null">iccid = #{iccid},</if>
             <if test="deviceName != null">device_name = #{deviceName},</if>
             <if test="deviceType != null">device_type = #{deviceType},</if>
             <if test="deviceLineState != null">device_line_state = #{deviceLineState},</if>

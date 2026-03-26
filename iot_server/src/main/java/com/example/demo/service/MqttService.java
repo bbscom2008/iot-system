@@ -148,7 +148,7 @@ public class MqttService implements MqttCallback {
 
         try {
             JsonNode node = objectMapper.readTree(payload);
-            JsonNode idNode = node.get("id");
+            JsonNode idNode = node.get("STM32ID");
             if (idNode != null && idNode.isTextual()) {
                 // 设备 ID ， 传感器设备的 父ID
                 String deviceNum = idNode.asText();
@@ -160,6 +160,7 @@ public class MqttService implements MqttCallback {
                     // 更新设备在线状态和报警状态
                     deviceService.updateDeviceState(device, node);
 
+                    // 传感器的父ID，即当前设备的ID
                     Long parentId = device.getId();
 
                     //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
