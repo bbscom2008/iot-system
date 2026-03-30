@@ -80,27 +80,14 @@
 
     <!-- 状态切换栏 -->
     <view class="status-bar">
-      <view
-        class="status-item"
-        :class="{ active: autoMode === 1 }"
-        @tap="switchAutoMode(1)"
-      >
-        自动
-      </view>
-      <view
-        class="status-item"
-        :class="{ active: autoMode === 2 }"
-        @tap="switchAutoMode(2)"
-      >
-        开
-      </view>
-      <view
-        class="status-item"
-        :class="{ active: autoMode === 3 }"
-        @tap="switchAutoMode(3)"
-      >
-        关
-      </view>
+      <SingleButtonSelect
+        v-model="autoMode"
+        :options="[
+          { label: '自动', value: 1 },
+          { label: '开', value: 2 },
+          { label: '关', value: 3 }
+        ]"
+      />
     </view>
 
     <!-- 风机信息 -->
@@ -189,6 +176,20 @@
         <text class="form-unit-small">秒</text>
       </view>
 
+      <view class="form-item">
+        <text class="form-label">温控模式:</text>
+        <SingleButtonSelect
+          v-model="tctcm"
+          :options="[
+            { label: '降温', value: 0 },
+            { label: '升温', value: 1 }
+          ]"
+          variant="chip"
+          itemMinWidth="100rpx"
+          fontSize="24rpx"
+        />
+      </view>
+
       <view class="instructions">
         <text class="instruction-item">1、实时温度达到或超过温度上限，设备一直工作。</text>
         <text class="instruction-item">2、实时温度在温度上限与温度下限之间，设备按照运行时间和暂停时间循环工作。</text>
@@ -273,6 +274,21 @@
         <text class="form-unit-small">秒</text>
       </view>
 
+      <view class="form-item">
+        <text class="form-label">循环模式:</text>
+        <SingleButtonSelect
+          v-model="cccm"
+          :options="[
+            { label: '降温', value: 0 },
+            { label: '升温', value: 1 },
+            { label: '时间', value: 2 }
+          ]"
+          variant="chip"
+          itemMinWidth="100rpx"
+          fontSize="24rpx"
+        />
+      </view>
+
       <view class="instructions">
         <text class="instruction-item">1、实时温度大于等于启动温度值启动设备，低于停止温度值设备停止工作。</text>
         <text class="instruction-item">2、低温循环设置方法（最小通风模式）：设置所需低温运行时间和低温暂停时间即可。</text>
@@ -338,6 +354,20 @@
           placeholder="5"
         />
         <text class="form-unit-small">秒</text>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">湿控模式:</text>
+        <SingleButtonSelect
+          v-model="hchcm"
+          :options="[
+            { label: '除湿', value: 0 },
+            { label: '加湿', value: 1 }
+          ]"
+          variant="chip"
+          itemMinWidth="100rpx"
+          fontSize="24rpx"
+        />
       </view>
 
       <view class="instructions">
@@ -418,27 +448,14 @@
     <view v-if="controlMode === 5" class="control-content">
       <!-- 定时组切换 -->
       <view class="timer-tabs">
-        <view
-          class="timer-tab"
-          :class="{ active: currentTimerGroup === 1 }"
-          @tap="switchTimerGroup(1)"
-        >
-          定时1
-        </view>
-        <view
-          class="timer-tab"
-          :class="{ active: currentTimerGroup === 2 }"
-          @tap="switchTimerGroup(2)"
-        >
-          定时2
-        </view>
-        <view
-          class="timer-tab"
-          :class="{ active: currentTimerGroup === 3 }"
-          @tap="switchTimerGroup(3)"
-        >
-          定时3
-        </view>
+        <SingleButtonSelect
+          v-model="timerGroupModel"
+          :options="[
+            { label: '定时1', value: 1 },
+            { label: '定时2', value: 2 },
+            { label: '定时3', value: 3 }
+          ]"
+        />
       </view>
 
       <!-- 定时1开关 -->
@@ -536,6 +553,20 @@
         <text class="form-unit">°C</text>
       </view>
 
+      <view class="form-item">
+        <text class="form-label">定时温控:</text>
+        <SingleButtonSelect
+          v-model="tictitm"
+          :options="[
+            { label: '降温', value: 0 },
+            { label: '升温', value: 1 }
+          ]"
+          variant="chip"
+          itemMinWidth="100rpx"
+          fontSize="24rpx"
+        />
+      </view>
+
       <view class="instructions">
         <text class="instruction-item">此模式为北京时间定时控制功能，分三个时间段:</text>
         <text class="instruction-item">定时开关打开：设备在设置的北京时间内，按照设定启动和停止温度执行。</text>
@@ -550,6 +581,7 @@
 <script>
 import SvgIcon from "@/components/SvgIcon.vue";
 import MySwitch from "@/components/MySwitch.vue";
+import SingleButtonSelect from "@/components/SingleButtonSelect.vue";
 import { request } from "@/utils/request";
 
 export default {
@@ -557,6 +589,7 @@ export default {
   components: {
     SvgIcon,
     MySwitch,
+    SingleButtonSelect,
   },
   computed: {
     currFan() {
@@ -697,6 +730,56 @@ export default {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "pauseTime",
           value: minutes * 60 + seconds,
+        });
+      },
+    },
+    // 温控模式：0降温 1升温
+    tctcm: {
+      get() {
+        return this.currFan.tctcm !== undefined && this.currFan.tctcm !== null ? Number(this.currFan.tctcm) : 0;
+      },
+      set(value) {
+        console.log('tctcm : ', value);
+        
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+          field: "tctcm",
+          value: Number(value) || 0,
+        });
+      },
+    },
+    // 循环模式：0降温 1升温 2时间
+    cccm: {
+      get() {
+        return this.currFan.cccm !== undefined && this.currFan.cccm !== null ? Number(this.currFan.cccm) : 0;
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+          field: "cccm",
+          value: Number(value) || 0,
+        });
+      },
+    },
+    // 湿控模式：0除湿 1加湿
+    hchcm: {
+      get() {
+        return this.currFan.hchcm !== undefined && this.currFan.hchcm !== null ? Number(this.currFan.hchcm) : 0;
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+          field: "hchcm",
+          value: Number(value) || 0,
+        });
+      },
+    },
+    // 定时温控：0降温 1升温
+    tictitm: {
+      get() {
+        return this.currFan.tictitm !== undefined && this.currFan.tictitm !== null ? Number(this.currFan.tictitm) : 0;
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+          field: "tictitm",
+          value: Number(value) || 0,
         });
       },
     },
@@ -868,6 +951,14 @@ export default {
         return this.temperatureSensors[this.probeIndex].sensorValue;
       }
       return '--';
+    },
+    timerGroupModel: {
+      get() {
+        return this.currentTimerGroup;
+      },
+      set(value) {
+        this.currentTimerGroup = Number(value) || 1;
+      }
     }
     
   },
@@ -883,14 +974,8 @@ export default {
     switchControlMode(mode) {
       this.controlMode = mode;
     },
-    switchAutoMode(mode) {
-      this.autoMode = mode;
-    },
     onProbeChange(e) {
       this.probeIndex = parseInt(e.detail.value);
-    },
-    switchTimerGroup(group) {
-      this.currentTimerGroup = group;
     },
     onTimerSwitchChange(value) {
       const field = `timer${this.currentTimerGroup}Enabled`;
@@ -962,6 +1047,10 @@ export default {
           tempLower: this.currFan.tempLower,
           runTime: this.currFan.runTime,
           pauseTime: this.currFan.pauseTime,
+          tctcm: this.currFan.tctcm,
+          cccm: this.currFan.cccm,
+          hchcm: this.currFan.hchcm,
+          tictitm: this.currFan.tictitm,
           humidityUpper: this.currFan.humidityUpper,
           humidityLower: this.currFan.humidityLower,
           gasUpper: this.currFan.gasUpper,
@@ -1113,31 +1202,6 @@ export default {
   display: flex;
   justify-content: center;
   margin-bottom: 30rpx;
-  gap: 0;
-}
-
-.status-item {
-  width: 150rpx;
-  height: 60rpx;
-  line-height: 60rpx;
-  text-align: center;
-  color: #fff;
-  font-size: 26rpx;
-  background: #1a1a3a;
-  border: 2rpx solid var(--accent-color);
-}
-
-.status-item:first-child {
-  border-radius: 30rpx 0 0 30rpx;
-}
-
-.status-item:last-child {
-  border-radius: 0 30rpx 30rpx 0;
-}
-
-.status-item.active {
-  background: var(--accent-color);
-  font-weight: bold;
 }
 
 /* 风机信息 */
@@ -1276,32 +1340,6 @@ export default {
   display: flex;
   justify-content: center;
   margin-bottom: 30rpx;
-  gap: 0;
-}
-
-.timer-tab {
-  width: 150rpx;
-  height: 60rpx;
-  line-height: 60rpx;
-  text-align: center;
-  color: #fff;
-  font-size: 26rpx;
-  background: #1a1a3a;
-  border: 2rpx solid rgba(106, 90, 205, 0.3);
-}
-
-.timer-tab:first-child {
-  border-radius: 30rpx 0 0 30rpx;
-}
-
-.timer-tab:last-child {
-  border-radius: 0 30rpx 30rpx 0;
-}
-
-.timer-tab.active {
-  background: var(--accent-color);
-  border-color: var(--accent-color);
-  font-weight: bold;
 }
 
 /* 说明文字 */

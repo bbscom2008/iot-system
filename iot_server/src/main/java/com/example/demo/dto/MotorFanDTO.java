@@ -30,10 +30,13 @@ public class MotorFanDTO {
     private Double tempLower;            // 温度下限/停止温度（°C）
     private Integer runTime;             // 运行时间/低温运行（秒）
     private Integer pauseTime;           // 暂停时间/低温暂停（秒）
+    private Integer tctcm;               // 温控模式：0-降温 1-升温
+    private Integer cccm;                // 循环模式：0-降温 1-升温 2-时间
     
     // 湿控字段
     private Double humidityUpper;        // 湿度上限（%）
     private Double humidityLower;        // 湿度下限（%）
+    private Integer hchcm;               // 湿控模式：0-除湿 1-加湿
     
     // 气体字段
     private Integer gasUpper;            // 气体上限（ppm）
@@ -62,6 +65,7 @@ public class MotorFanDTO {
     private Long timer3ProbeSensorId;    // 定时3探头传感器ID
     private Double timer3StartTemp;      // 定时3启动温度（°C）
     private Double timer3StopTemp;       // 定时3停止温度（°C）
+    private Integer tictitm;             // 定时温控：0-降温 1-升温
     
     @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
     private LocalDateTime createdTime;    // 创建时间

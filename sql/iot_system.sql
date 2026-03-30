@@ -336,6 +336,13 @@ INSERT INTO `motor_fan` VALUES (142, '风机8', 11, 'mt8', 0, 1, 1, NULL, 38.00,
 INSERT INTO `motor_fan` VALUES (143, '风机9', 11, 'mt9', 1, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2026-03-17 20:45:09', '2026-03-19 22:32:48');
 INSERT INTO `motor_fan` VALUES (144, '风机10', 11, 'mt10', 0, 1, 1, NULL, 38.00, 30.00, 5, 5, 75.00, 45.00, 3000, 1000, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, 30.00, 38.00, '2026-03-17 20:45:09', '2026-03-19 22:32:48');
 
+-- motor_fan 新增控制模式字段（与旧版 INSERT 语句兼容，放在数据后执行）
+ALTER TABLE `motor_fan`
+  ADD COLUMN `tctcm` tinyint(4) NULL DEFAULT 0 COMMENT '温控模式：0降温1升温' AFTER `pause_time`,
+  ADD COLUMN `cccm` tinyint(4) NULL DEFAULT 0 COMMENT '循环模式：0降温1升温2时间' AFTER `tctcm`,
+  ADD COLUMN `hchcm` tinyint(4) NULL DEFAULT 0 COMMENT '湿控模式：0除湿1加湿' AFTER `humidity_lower`,
+  ADD COLUMN `tictitm` tinyint(4) NULL DEFAULT 0 COMMENT '定时温控：0降温1升温' AFTER `timer3_stop_temp`;
+
 -- ----------------------------
 -- Table structure for mqtt_message_data
 -- ----------------------------

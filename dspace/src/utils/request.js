@@ -2,7 +2,7 @@
 // 根据环境变量设置不同的 BASE_URL
 const BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'http://121.41.131.103:8080' // 生产环境，nginx 与服务器 在同一台机器上，使用内网地址
-  : 'http://127.0.0.1:8080'   // 开发环境
+  : 'http://192.168.0.105:8080'   // 开发环境
 
 
 // const BASE_URL = 'http://127.0.0.1:8080'

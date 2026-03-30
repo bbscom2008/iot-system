@@ -18,9 +18,12 @@
         <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
         <result column="run_time" property="runTime" jdbcType="INTEGER"/>
         <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        <result column="tctcm" property="tctcm" jdbcType="INTEGER"/>
+        <result column="cccm" property="cccm" jdbcType="INTEGER"/>
         
         <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
         <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        <result column="hchcm" property="hchcm" jdbcType="INTEGER"/>
         
         <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
         <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
@@ -45,6 +48,7 @@
         <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
         <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
         <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        <result column="tictitm" property="tictitm" jdbcType="INTEGER"/>
         
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
@@ -64,9 +68,12 @@
         <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
         <result column="run_time" property="runTime" jdbcType="INTEGER"/>
         <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        <result column="tctcm" property="tctcm" jdbcType="INTEGER"/>
+        <result column="cccm" property="cccm" jdbcType="INTEGER"/>
         
         <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
         <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        <result column="hchcm" property="hchcm" jdbcType="INTEGER"/>
         
         <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
         <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
@@ -91,6 +98,7 @@
         <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
         <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
         <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        <result column="tictitm" property="tictitm" jdbcType="INTEGER"/>
         
         <!-- 设备信息 -->
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
@@ -204,8 +212,11 @@
             <if test="tempLower != null">temp_lower = #{tempLower},</if>
             <if test="runTime != null">run_time = #{runTime},</if>
             <if test="pauseTime != null">pause_time = #{pauseTime},</if>
+            <if test="tctcm != null">tctcm = #{tctcm},</if>
+            <if test="cccm != null">cccm = #{cccm},</if>
             <if test="humidityUpper != null">humidity_upper = #{humidityUpper},</if>
             <if test="humidityLower != null">humidity_lower = #{humidityLower},</if>
+            <if test="hchcm != null">hchcm = #{hchcm},</if>
             <if test="gasUpper != null">gas_upper = #{gasUpper},</if>
             <if test="gasLower != null">gas_lower = #{gasLower},</if>
             <if test="timer1Enabled != null">timer1_enabled = #{timer1Enabled},</if>
@@ -226,6 +237,7 @@
             <if test="timer3ProbeSensorId != null">timer3_probe_sensor_id = #{timer3ProbeSensorId},</if>
             <if test="timer3StartTemp != null">timer3_start_temp = #{timer3StartTemp},</if>
             <if test="timer3StopTemp != null">timer3_stop_temp = #{timer3StopTemp},</if>
+            <if test="tictitm != null">tictitm = #{tictitm},</if>
             updated_time = NOW()
         </set>
         WHERE id = #{id}
