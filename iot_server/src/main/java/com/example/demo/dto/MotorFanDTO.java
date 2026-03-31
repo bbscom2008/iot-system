@@ -21,50 +21,64 @@ public class MotorFanDTO {
     private Long deviceId;               // 设备ID
     private String deviceNum;            // 设备编号
     private Integer isRunning;           // 运行状态：0-停止 1-运行
-    private Integer controlMode;         // 控制模式：1-温控 2-循环 3-湿控 4-气体 5-定时
+    private Integer wm;                  // 工作模式：0温控，1循环，2湿控，3氨气，4定时
     private Integer autoMode;            // 自动模式：1-自动 2-开 3-关
-    private Long probeSensorId;          // 探头传感器ID
     
-    // 温控/循环共用字段
-    private Double tempUpper;            // 温度上限/启动温度（°C）
-    private Double tempLower;            // 温度下限/停止温度（°C）
-    private Integer runTime;             // 运行时间/低温运行（秒）
-    private Integer pauseTime;           // 暂停时间/低温暂停（秒）
+    // 温控字段
+    private Integer tcps;
+    private Double tcat;
+    private Double tcot;
+    private Integer tcltrm;
+    private Integer tcltrs;
+    private Integer tcltpm;
+    private Integer tcltps;
     private Integer tctcm;               // 温控模式：0-降温 1-升温
+    // 循环字段
+    private Integer ccps;
+    private Double cctu;
+    private Double cctd;
+    private Integer ccrm;
+    private Integer ccrs;
+    private Integer ccpm;
+    private Integer ccpss;
     private Integer cccm;                // 循环模式：0-降温 1-升温 2-时间
     
     // 湿控字段
-    private Double humidityUpper;        // 湿度上限（%）
-    private Double humidityLower;        // 湿度下限（%）
+    private Double hchu;
+    private Double hchd;
+    private Integer hcrm;
+    private Integer hcrs;
+    private Integer hcpm;
+    private Integer hcps;
     private Integer hchcm;               // 湿控模式：0-除湿 1-加湿
     
-    // 气体字段
-    private Integer gasUpper;            // 气体上限（ppm）
-    private Integer gasLower;            // 气体下限（ppm）
+    // 氨气字段
+    private Integer ncnu;
+    private Integer ncnd;
+    private Integer ncrm;
+    private Integer ncrs;
+    private Integer ncpm;
+    private Integer ncps;
     
-    // 定时1字段
-    private Integer timer1Enabled;       // 定时1开关：0-关闭 1-开启
-    private String timer1StartTime;      // 定时1开启时间（HH:mm）
-    private String timer1EndTime;        // 定时1关闭时间（HH:mm）
-    private Long timer1ProbeSensorId;    // 定时1探头传感器ID
-    private Double timer1StartTemp;      // 定时1启动温度（°C）
-    private Double timer1StopTemp;       // 定时1停止温度（°C）
-    
-    // 定时2字段
-    private Integer timer2Enabled;       // 定时2开关：0-关闭 1-开启
-    private String timer2StartTime;      // 定时2开启时间（HH:mm）
-    private String timer2EndTime;        // 定时2关闭时间（HH:mm）
-    private Long timer2ProbeSensorId;    // 定时2探头传感器ID
-    private Double timer2StartTemp;      // 定时2启动温度（°C）
-    private Double timer2StopTemp;       // 定时2停止温度（°C）
-    
-    // 定时3字段
-    private Integer timer3Enabled;       // 定时3开关：0-关闭 1-开启
-    private String timer3StartTime;      // 定时3开启时间（HH:mm）
-    private String timer3EndTime;        // 定时3关闭时间（HH:mm）
-    private Long timer3ProbeSensorId;    // 定时3探头传感器ID
-    private Double timer3StartTemp;      // 定时3启动温度（°C）
-    private Double timer3StopTemp;       // 定时3停止温度（°C）
+    // 定时字段
+    private Integer tict1nf;
+    private Integer tict1nh;
+    private Integer tict1nm;
+    private Integer tict1fh;
+    private Integer tict1fm;
+    private Integer tict2nf;
+    private Integer tict2nh;
+    private Integer tict2nm;
+    private Integer tict2fh;
+    private Integer tict2fm;
+    private Integer tict3nf;
+    private Integer tict3nh;
+    private Integer tict3nm;
+    private Integer tict3fh;
+    private Integer tict3fm;
+    private Integer ticps;
+    private Double ticat;
+    private Double ticot;
     private Integer tictitm;             // 定时温控：0-降温 1-升温
     
     @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)

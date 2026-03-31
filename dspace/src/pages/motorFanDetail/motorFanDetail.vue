@@ -4,14 +4,14 @@
     <view class="control-options">
       <view
         class="control-option"
-        :class="{ active: controlMode === 1 }"
-        @tap="switchControlMode(1)"
+        :class="{ active: controlMode === 0 }"
+        @tap="switchControlMode(0)"
       >
         <view class="control-icon temp-icon">
           <SvgIcon
             name="temperature"
-            :color="controlMode === 1 ? 'red' : 'white'"
-            :fill="controlMode === 1 ? 'red' : 'white'"
+            :color="controlMode === 0 ? 'red' : 'white'"
+            :fill="controlMode === 0 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">温控</text>
@@ -19,14 +19,14 @@
 
       <view
         class="control-option"
-        :class="{ active: controlMode === 2 }"
-        @tap="switchControlMode(2)"
+        :class="{ active: controlMode === 1 }"
+        @tap="switchControlMode(1)"
       >
         <view class="control-icon fire-icon">
           <SvgIcon
             name="recycle"
-            :color="controlMode === 2 ? 'red' : 'white'"
-            :fill="controlMode === 2 ? 'red' : 'white'"
+            :color="controlMode === 1 ? 'red' : 'white'"
+            :fill="controlMode === 1 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">循环</text>
@@ -34,14 +34,14 @@
 
       <view
         class="control-option"
-        :class="{ active: controlMode === 3 }"
-        @tap="switchControlMode(3)"
+        :class="{ active: controlMode === 2 }"
+        @tap="switchControlMode(2)"
       >
         <view class="control-icon humidity-icon">
           <SvgIcon
             name="humidity"
-            :color="controlMode === 3 ? 'red' : 'white'"
-            :fill="controlMode === 3 ? 'red' : 'white'"
+            :color="controlMode === 2 ? 'red' : 'white'"
+            :fill="controlMode === 2 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">湿控</text>
@@ -49,14 +49,14 @@
 
       <view
         class="control-option"
-        :class="{ active: controlMode === 4 }"
-        @tap="switchControlMode(4)"
+        :class="{ active: controlMode === 3 }"
+        @tap="switchControlMode(3)"
       >
         <view class="control-icon gas-icon">
           <SvgIcon
             name="gas"
-            :color="controlMode === 4 ? 'red' : 'white'"
-            :fill="controlMode === 4 ? 'red' : 'white'"
+            :color="controlMode === 3 ? 'red' : 'white'"
+            :fill="controlMode === 3 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">气体</text>
@@ -64,14 +64,14 @@
 
       <view
         class="control-option"
-        :class="{ active: controlMode === 5 }"
-        @tap="switchControlMode(5)"
+        :class="{ active: controlMode === 4 }"
+        @tap="switchControlMode(4)"
       >
         <view class="control-icon timer-icon">
           <SvgIcon
             name="timer"
-            :color="controlMode === 5 ? 'red' : 'white'"
-            :fill="controlMode === 5 ? 'red' : 'white'"
+            :color="controlMode === 4 ? 'red' : 'white'"
+            :fill="controlMode === 4 ? 'red' : 'white'"
           />
         </view>
         <text class="control-label">定时</text>
@@ -100,7 +100,7 @@
     </view>
 
     <!-- 温控模式内容 -->
-    <view v-if="controlMode === 1" class="control-content">
+    <view v-if="controlMode === 0" class="control-content">
       <view class="form-item">
         <text class="form-label">探头选择:</text>
         <picker
@@ -198,19 +198,19 @@
     </view>
 
     <!-- 循环模式内容 -->
-    <view v-if="controlMode === 2" class="control-content">
+    <view v-if="controlMode === 1" class="control-content">
       <view class="form-item">
         <text class="form-label">探头选择:</text>
         <picker
           class="picker-wrapper"
-          @change="onProbeChange"
-          :value="probeIndex"
+          @change="onCycleProbeChange"
+          :value="cycleProbeIndex"
           :range="temperatureSensors"
           range-key="sensorName"
         >
           <view class="picker-input">
-            <text :class="{ placeholder: probeIndex < 0 }">
-              {{ probeIndex >= 0 ? temperatureSensors[probeIndex].sensorName : '请选择探头' }}
+            <text :class="{ placeholder: cycleProbeIndex < 0 }">
+              {{ cycleProbeIndex >= 0 ? temperatureSensors[cycleProbeIndex].sensorName : '请选择探头' }}
             </text>
           </view>
         </picker>
@@ -297,7 +297,7 @@
     </view>
 
     <!-- 湿控模式内容 -->
-    <view v-if="controlMode === 3" class="control-content">
+    <view v-if="controlMode === 2" class="control-content">
       <view class="form-item">
         <text class="form-label">湿度上限:</text>
         <input
@@ -324,14 +324,14 @@
         <text class="form-label">运行时间:</text>
         <input
           class="form-input-small"
-          v-model="runMinutes"
+          v-model="humidityRunMinutes"
           type="number"
           placeholder="0"
         />
         <text class="form-unit-small">分</text>
         <input
           class="form-input-small"
-          v-model="runSeconds"
+          v-model="humidityRunSeconds"
           type="number"
           placeholder="5"
         />
@@ -342,14 +342,14 @@
         <text class="form-label">暂停时间:</text>
         <input
           class="form-input-small"
-          v-model="pauseMinutes"
+          v-model="humidityPauseMinutes"
           type="number"
           placeholder="0"
         />
         <text class="form-unit-small">分</text>
         <input
           class="form-input-small"
-          v-model="pauseSeconds"
+          v-model="humidityPauseSeconds"
           type="number"
           placeholder="5"
         />
@@ -378,7 +378,7 @@
     </view>
 
     <!-- 气体模式内容 -->
-    <view v-if="controlMode === 4" class="control-content">
+    <view v-if="controlMode === 3" class="control-content">
       <view class="form-item">
         <text class="form-label">气体上限:</text>
         <input
@@ -405,14 +405,14 @@
         <text class="form-label">运行时间:</text>
         <input
           class="form-input-small"
-          v-model="runMinutes"
+          v-model="gasRunMinutes"
           type="number"
           placeholder="0"
         />
         <text class="form-unit-small">分</text>
         <input
           class="form-input-small"
-          v-model="runSeconds"
+          v-model="gasRunSeconds"
           type="number"
           placeholder="5"
         />
@@ -423,14 +423,14 @@
         <text class="form-label">暂停时间:</text>
         <input
           class="form-input-small"
-          v-model="pauseMinutes"
+          v-model="gasPauseMinutes"
           type="number"
           placeholder="0"
         />
         <text class="form-unit-small">分</text>
         <input
           class="form-input-small"
-          v-model="pauseSeconds"
+          v-model="gasPauseSeconds"
           type="number"
           placeholder="5"
         />
@@ -445,7 +445,7 @@
     </view>
 
     <!-- 定时模式内容 -->
-    <view v-if="controlMode === 5" class="control-content">
+    <view v-if="controlMode === 4" class="control-content">
       <!-- 定时组切换 -->
       <view class="timer-tabs">
         <SingleButtonSelect
@@ -596,12 +596,17 @@ export default {
       return this.$store.state.deviceDetail.currentMotorFan || {};
     },
     temperatureSensors() {
-      // 从设备信息中获取温度传感器列表
-      const deviceInfo = this.$store.state.deviceDetail.deviceInfo;
-      if (deviceInfo && deviceInfo.sensors) {
-        return deviceInfo.sensors.filter(sensor => sensor.sensorTypeId === 5);
-      }
-      return [];
+      // 固定探头枚举：0~7
+      return [
+        { id: 0, sensorName: '探头1' },
+        { id: 1, sensorName: '探头2' },
+        { id: 2, sensorName: '探头3' },
+        { id: 3, sensorName: '探头4' },
+        { id: 4, sensorName: '探头12' },
+        { id: 5, sensorName: '探头34' },
+        { id: 6, sensorName: '探头1234' },
+        { id: 7, sensorName: '探头1234' },
+      ];
     },
     // 风机名称
     fanName: {
@@ -618,12 +623,12 @@ export default {
     // 控制模式
     controlMode: {
       get() {
-        return this.currFan.controlMode || 1;
+        return this.currFan.wm !== undefined && this.currFan.wm !== null ? Number(this.currFan.wm) : 0;
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "controlMode",
-          value,
+          field: "wm",
+          value: Number(value) || 0,
         });
       },
     },
@@ -642,13 +647,14 @@ export default {
     // 探头索引
     probeIndex: {
       get() {
-        if (!this.currFan.probeSensorId || !this.temperatureSensors.length) return -1;
-        return this.temperatureSensors.findIndex(s => s.id === this.currFan.probeSensorId);
+        const sensorId = this.currFan.tcps;
+        if (sensorId === undefined || sensorId === null || !this.temperatureSensors.length) return -1;
+        return this.temperatureSensors.findIndex(s => s.id === Number(sensorId));
       },
       set(value) {
         const sensorId = value >= 0 && this.temperatureSensors[value] ? this.temperatureSensors[value].id : null;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "probeSensorId",
+          field: "tcps",
           value: sensorId,
         });
       },
@@ -656,11 +662,11 @@ export default {
     // 温度上限/启动温度
     tempUpper: {
       get() {
-        return this.currFan.tempUpper !== undefined ? String(this.currFan.tempUpper) : '35';
+        return this.currFan.tcat !== undefined && this.currFan.tcat !== null ? String(this.currFan.tcat) : '35';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "tempUpper",
+          field: "tcat",
           value: parseFloat(value) || 0,
         });
       },
@@ -668,11 +674,11 @@ export default {
     // 温度下限/停止温度
     tempLower: {
       get() {
-        return this.currFan.tempLower !== undefined ? String(this.currFan.tempLower) : '10';
+        return this.currFan.tcot !== undefined && this.currFan.tcot !== null ? String(this.currFan.tcot) : '10';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "tempLower",
+          field: "tcot",
           value: parseFloat(value) || 0,
         });
       },
@@ -680,56 +686,48 @@ export default {
     // 运行时间（分钟）
     runMinutes: {
       get() {
-        return this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
+        return this.currFan.tcltrm || 0;
       },
       set(value) {
-        const minutes = parseInt(value) || 0;
-        const seconds = this.currFan.runTime ? this.currFan.runTime % 60 : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "runTime",
-          value: minutes * 60 + seconds,
+          field: "tcltrm",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 运行时间（秒）
     runSeconds: {
       get() {
-        return this.currFan.runTime ? this.currFan.runTime % 60 : 5;
+        return this.currFan.tcltrs || 5;
       },
       set(value) {
-        const seconds = parseInt(value) || 0;
-        const minutes = this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "runTime",
-          value: minutes * 60 + seconds,
+          field: "tcltrs",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 暂停时间（分钟）
     pauseMinutes: {
       get() {
-        return this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
+        return this.currFan.tcltpm || 0;
       },
       set(value) {
-        const minutes = parseInt(value) || 0;
-        const seconds = this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "pauseTime",
-          value: minutes * 60 + seconds,
+          field: "tcltpm",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 暂停时间（秒）
     pauseSeconds: {
       get() {
-        return this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 5;
+        return this.currFan.tcltps || 5;
       },
       set(value) {
-        const seconds = parseInt(value) || 0;
-        const minutes = this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "pauseTime",
-          value: minutes * 60 + seconds,
+          field: "tcltps",
+          value: parseInt(value) || 0,
         });
       },
     },
@@ -739,8 +737,6 @@ export default {
         return this.currFan.tctcm !== undefined && this.currFan.tctcm !== null ? Number(this.currFan.tctcm) : 0;
       },
       set(value) {
-        console.log('tctcm : ', value);
-        
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
           field: "tctcm",
           value: Number(value) || 0,
@@ -786,11 +782,11 @@ export default {
     // 湿度上限
     humidityUpper: {
       get() {
-        return this.currFan.humidityUpper !== undefined ? String(this.currFan.humidityUpper) : '90';
+        return this.currFan.hchu !== undefined && this.currFan.hchu !== null ? String(this.currFan.hchu) : '90';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "humidityUpper",
+          field: "hchu",
           value: parseFloat(value) || 0,
         });
       },
@@ -798,11 +794,11 @@ export default {
     // 湿度下限
     humidityLower: {
       get() {
-        return this.currFan.humidityLower !== undefined ? String(this.currFan.humidityLower) : '30';
+        return this.currFan.hchd !== undefined && this.currFan.hchd !== null ? String(this.currFan.hchd) : '30';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "humidityLower",
+          field: "hchd",
           value: parseFloat(value) || 0,
         });
       },
@@ -810,11 +806,11 @@ export default {
     // 气体上限
     gasUpper: {
       get() {
-        return this.currFan.gasUpper !== undefined ? String(this.currFan.gasUpper) : '3000';
+        return this.currFan.ncnu !== undefined && this.currFan.ncnu !== null ? String(this.currFan.ncnu) : '3000';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "gasUpper",
+          field: "ncnu",
           value: parseInt(value) || 0,
         });
       },
@@ -822,11 +818,11 @@ export default {
     // 气体下限
     gasLower: {
       get() {
-        return this.currFan.gasLower !== undefined ? String(this.currFan.gasLower) : '1000';
+        return this.currFan.ncnd !== undefined && this.currFan.ncnd !== null ? String(this.currFan.ncnd) : '1000';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "gasLower",
+          field: "ncnd",
           value: parseInt(value) || 0,
         });
       },
@@ -834,11 +830,11 @@ export default {
     // 循环模式 - 启动温度（使用tempUpper）
     startTemp: {
       get() {
-        return this.currFan.tempUpper !== undefined ? String(this.currFan.tempUpper) : '35';
+        return this.currFan.cctu !== undefined ? String(this.currFan.cctu) : '35';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "tempUpper",
+          field: "cctu",
           value: parseFloat(value) || 0,
         });
       },
@@ -846,109 +842,148 @@ export default {
     // 循环模式 - 停止温度（使用tempLower）
     stopTemp: {
       get() {
-        return this.currFan.tempLower !== undefined ? String(this.currFan.tempLower) : '10';
+        return this.currFan.cctd !== undefined ? String(this.currFan.cctd) : '10';
       },
       set(value) {
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "tempLower",
+          field: "cctd",
           value: parseFloat(value) || 0,
+        });
+      },
+    },
+    // 循环模式 - 探头索引
+    cycleProbeIndex: {
+      get() {
+        if (this.currFan.ccps === undefined || this.currFan.ccps === null) return -1;
+        return Number(this.currFan.ccps);
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+          field: "ccps",
+          value: Number(value),
         });
       },
     },
     // 循环模式 - 低温运行时间（分钟）
     lowTempRunMinutes: {
       get() {
-        return this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
+        return this.currFan.ccrm || 0;
       },
       set(value) {
-        const minutes = parseInt(value) || 0;
-        const seconds = this.currFan.runTime ? this.currFan.runTime % 60 : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "runTime",
-          value: minutes * 60 + seconds,
+          field: "ccrm",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 循环模式 - 低温运行时间（秒）
     lowTempRunSeconds: {
       get() {
-        return this.currFan.runTime ? this.currFan.runTime % 60 : 0;
+        return this.currFan.ccrs || 0;
       },
       set(value) {
-        const seconds = parseInt(value) || 0;
-        const minutes = this.currFan.runTime ? Math.floor(this.currFan.runTime / 60) : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "runTime",
-          value: minutes * 60 + seconds,
+          field: "ccrs",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 循环模式 - 低温暂停时间（分钟）
     lowTempPauseMinutes: {
       get() {
-        return this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
+        return this.currFan.ccpm || 0;
       },
       set(value) {
-        const minutes = parseInt(value) || 0;
-        const seconds = this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "pauseTime",
-          value: minutes * 60 + seconds,
+          field: "ccpm",
+          value: parseInt(value) || 0,
         });
       },
     },
     // 循环模式 - 低温暂停时间（秒）
     lowTempPauseSeconds: {
       get() {
-        return this.currFan.pauseTime ? this.currFan.pauseTime % 60 : 5;
+        return this.currFan.ccpss || 5;
       },
       set(value) {
-        const seconds = parseInt(value) || 0;
-        const minutes = this.currFan.pauseTime ? Math.floor(this.currFan.pauseTime / 60) : 0;
         this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-          field: "pauseTime",
-          value: minutes * 60 + seconds,
+          field: "ccpss",
+          value: parseInt(value) || 0,
         });
       },
+    },
+    // 湿控运行暂停时间
+    humidityRunMinutes: {
+      get() { return this.currFan.hcrm || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "hcrm", value: parseInt(value) || 0 }); },
+    },
+    humidityRunSeconds: {
+      get() { return this.currFan.hcrs || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "hcrs", value: parseInt(value) || 0 }); },
+    },
+    humidityPauseMinutes: {
+      get() { return this.currFan.hcpm || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "hcpm", value: parseInt(value) || 0 }); },
+    },
+    humidityPauseSeconds: {
+      get() { return this.currFan.hcps || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "hcps", value: parseInt(value) || 0 }); },
+    },
+    // 氨气运行暂停时间
+    gasRunMinutes: {
+      get() { return this.currFan.ncrm || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "ncrm", value: parseInt(value) || 0 }); },
+    },
+    gasRunSeconds: {
+      get() { return this.currFan.ncrs || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "ncrs", value: parseInt(value) || 0 }); },
+    },
+    gasPauseMinutes: {
+      get() { return this.currFan.ncpm || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "ncpm", value: parseInt(value) || 0 }); },
+    },
+    gasPauseSeconds: {
+      get() { return this.currFan.ncps || 0; },
+      set(value) { this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", { field: "ncps", value: parseInt(value) || 0 }); },
     },
     // 定时组数据
     timerGroups() {
       return [
         {
-          enabled: this.currFan.timer1Enabled === 1,
-          startHour: this.currFan.timer1StartTime ? this.currFan.timer1StartTime.split(':')[0] : '5',
-          startMinute: this.currFan.timer1StartTime ? this.currFan.timer1StartTime.split(':')[1] : '5',
-          endHour: this.currFan.timer1EndTime ? this.currFan.timer1EndTime.split(':')[0] : '6',
-          endMinute: this.currFan.timer1EndTime ? this.currFan.timer1EndTime.split(':')[1] : '6',
-          probeIndex: this.currFan.timer1ProbeSensorId ? this.temperatureSensors.findIndex(s => s.id === this.currFan.timer1ProbeSensorId) : 0,
-          startTemp: this.currFan.timer1StartTemp !== undefined ? String(this.currFan.timer1StartTemp) : '20',
-          stopTemp: this.currFan.timer1StopTemp !== undefined ? String(this.currFan.timer1StopTemp) : '30',
+          enabled: this.currFan.tict1nf === 0,
+          startHour: this.currFan.tict1nh ?? '5',
+          startMinute: this.currFan.tict1nm ?? '5',
+          endHour: this.currFan.tict1fh ?? '6',
+          endMinute: this.currFan.tict1fm ?? '6',
+          probeIndex: this.currFan.ticps ?? 0,
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
         },
         {
-          enabled: this.currFan.timer2Enabled === 1,
-          startHour: this.currFan.timer2StartTime ? this.currFan.timer2StartTime.split(':')[0] : '12',
-          startMinute: this.currFan.timer2StartTime ? this.currFan.timer2StartTime.split(':')[1] : '0',
-          endHour: this.currFan.timer2EndTime ? this.currFan.timer2EndTime.split(':')[0] : '14',
-          endMinute: this.currFan.timer2EndTime ? this.currFan.timer2EndTime.split(':')[1] : '0',
-          probeIndex: this.currFan.timer2ProbeSensorId ? this.temperatureSensors.findIndex(s => s.id === this.currFan.timer2ProbeSensorId) : 0,
-          startTemp: this.currFan.timer2StartTemp !== undefined ? String(this.currFan.timer2StartTemp) : '20',
-          stopTemp: this.currFan.timer2StopTemp !== undefined ? String(this.currFan.timer2StopTemp) : '30',
+          enabled: this.currFan.tict2nf === 0,
+          startHour: this.currFan.tict2nh ?? '12',
+          startMinute: this.currFan.tict2nm ?? '0',
+          endHour: this.currFan.tict2fh ?? '14',
+          endMinute: this.currFan.tict2fm ?? '0',
+          probeIndex: this.currFan.ticps ?? 0,
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
         },
         {
-          enabled: this.currFan.timer3Enabled === 1,
-          startHour: this.currFan.timer3StartTime ? this.currFan.timer3StartTime.split(':')[0] : '18',
-          startMinute: this.currFan.timer3StartTime ? this.currFan.timer3StartTime.split(':')[1] : '0',
-          endHour: this.currFan.timer3EndTime ? this.currFan.timer3EndTime.split(':')[0] : '20',
-          endMinute: this.currFan.timer3EndTime ? this.currFan.timer3EndTime.split(':')[1] : '0',
-          probeIndex: this.currFan.timer3ProbeSensorId ? this.temperatureSensors.findIndex(s => s.id === this.currFan.timer3ProbeSensorId) : 0,
-          startTemp: this.currFan.timer3StartTemp !== undefined ? String(this.currFan.timer3StartTemp) : '20',
-          stopTemp: this.currFan.timer3StopTemp !== undefined ? String(this.currFan.timer3StopTemp) : '30',
+          enabled: this.currFan.tict3nf === 0,
+          startHour: this.currFan.tict3nh ?? '18',
+          startMinute: this.currFan.tict3nm ?? '0',
+          endHour: this.currFan.tict3fh ?? '20',
+          endMinute: this.currFan.tict3fm ?? '0',
+          probeIndex: this.currFan.ticps ?? 0,
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
         },
       ];
     },
     realtimeTemp(){
       if (this.probeIndex >= 0 && this.temperatureSensors[this.probeIndex]) {
-        return this.temperatureSensors[this.probeIndex].sensorValue;
+        return this.temperatureSensors[this.probeIndex].sensorValue ?? '--';
       }
       return '--';
     },
@@ -977,54 +1012,60 @@ export default {
     onProbeChange(e) {
       this.probeIndex = parseInt(e.detail.value);
     },
+    onCycleProbeChange(e) {
+      this.cycleProbeIndex = parseInt(e.detail.value);
+    },
     onTimerSwitchChange(value) {
-      const field = `timer${this.currentTimerGroup}Enabled`;
+      const field = `tict${this.currentTimerGroup}nf`;
       this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
         field,
-        value: value ? 1 : 0,
+        value: value ? 0 : 1,
       });
     },
     onTimerProbeChange(e) {
       const index = parseInt(e.detail.value);
       const sensorId = index >= 0 && this.temperatureSensors[index] ? this.temperatureSensors[index].id : null;
-      const field = `timer${this.currentTimerGroup}ProbeSensorId`;
       this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
-        field,
+        field: "ticps",
         value: sensorId,
       });
     },
     updateTimerField(timerNum, fieldName, value) {
-      const field = `timer${timerNum}${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`;
+      const mapping = {
+        1: { startHour: 'tict1nh', startMinute: 'tict1nm', endHour: 'tict1fh', endMinute: 'tict1fm' },
+        2: { startHour: 'tict2nh', startMinute: 'tict2nm', endHour: 'tict2fh', endMinute: 'tict2fm' },
+        3: { startHour: 'tict3nh', startMinute: 'tict3nm', endHour: 'tict3fh', endMinute: 'tict3fm' },
+      };
+      const field = mapping[timerNum]?.[fieldName];
+      if (!field) return;
       this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
         field,
         value,
       });
     },
     onTimerStartHourInput(e) {
-      const hour = e.detail.value;
-      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
-      this.updateTimerField(this.currentTimerGroup, "startTime", `${hour}:${timer.startMinute || 0}`);
+      this.updateTimerField(this.currentTimerGroup, "startHour", parseInt(e.detail.value) || 0);
     },
     onTimerStartMinuteInput(e) {
-      const minute = e.detail.value;
-      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
-      this.updateTimerField(this.currentTimerGroup, "startTime", `${timer.startHour || 0}:${minute}`);
+      this.updateTimerField(this.currentTimerGroup, "startMinute", parseInt(e.detail.value) || 0);
     },
     onTimerEndHourInput(e) {
-      const hour = e.detail.value;
-      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
-      this.updateTimerField(this.currentTimerGroup, "endTime", `${hour}:${timer.endMinute || 0}`);
+      this.updateTimerField(this.currentTimerGroup, "endHour", parseInt(e.detail.value) || 0);
     },
     onTimerEndMinuteInput(e) {
-      const minute = e.detail.value;
-      const timer = this.timerGroups[this.currentTimerGroup - 1] || {};
-      this.updateTimerField(this.currentTimerGroup, "endTime", `${timer.endHour || 0}:${minute}`);
+      this.updateTimerField(this.currentTimerGroup, "endMinute", parseInt(e.detail.value) || 0);
     },
     onTimerStartTempInput(e) {
-      this.updateTimerField(this.currentTimerGroup, "startTemp", parseFloat(e.detail.value) || 0);
+      this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+        field: "ticat",
+        value: parseFloat(e.detail.value) || 0,
+      });
     },
     onTimerStopTempInput(e) {
-      this.updateTimerField(this.currentTimerGroup, "stopTemp", parseFloat(e.detail.value) || 0);
+      this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_FIELD", {
+        field: "ticot",
+        value: parseFloat(e.detail.value) || 0,
+      });
     },
     async handleSave() {
       if (!this.currFan.id) {
@@ -1036,43 +1077,61 @@ export default {
       }
 
       try {
+        const timerGroups = this.timerGroups;
         // 准备要提交的数据
         const requestData = {
           id: this.currFan.id,
           fanName: this.currFan.fanName,
-          controlMode: this.currFan.controlMode,
+          wm: this.currFan.wm,
           autoMode: this.currFan.autoMode,
-          probeSensorId: this.currFan.probeSensorId,
-          tempUpper: this.currFan.tempUpper,
-          tempLower: this.currFan.tempLower,
-          runTime: this.currFan.runTime,
-          pauseTime: this.currFan.pauseTime,
+          tcps: this.currFan.tcps,
+          tcat: this.currFan.tcat,
+          tcot: this.currFan.tcot,
+          tcltrm: this.currFan.tcltrm,
+          tcltrs: this.currFan.tcltrs,
+          tcltpm: this.currFan.tcltpm,
+          tcltps: this.currFan.tcltps,
           tctcm: this.currFan.tctcm,
+          ccps: this.currFan.ccps,
+          cctu: this.currFan.cctu,
+          cctd: this.currFan.cctd,
+          ccrm: this.currFan.ccrm,
+          ccrs: this.currFan.ccrs,
+          ccpm: this.currFan.ccpm,
+          ccpss: this.currFan.ccpss,
           cccm: this.currFan.cccm,
+          hchu: this.currFan.hchu,
+          hchd: this.currFan.hchd,
+          hcrm: this.currFan.hcrm,
+          hcrs: this.currFan.hcrs,
+          hcpm: this.currFan.hcpm,
+          hcps: this.currFan.hcps,
           hchcm: this.currFan.hchcm,
+          ncnu: this.currFan.ncnu,
+          ncnd: this.currFan.ncnd,
+          ncrm: this.currFan.ncrm,
+          ncrs: this.currFan.ncrs,
+          ncpm: this.currFan.ncpm,
+          ncps: this.currFan.ncps,
           tictitm: this.currFan.tictitm,
-          humidityUpper: this.currFan.humidityUpper,
-          humidityLower: this.currFan.humidityLower,
-          gasUpper: this.currFan.gasUpper,
-          gasLower: this.currFan.gasLower,
-          timer1Enabled: this.currFan.timer1Enabled,
-          timer1StartTime: `${this.timerGroups[0].startHour}:${this.timerGroups[0].startMinute}`,
-          timer1EndTime: `${this.timerGroups[0].endHour}:${this.timerGroups[0].endMinute}`,
-          timer1ProbeSensorId: this.currFan.timer1ProbeSensorId,
-          timer1StartTemp: this.currFan.timer1StartTemp,
-          timer1StopTemp: this.currFan.timer1StopTemp,
-          timer2Enabled: this.currFan.timer2Enabled,
-          timer2StartTime: `${this.timerGroups[1].startHour}:${this.timerGroups[1].startMinute}`,
-          timer2EndTime: `${this.timerGroups[1].endHour}:${this.timerGroups[1].endMinute}`,
-          timer2ProbeSensorId: this.currFan.timer2ProbeSensorId,
-          timer2StartTemp: this.currFan.timer2StartTemp,
-          timer2StopTemp: this.currFan.timer2StopTemp,
-          timer3Enabled: this.currFan.timer3Enabled,
-          timer3StartTime: `${this.timerGroups[2].startHour}:${this.timerGroups[2].startMinute}`,
-          timer3EndTime: `${this.timerGroups[2].endHour}:${this.timerGroups[2].endMinute}`,
-          timer3ProbeSensorId: this.currFan.timer3ProbeSensorId,
-          timer3StartTemp: this.currFan.timer3StartTemp,
-          timer3StopTemp: this.currFan.timer3StopTemp,
+          tict1nf: timerGroups[0].enabled ? 0 : 1,
+          tict1nh: Number(timerGroups[0].startHour) || 0,
+          tict1nm: Number(timerGroups[0].startMinute) || 0,
+          tict1fh: Number(timerGroups[0].endHour) || 0,
+          tict1fm: Number(timerGroups[0].endMinute) || 0,
+          tict2nf: timerGroups[1].enabled ? 0 : 1,
+          tict2nh: Number(timerGroups[1].startHour) || 0,
+          tict2nm: Number(timerGroups[1].startMinute) || 0,
+          tict2fh: Number(timerGroups[1].endHour) || 0,
+          tict2fm: Number(timerGroups[1].endMinute) || 0,
+          tict3nf: timerGroups[2].enabled ? 0 : 1,
+          tict3nh: Number(timerGroups[2].startHour) || 0,
+          tict3nm: Number(timerGroups[2].startMinute) || 0,
+          tict3fh: Number(timerGroups[2].endHour) || 0,
+          tict3fm: Number(timerGroups[2].endMinute) || 0,
+          ticps: (this.currFan.ticps ?? Number(timerGroups[this.currentTimerGroup - 1].probeIndex)) || 0,
+          ticat: (this.currFan.ticat ?? Number(timerGroups[this.currentTimerGroup - 1].startTemp)) || 0,
+          ticot: (this.currFan.ticot ?? Number(timerGroups[this.currentTimerGroup - 1].stopTemp)) || 0,
         };
 
         // 调用API保存
@@ -1080,6 +1139,15 @@ export default {
           url: '/motor-fan/update',
           method: 'PUT',
           data: requestData,
+        });
+
+        this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", {
+          ...this.currFan,
+          ...requestData,
+        });
+        this.$store.commit("deviceDetail/UPDATE_MOTOR_FAN_IN_DEVICE_INFO", {
+          ...this.currFan,
+          ...requestData,
         });
 
         uni.showToast({

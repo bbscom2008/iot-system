@@ -87,8 +87,8 @@ public class MotorFanController {
         if (motorFan.getIsRunning() == null) {
             motorFan.setIsRunning(0); // 默认停止
         }
-        if (motorFan.getControlMode() == null) {
-            motorFan.setControlMode(1); // 默认温控
+        if (motorFan.getWm() == null) {
+            motorFan.setWm(0); // 默认温控
         }
         if (motorFan.getAutoMode() == null) {
             motorFan.setAutoMode(1); // 默认自动

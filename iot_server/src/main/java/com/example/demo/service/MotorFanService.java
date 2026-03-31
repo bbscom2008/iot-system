@@ -149,7 +149,7 @@ public class MotorFanService {
         fan.setDeviceNum(e.getKey());
         Integer run = e.getValue();
         fan.setIsRunning(run == null ? 0 : run);
-        fan.setControlMode(1);
+        fan.setWm(0);
         fan.setAutoMode(1);
         String name = "风机";
         try {

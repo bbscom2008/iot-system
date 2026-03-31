@@ -53,6 +53,18 @@ const mutations = {
     }
   },
 
+  // 同步更新 deviceInfo.motorFans 中的指定风机
+  UPDATE_MOTOR_FAN_IN_DEVICE_INFO(state, motorFan) {
+    if (!motorFan || !motorFan.id || !state.deviceInfo || !Array.isArray(state.deviceInfo.motorFans)) return
+    const index = state.deviceInfo.motorFans.findIndex(item => item.id === motorFan.id)
+    if (index >= 0) {
+      state.deviceInfo.motorFans.splice(index, 1, {
+        ...state.deviceInfo.motorFans[index],
+        ...motorFan
+      })
+    }
+  },
+
 }
 
 const actions = {

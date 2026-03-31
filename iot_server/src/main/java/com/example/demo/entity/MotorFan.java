@@ -16,50 +16,68 @@ public class MotorFan {
     private Long deviceId;               // 父设备的ID
     private String deviceNum;            // 风机编码
     private Integer isRunning;           // 运行状态：0-停止 1-运行
-    private Integer controlMode;         // 控制模式：1-温控 2-循环 3-湿控 4-气体 5-定时
+    private Integer wm;                  // 工作模式：0-温控 1-循环 2-湿控 3-氨气 4-定时
     private Integer autoMode;            // 自动模式：1-自动 2-开 3-关
-    private Long probeSensorId;          // 探头传感器ID
-
-    // 温控/循环共用字段
-    private Double tempUpper;            // 温度上限/启动温度（°C）
-    private Double tempLower;            // 温度下限/停止温度（°C）
-    private Integer runTime;             // 运行时间/低温运行（秒）
-    private Integer pauseTime;           // 暂停时间/低温暂停（秒）
+    
+    // 温控字段
+    private Integer tcps;                // 温控探头选择：0~7
+    private Double tcat;                 // 温控启动温度
+    private Double tcot;                 // 温控停止温度
+    private Integer tcltrm;              // 温控低温运行时间-分
+    private Integer tcltrs;              // 温控低温运行时间-秒
+    private Integer tcltpm;              // 温控低温暂停时间-分
+    private Integer tcltps;              // 温控低温暂停时间-秒
     private Integer tctcm;               // 温控模式：0-降温 1-升温
+
+    // 循环字段
+    private Integer ccps;                // 循环探头选择：0~7
+    private Double cctu;                 // 循环温度上限
+    private Double cctd;                 // 循环温度下限
+    private Integer ccrm;                // 循环运行时间-分
+    private Integer ccrs;                // 循环运行时间-秒
+    private Integer ccpm;                // 循环暂停时间-分
+    private Integer ccpss;               // 循环暂停时间-秒
     private Integer cccm;                // 循环模式：0-降温 1-升温 2-时间
 
     // 湿控字段
-    private Double humidityUpper;        // 湿度上限（%）
-    private Double humidityLower;        // 湿度下限（%）
+    private Double hchu;                 // 湿控湿度上限
+    private Double hchd;                 // 湿控湿度下限
+    private Integer hcrm;                // 湿控运行时间-分
+    private Integer hcrs;                // 湿控运行时间-秒
+    private Integer hcpm;                // 湿控暂停时间-分
+    private Integer hcps;                // 湿控暂停时间-秒
     private Integer hchcm;               // 湿控模式：0-除湿 1-加湿
 
-    // 气体字段
-    private Integer gasUpper;            // 气体上限（ppm）
-    private Integer gasLower;            // 气体下限（ppm）
+    // 氨气字段
+    private Integer ncnu;                // NH3上限
+    private Integer ncnd;                // NH3下限
+    private Integer ncrm;                // NH3运行时间-分
+    private Integer ncrs;                // NH3运行时间-秒
+    private Integer ncpm;                // NH3暂停时间-分
+    private Integer ncps;                // NH3暂停时间-秒
 
-    // 定时1字段
-    private Integer timer1Enabled;       // 定时1开关：0-关闭 1-开启
-    private String timer1StartTime;      // 定时1开启时间（HH:mm）
-    private String timer1EndTime;        // 定时1关闭时间（HH:mm）
-    private Long timer1ProbeSensorId;    // 定时1探头传感器ID
-    private Double timer1StartTemp;      // 定时1启动温度（°C）
-    private Double timer1StopTemp;       // 定时1停止温度（°C）
+    // 定时字段
+    private Integer tict1nf;             // 定时1，0开1关
+    private Integer tict1nh;             // 定时1开-时
+    private Integer tict1nm;             // 定时1开-分
+    private Integer tict1fh;             // 定时1关-时
+    private Integer tict1fm;             // 定时1关-分
 
-    // 定时2字段
-    private Integer timer2Enabled;       // 定时2开关：0-关闭 1-开启
-    private String timer2StartTime;      // 定时2开启时间（HH:mm）
-    private String timer2EndTime;        // 定时2关闭时间（HH:mm）
-    private Long timer2ProbeSensorId;    // 定时2探头传感器ID
-    private Double timer2StartTemp;      // 定时2启动温度（°C）
-    private Double timer2StopTemp;       // 定时2停止温度（°C）
+    private Integer tict2nf;             // 定时2，0开1关
+    private Integer tict2nh;             // 定时2开-时
+    private Integer tict2nm;             // 定时2开-分
+    private Integer tict2fh;             // 定时2关-时
+    private Integer tict2fm;             // 定时2关-分
 
-    // 定时3字段
-    private Integer timer3Enabled;       // 定时3开关：0-关闭 1-开启
-    private String timer3StartTime;      // 定时3开启时间（HH:mm）
-    private String timer3EndTime;        // 定时3关闭时间（HH:mm）
-    private Long timer3ProbeSensorId;    // 定时3探头传感器ID
-    private Double timer3StartTemp;      // 定时3启动温度（°C）
-    private Double timer3StopTemp;       // 定时3停止温度（°C）
+    private Integer tict3nf;             // 定时3，0开1关
+    private Integer tict3nh;             // 定时3开-时
+    private Integer tict3nm;             // 定时3开-分
+    private Integer tict3fh;             // 定时3关-时
+    private Integer tict3fm;             // 定时3关-分
+
+    private Integer ticps;               // 定时探头选择：0~7
+    private Double ticat;                // 定时启动温度
+    private Double ticot;                // 定时停止温度
     private Integer tictitm;             // 定时温控：0-降温 1-升温
 
     // 关联的设备和用户信息

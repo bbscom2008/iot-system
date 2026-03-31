@@ -4,6 +4,7 @@ import com.example.demo.dto.MotorControlMessage;
 import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.entity.MotorFanTimerTask;
+import com.example.demo.entity.Sensor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class MotorControlRuleEngineService {
     @Autowired
     private MqttService mqttService;
 
-    // 1 = 温度控制, 2 = 循环, 3 = 湿度控制, 4 = 气体控制, 5 = 定时
+    // wm: 0 = 温控, 1 = 循环, 2 = 湿控, 3 = 氨气, 4 = 定时
 
     /**
      * 电机调度的延时切换，KEY : 格式：temp:motorNum:parentDeviceNum
@@ -62,15 +63,15 @@ public class MotorControlRuleEngineService {
      * @param deviceNum
      * @return
      */
-    private String getMapKey(int controlMode, String motorNum, String deviceNum) {
+    private String getMapKey(int wm, String motorNum, String deviceNum) {
         String type = null;
-        if (controlMode == 1) {
+        if (wm == 0) {
             type = "temp";
-        } else if (controlMode == 5) {
+        } else if (wm == 4) {
             type = "timer";
         } else {
-            log.error("未知的控制模式: controlMode={}, motorNum={}, deviceNum={}", controlMode, motorNum, deviceNum);
-            throw new IllegalArgumentException("未知的控制模式: " + controlMode);
+            log.error("未知的工作模式: wm={}, motorNum={}, deviceNum={}", wm, motorNum, deviceNum);
+            throw new IllegalArgumentException("未知的工作模式: " + wm);
         }
 
         return type + ":" + motorNum + ":" + deviceNum;
@@ -85,7 +86,7 @@ public class MotorControlRuleEngineService {
      * @return
      */
     private String getMapKey(MotorFan motorFan, String deviceNum) {
-        return getMapKey(motorFan.getControlMode(), motorFan.getDeviceNum(), deviceNum);
+        return getMapKey(motorFan.getWm(), motorFan.getDeviceNum(), deviceNum);
     }
 
     /**
@@ -108,7 +109,7 @@ public class MotorControlRuleEngineService {
      * @param deviceNum
      */
     private void removeScheduleKey(MotorFan motorFan, String deviceNum) {
-        removeScheduleKey(motorFan.getControlMode(), motorFan.getDeviceNum(), deviceNum);
+        removeScheduleKey(motorFan.getWm(), motorFan.getDeviceNum(), deviceNum);
     }
 
     /**
@@ -156,36 +157,33 @@ public class MotorControlRuleEngineService {
             }
 
             // 第二步：按控制模式处理（仅当autoMode = 1时）
-            Integer controlMode = motorFan.getControlMode();
+            Integer wm = motorFan.getWm();
 
-            if (controlMode == null) {
-                log.warn("未设置控制模式: motorId={}", motorFan.getDeviceId());
+            if (wm == null) {
+                log.warn("未设置工作模式: motorId={}", motorFan.getDeviceId());
                 return;
             }
 
             Integer newState = 0;
 
-            switch (controlMode) {
-                case 1: // 温控
+            switch (wm) {
+                case 0: // 温控
                     newState = processTemperatureControl(motorFan, currentSensorValue, deviceNum);
                     break;
-                case 2: // 循环
+                case 1: // 循环
                     newState = processCycleControl(motorFan);
                     break;
+                case 2:
+                    log.warn("目前还没有湿控传感器规则: motorId={}，wm={}", motorFan.getDeviceId(), wm);
+                    break;
                 case 3:
-                    // 目前还没有 湿度传感器
-                    log.warn("目前还没有温度控制模式: motorId={}，controlMode={}", motorFan.getDeviceId(), controlMode);
+                    log.warn("目前还没有氨气传感器规则: motorId={}, wm={}", motorFan.getDeviceId(), wm);
                     break;
                 case 4:
-                    // 目前还没有 气体传感器
-                    log.warn("目前还没有气体控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
-                    break;
-                case 5:
-                    // 定时
                     newState = processTimerControl(motorFan, deviceNum);
                     break;
                 default:
-                    log.warn("未知的控制模式: motorId={}, controlMode={}", motorFan.getDeviceId(), controlMode);
+                    log.warn("未知的工作模式: motorId={}, wm={}", motorFan.getDeviceId(), wm);
                     return;
             }
 
@@ -213,18 +211,18 @@ public class MotorControlRuleEngineService {
     private Integer processTemperatureControl(MotorFan motorFan, Double currentTemp, String deviceNum) {
         if (currentTemp == null) {
             // 根据 motorFan 绑定的温度传感器，去查询 当前温度值
-            Long sensorId = motorFan.getProbeSensorId();
-            if (sensorId != null) {
-                currentTemp = sensorService.getSensorValueById(sensorId);
-                log.info("获取传感器温度: sensorId={}, temperature={}", sensorId, currentTemp);
+            Integer tcps = motorFan.getTcps();
+            if (tcps != null) {
+                currentTemp = getTempValueBySelection(motorFan.getDeviceId(), tcps);
+                log.info("获取温控传感器温度: tcps={}, temperature={}", tcps, currentTemp);
             } else {
-                log.info("当前电机没有设置 温度传感器: motorFanId={}, sensorId={}", motorFan.getDeviceId(), sensorId);
+                log.info("当前电机没有设置温控探头: motorFanId={}", motorFan.getDeviceId());
                 return motorFan.getIsRunning();
             }
         }
 
-        Double upper = motorFan.getTempUpper();
-        Double lower = motorFan.getTempLower();
+        Double upper = motorFan.getTcat();
+        Double lower = motorFan.getTcot();
 
         if (upper == null || lower == null) {
             log.warn("温度限制未设置: motorId={}", motorFan.getId());
@@ -243,8 +241,8 @@ public class MotorControlRuleEngineService {
         }
         // 否则，保持当前状态，并按照运行/暂停时间进行循环调度
         else {
-            Integer runTime = motorFan.getRunTime(); // 运行多少 秒
-            Integer pauseTime = motorFan.getPauseTime(); // 暂停多少秒
+            Integer runTime = (motorFan.getTcltrm() == null ? 0 : motorFan.getTcltrm()) * 60 + (motorFan.getTcltrs() == null ? 0 : motorFan.getTcltrs());
+            Integer pauseTime = (motorFan.getTcltpm() == null ? 0 : motorFan.getTcltpm()) * 60 + (motorFan.getTcltps() == null ? 0 : motorFan.getTcltps());
 
             if (runTime == null || pauseTime == null || runTime <= 0 || pauseTime <= 0) {
                 log.warn("循环时间未设置或无效: motorId={}", motorFan.getId());
@@ -289,8 +287,8 @@ public class MotorControlRuleEngineService {
     private Integer processCycleControl(MotorFan motorFan) {
         // 注意：循环控制需要跟踪时间状态
         // 这是一个简化的实现 - 你可能需要存储状态
-        Integer runTime = motorFan.getRunTime();
-        Integer pauseTime = motorFan.getPauseTime();
+        Integer runTime = (motorFan.getCcrm() == null ? 0 : motorFan.getCcrm()) * 60 + (motorFan.getCcrs() == null ? 0 : motorFan.getCcrs());
+        Integer pauseTime = (motorFan.getCcpm() == null ? 0 : motorFan.getCcpm()) * 60 + (motorFan.getCcpss() == null ? 0 : motorFan.getCcpss());
 
         if (runTime == null || pauseTime == null) {
             log.warn("循环时间未设置: motorId={}", motorFan.getId());
@@ -313,8 +311,8 @@ public class MotorControlRuleEngineService {
             return motorFan.getIsRunning();
         }
 
-        Double upper = motorFan.getHumidityUpper();
-        Double lower = motorFan.getHumidityLower();
+        Double upper = motorFan.getHchu();
+        Double lower = motorFan.getHchd();
 
         if (upper == null || lower == null) {
             log.warn("湿度限制未设置: motorId={}", motorFan.getId());
@@ -347,8 +345,8 @@ public class MotorControlRuleEngineService {
             return motorFan.getIsRunning();
         }
 
-        Integer upper = motorFan.getGasUpper();
-        Integer lower = motorFan.getGasLower();
+        Integer upper = motorFan.getNcnu();
+        Integer lower = motorFan.getNcnd();
 
         if (upper == null || lower == null) {
             log.warn("气体限制未设置: motorId={}", motorFan.getId());
@@ -426,8 +424,8 @@ public class MotorControlRuleEngineService {
         } else {
             // 当前时间在指定时间段内,
             // 检查传感器温度，决定是否开启或关闭电机
-            Long sensorId = processTimeTask.getProbeSensorId();
-            Double sensorValue = sensorService.getSensorValueById(sensorId);
+            Integer sensorSelection = processTimeTask.getProbeSensorId() == null ? null : processTimeTask.getProbeSensorId().intValue();
+            Double sensorValue = sensorSelection == null ? null : getTempValueBySelection(motorFan.getDeviceId(), sensorSelection);
             Double startTemp = processTimeTask.getStartTemp();
             Double stopTemp = processTimeTask.getStopTemp();  
             
@@ -441,7 +439,7 @@ public class MotorControlRuleEngineService {
                     resultState = motorFan.getIsRunning();
                 }
             } else {
-                log.warn("未获取到传感器数据: sensorId={}", sensorId);
+                log.warn("未获取到传感器数据: selection={}", sensorSelection);
                 // 保持当前状态
                 resultState = motorFan.getIsRunning();
             }
@@ -459,20 +457,26 @@ public class MotorControlRuleEngineService {
 
         List<MotorFanTimerTask> taskList = new ArrayList<>();
         // 总共 3 个传感器
-        if (motorFan.getTimer1Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer1Enabled(), motorFan.getTimer1StartTime(),
-                    motorFan.getTimer1EndTime(),
-                    motorFan.getTimer1ProbeSensorId(), motorFan.getTimer1StartTemp(), motorFan.getTimer1StopTemp()));
+        if (motorFan.getTict1nf() != null && motorFan.getTict1nf() == 0) {
+            taskList.add(new MotorFanTimerTask(1,
+                formatHm(motorFan.getTict1nh(), motorFan.getTict1nm()),
+                formatHm(motorFan.getTict1fh(), motorFan.getTict1fm()),
+                motorFan.getTicps() == null ? null : motorFan.getTicps().longValue(),
+                motorFan.getTicat(), motorFan.getTicot()));
         }
-        if (motorFan.getTimer2Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer2Enabled(), motorFan.getTimer2StartTime(),
-                    motorFan.getTimer2EndTime(),
-                    motorFan.getTimer2ProbeSensorId(), motorFan.getTimer2StartTemp(), motorFan.getTimer2StopTemp()));
+        if (motorFan.getTict2nf() != null && motorFan.getTict2nf() == 0) {
+            taskList.add(new MotorFanTimerTask(1,
+                formatHm(motorFan.getTict2nh(), motorFan.getTict2nm()),
+                formatHm(motorFan.getTict2fh(), motorFan.getTict2fm()),
+                motorFan.getTicps() == null ? null : motorFan.getTicps().longValue(),
+                motorFan.getTicat(), motorFan.getTicot()));
         }
-        if (motorFan.getTimer3Enabled() == 1) {
-            taskList.add(new MotorFanTimerTask(motorFan.getTimer3Enabled(), motorFan.getTimer3StartTime(),
-                    motorFan.getTimer3EndTime(),
-                    motorFan.getTimer3ProbeSensorId(), motorFan.getTimer3StartTemp(), motorFan.getTimer3StopTemp()));
+        if (motorFan.getTict3nf() != null && motorFan.getTict3nf() == 0) {
+            taskList.add(new MotorFanTimerTask(1,
+                formatHm(motorFan.getTict3nh(), motorFan.getTict3nm()),
+                formatHm(motorFan.getTict3fh(), motorFan.getTict3fm()),
+                motorFan.getTicps() == null ? null : motorFan.getTicps().longValue(),
+                motorFan.getTicat(), motorFan.getTicot()));
         }
 
         return taskList;
@@ -552,7 +556,6 @@ public class MotorControlRuleEngineService {
 
         String motorNum = message.getDeviceNum();
         String deviceNum = message.getParentDeviceNum();
-        // 控制模式: 1 = 温度控制, 2 = 循环, 3 = 湿度控制, 4 = 气体控制, 5 = 定时
         Integer controlMode = message.getControlMode();
 
         String key = getMapKey(controlMode, motorNum, deviceNum);
@@ -605,7 +608,7 @@ public class MotorControlRuleEngineService {
                 .deviceNum(motorFan.getDeviceNum())
                 .parentDeviceNum(deviceNum)
                 .state(newState)
-                .controlMode(motorFan.getControlMode())
+                .controlMode(motorFan.getWm())
                 .autoMode(motorFan.getAutoMode())
                 .delayTime(delayTime)
                 .timestamp(System.currentTimeMillis()) // 当前时间戳
@@ -617,5 +620,51 @@ public class MotorControlRuleEngineService {
         } else {
             motorControlProducerService.sendMotorControlMessage(message);
         }
+    }
+
+    private String formatHm(Integer hour, Integer minute) {
+        if (hour == null || minute == null) {
+            return null;
+        }
+        return hour + ":" + minute;
+    }
+
+    private Double getTempValueBySelection(Long deviceId, Integer selection) {
+        if (deviceId == null || selection == null) {
+            return null;
+        }
+        List<Sensor> sensors = sensorService.findByDeviceId(deviceId);
+        if (sensors == null || sensors.isEmpty()) {
+            return null;
+        }
+        Map<String, Double> tempMap = new HashMap<>();
+        for (Sensor sensor : sensors) {
+            if (sensor.getSensorCode() != null && sensor.getSensorValue() != null) {
+                tempMap.put(sensor.getSensorCode(), sensor.getSensorValue());
+            }
+        }
+        switch (selection) {
+            case 0: return tempMap.get("ts1");
+            case 1: return tempMap.get("ts2");
+            case 2: return tempMap.get("ts3");
+            case 3: return tempMap.get("ts4");
+            case 4: return avg(tempMap.get("ts1"), tempMap.get("ts2"));
+            case 5: return avg(tempMap.get("ts3"), tempMap.get("ts4"));
+            case 6:
+            case 7: return avg(tempMap.get("ts1"), tempMap.get("ts2"), tempMap.get("ts3"), tempMap.get("ts4"));
+            default: return null;
+        }
+    }
+
+    private Double avg(Double... values) {
+        double sum = 0D;
+        int count = 0;
+        for (Double value : values) {
+            if (value != null) {
+                sum += value;
+                count++;
+            }
+        }
+        return count == 0 ? null : sum / count;
     }
 }

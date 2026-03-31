@@ -10,44 +10,59 @@
         <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
-        <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
+        <result column="wm" property="wm" jdbcType="INTEGER"/>
         <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
-        <result column="probe_sensor_id" property="probeSensorId" jdbcType="BIGINT"/>
+        <result column="tcps" property="tcps" jdbcType="INTEGER"/>
         
-        <result column="temp_upper" property="tempUpper" jdbcType="DECIMAL"/>
-        <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
-        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
-        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        <result column="tcat" property="tcat" jdbcType="DECIMAL"/>
+        <result column="tcot" property="tcot" jdbcType="DECIMAL"/>
+        <result column="tcltrm" property="tcltrm" jdbcType="INTEGER"/>
+        <result column="tcltrs" property="tcltrs" jdbcType="INTEGER"/>
+        <result column="tcltpm" property="tcltpm" jdbcType="INTEGER"/>
+        <result column="tcltps" property="tcltps" jdbcType="INTEGER"/>
         <result column="tctcm" property="tctcm" jdbcType="INTEGER"/>
+        <result column="ccps" property="ccps" jdbcType="INTEGER"/>
+        <result column="cctu" property="cctu" jdbcType="DECIMAL"/>
+        <result column="cctd" property="cctd" jdbcType="DECIMAL"/>
+        <result column="ccrm" property="ccrm" jdbcType="INTEGER"/>
+        <result column="ccrs" property="ccrs" jdbcType="INTEGER"/>
+        <result column="ccpm" property="ccpm" jdbcType="INTEGER"/>
+        <result column="ccpss" property="ccpss" jdbcType="INTEGER"/>
         <result column="cccm" property="cccm" jdbcType="INTEGER"/>
         
-        <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
-        <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        <result column="hchu" property="hchu" jdbcType="DECIMAL"/>
+        <result column="hchd" property="hchd" jdbcType="DECIMAL"/>
+        <result column="hcrm" property="hcrm" jdbcType="INTEGER"/>
+        <result column="hcrs" property="hcrs" jdbcType="INTEGER"/>
+        <result column="hcpm" property="hcpm" jdbcType="INTEGER"/>
+        <result column="hcps" property="hcps" jdbcType="INTEGER"/>
         <result column="hchcm" property="hchcm" jdbcType="INTEGER"/>
         
-        <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
-        <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
+        <result column="ncnu" property="ncnu" jdbcType="INTEGER"/>
+        <result column="ncnd" property="ncnd" jdbcType="INTEGER"/>
+        <result column="ncrm" property="ncrm" jdbcType="INTEGER"/>
+        <result column="ncrs" property="ncrs" jdbcType="INTEGER"/>
+        <result column="ncpm" property="ncpm" jdbcType="INTEGER"/>
+        <result column="ncps" property="ncps" jdbcType="INTEGER"/>
         
-        <result column="timer1_enabled" property="timer1Enabled" jdbcType="INTEGER"/>
-        <result column="timer1_start_time" property="timer1StartTime" jdbcType="VARCHAR"/>
-        <result column="timer1_end_time" property="timer1EndTime" jdbcType="VARCHAR"/>
-        <result column="timer1_probe_sensor_id" property="timer1ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer1_start_temp" property="timer1StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer1_stop_temp" property="timer1StopTemp" jdbcType="DECIMAL"/>
-        
-        <result column="timer2_enabled" property="timer2Enabled" jdbcType="INTEGER"/>
-        <result column="timer2_start_time" property="timer2StartTime" jdbcType="VARCHAR"/>
-        <result column="timer2_end_time" property="timer2EndTime" jdbcType="VARCHAR"/>
-        <result column="timer2_probe_sensor_id" property="timer2ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer2_start_temp" property="timer2StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer2_stop_temp" property="timer2StopTemp" jdbcType="DECIMAL"/>
-        
-        <result column="timer3_enabled" property="timer3Enabled" jdbcType="INTEGER"/>
-        <result column="timer3_start_time" property="timer3StartTime" jdbcType="VARCHAR"/>
-        <result column="timer3_end_time" property="timer3EndTime" jdbcType="VARCHAR"/>
-        <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        <result column="tict1nf" property="tict1nf" jdbcType="INTEGER"/>
+        <result column="tict1nh" property="tict1nh" jdbcType="INTEGER"/>
+        <result column="tict1nm" property="tict1nm" jdbcType="INTEGER"/>
+        <result column="tict1fh" property="tict1fh" jdbcType="INTEGER"/>
+        <result column="tict1fm" property="tict1fm" jdbcType="INTEGER"/>
+        <result column="tict2nf" property="tict2nf" jdbcType="INTEGER"/>
+        <result column="tict2nh" property="tict2nh" jdbcType="INTEGER"/>
+        <result column="tict2nm" property="tict2nm" jdbcType="INTEGER"/>
+        <result column="tict2fh" property="tict2fh" jdbcType="INTEGER"/>
+        <result column="tict2fm" property="tict2fm" jdbcType="INTEGER"/>
+        <result column="tict3nf" property="tict3nf" jdbcType="INTEGER"/>
+        <result column="tict3nh" property="tict3nh" jdbcType="INTEGER"/>
+        <result column="tict3nm" property="tict3nm" jdbcType="INTEGER"/>
+        <result column="tict3fh" property="tict3fh" jdbcType="INTEGER"/>
+        <result column="tict3fm" property="tict3fm" jdbcType="INTEGER"/>
+        <result column="ticps" property="ticps" jdbcType="INTEGER"/>
+        <result column="ticat" property="ticat" jdbcType="DECIMAL"/>
+        <result column="ticot" property="ticot" jdbcType="DECIMAL"/>
         <result column="tictitm" property="tictitm" jdbcType="INTEGER"/>
         
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
@@ -60,44 +75,59 @@
         <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="is_running" property="isRunning" jdbcType="INTEGER"/>
-        <result column="control_mode" property="controlMode" jdbcType="INTEGER"/>
+        <result column="wm" property="wm" jdbcType="INTEGER"/>
         <result column="auto_mode" property="autoMode" jdbcType="INTEGER"/>
-        <result column="probe_sensor_id" property="probeSensorId" jdbcType="BIGINT"/>
+        <result column="tcps" property="tcps" jdbcType="INTEGER"/>
         
-        <result column="temp_upper" property="tempUpper" jdbcType="DECIMAL"/>
-        <result column="temp_lower" property="tempLower" jdbcType="DECIMAL"/>
-        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
-        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
+        <result column="tcat" property="tcat" jdbcType="DECIMAL"/>
+        <result column="tcot" property="tcot" jdbcType="DECIMAL"/>
+        <result column="tcltrm" property="tcltrm" jdbcType="INTEGER"/>
+        <result column="tcltrs" property="tcltrs" jdbcType="INTEGER"/>
+        <result column="tcltpm" property="tcltpm" jdbcType="INTEGER"/>
+        <result column="tcltps" property="tcltps" jdbcType="INTEGER"/>
         <result column="tctcm" property="tctcm" jdbcType="INTEGER"/>
+        <result column="ccps" property="ccps" jdbcType="INTEGER"/>
+        <result column="cctu" property="cctu" jdbcType="DECIMAL"/>
+        <result column="cctd" property="cctd" jdbcType="DECIMAL"/>
+        <result column="ccrm" property="ccrm" jdbcType="INTEGER"/>
+        <result column="ccrs" property="ccrs" jdbcType="INTEGER"/>
+        <result column="ccpm" property="ccpm" jdbcType="INTEGER"/>
+        <result column="ccpss" property="ccpss" jdbcType="INTEGER"/>
         <result column="cccm" property="cccm" jdbcType="INTEGER"/>
         
-        <result column="humidity_upper" property="humidityUpper" jdbcType="DECIMAL"/>
-        <result column="humidity_lower" property="humidityLower" jdbcType="DECIMAL"/>
+        <result column="hchu" property="hchu" jdbcType="DECIMAL"/>
+        <result column="hchd" property="hchd" jdbcType="DECIMAL"/>
+        <result column="hcrm" property="hcrm" jdbcType="INTEGER"/>
+        <result column="hcrs" property="hcrs" jdbcType="INTEGER"/>
+        <result column="hcpm" property="hcpm" jdbcType="INTEGER"/>
+        <result column="hcps" property="hcps" jdbcType="INTEGER"/>
         <result column="hchcm" property="hchcm" jdbcType="INTEGER"/>
         
-        <result column="gas_upper" property="gasUpper" jdbcType="INTEGER"/>
-        <result column="gas_lower" property="gasLower" jdbcType="INTEGER"/>
+        <result column="ncnu" property="ncnu" jdbcType="INTEGER"/>
+        <result column="ncnd" property="ncnd" jdbcType="INTEGER"/>
+        <result column="ncrm" property="ncrm" jdbcType="INTEGER"/>
+        <result column="ncrs" property="ncrs" jdbcType="INTEGER"/>
+        <result column="ncpm" property="ncpm" jdbcType="INTEGER"/>
+        <result column="ncps" property="ncps" jdbcType="INTEGER"/>
         
-        <result column="timer1_enabled" property="timer1Enabled" jdbcType="INTEGER"/>
-        <result column="timer1_start_time" property="timer1StartTime" jdbcType="VARCHAR"/>
-        <result column="timer1_end_time" property="timer1EndTime" jdbcType="VARCHAR"/>
-        <result column="timer1_probe_sensor_id" property="timer1ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer1_start_temp" property="timer1StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer1_stop_temp" property="timer1StopTemp" jdbcType="DECIMAL"/>
-        
-        <result column="timer2_enabled" property="timer2Enabled" jdbcType="INTEGER"/>
-        <result column="timer2_start_time" property="timer2StartTime" jdbcType="VARCHAR"/>
-        <result column="timer2_end_time" property="timer2EndTime" jdbcType="VARCHAR"/>
-        <result column="timer2_probe_sensor_id" property="timer2ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer2_start_temp" property="timer2StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer2_stop_temp" property="timer2StopTemp" jdbcType="DECIMAL"/>
-        
-        <result column="timer3_enabled" property="timer3Enabled" jdbcType="INTEGER"/>
-        <result column="timer3_start_time" property="timer3StartTime" jdbcType="VARCHAR"/>
-        <result column="timer3_end_time" property="timer3EndTime" jdbcType="VARCHAR"/>
-        <result column="timer3_probe_sensor_id" property="timer3ProbeSensorId" jdbcType="BIGINT"/>
-        <result column="timer3_start_temp" property="timer3StartTemp" jdbcType="DECIMAL"/>
-        <result column="timer3_stop_temp" property="timer3StopTemp" jdbcType="DECIMAL"/>
+        <result column="tict1nf" property="tict1nf" jdbcType="INTEGER"/>
+        <result column="tict1nh" property="tict1nh" jdbcType="INTEGER"/>
+        <result column="tict1nm" property="tict1nm" jdbcType="INTEGER"/>
+        <result column="tict1fh" property="tict1fh" jdbcType="INTEGER"/>
+        <result column="tict1fm" property="tict1fm" jdbcType="INTEGER"/>
+        <result column="tict2nf" property="tict2nf" jdbcType="INTEGER"/>
+        <result column="tict2nh" property="tict2nh" jdbcType="INTEGER"/>
+        <result column="tict2nm" property="tict2nm" jdbcType="INTEGER"/>
+        <result column="tict2fh" property="tict2fh" jdbcType="INTEGER"/>
+        <result column="tict2fm" property="tict2fm" jdbcType="INTEGER"/>
+        <result column="tict3nf" property="tict3nf" jdbcType="INTEGER"/>
+        <result column="tict3nh" property="tict3nh" jdbcType="INTEGER"/>
+        <result column="tict3nm" property="tict3nm" jdbcType="INTEGER"/>
+        <result column="tict3fh" property="tict3fh" jdbcType="INTEGER"/>
+        <result column="tict3fm" property="tict3fm" jdbcType="INTEGER"/>
+        <result column="ticps" property="ticps" jdbcType="INTEGER"/>
+        <result column="ticat" property="ticat" jdbcType="DECIMAL"/>
+        <result column="ticot" property="ticot" jdbcType="DECIMAL"/>
         <result column="tictitm" property="tictitm" jdbcType="INTEGER"/>
         
         <!-- 设备信息 -->
@@ -164,8 +194,8 @@
 
     <!-- 新增风扇 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, control_mode, auto_mode, created_time, updated_time)
-        VALUES (#{fanName}, #{deviceId}, #{deviceNum}, #{isRunning}, #{controlMode}, #{autoMode}, NOW(), NOW())
+        INSERT INTO motor_fan (fan_name, device_id, device_num, is_running, wm, auto_mode, created_time, updated_time)
+        VALUES (#{fanName}, #{deviceId}, #{deviceNum}, #{isRunning}, #{wm}, #{autoMode}, NOW(), NOW())
     </insert>
 
     <!-- 更新风扇运行状态 -->
@@ -205,38 +235,55 @@
         <set>
             <if test="fanName != null">fan_name = #{fanName},</if>
             <if test="isRunning != null">is_running = #{isRunning},</if>
-            <if test="controlMode != null">control_mode = #{controlMode},</if>
+            <if test="wm != null">wm = #{wm},</if>
             <if test="autoMode != null">auto_mode = #{autoMode},</if>
-            <if test="probeSensorId != null">probe_sensor_id = #{probeSensorId},</if>
-            <if test="tempUpper != null">temp_upper = #{tempUpper},</if>
-            <if test="tempLower != null">temp_lower = #{tempLower},</if>
-            <if test="runTime != null">run_time = #{runTime},</if>
-            <if test="pauseTime != null">pause_time = #{pauseTime},</if>
+            <if test="tcps != null">tcps = #{tcps},</if>
+            <if test="tcat != null">tcat = #{tcat},</if>
+            <if test="tcot != null">tcot = #{tcot},</if>
+            <if test="tcltrm != null">tcltrm = #{tcltrm},</if>
+            <if test="tcltrs != null">tcltrs = #{tcltrs},</if>
+            <if test="tcltpm != null">tcltpm = #{tcltpm},</if>
+            <if test="tcltps != null">tcltps = #{tcltps},</if>
             <if test="tctcm != null">tctcm = #{tctcm},</if>
+            <if test="ccps != null">ccps = #{ccps},</if>
+            <if test="cctu != null">cctu = #{cctu},</if>
+            <if test="cctd != null">cctd = #{cctd},</if>
+            <if test="ccrm != null">ccrm = #{ccrm},</if>
+            <if test="ccrs != null">ccrs = #{ccrs},</if>
+            <if test="ccpm != null">ccpm = #{ccpm},</if>
+            <if test="ccpss != null">ccpss = #{ccpss},</if>
             <if test="cccm != null">cccm = #{cccm},</if>
-            <if test="humidityUpper != null">humidity_upper = #{humidityUpper},</if>
-            <if test="humidityLower != null">humidity_lower = #{humidityLower},</if>
+            <if test="hchu != null">hchu = #{hchu},</if>
+            <if test="hchd != null">hchd = #{hchd},</if>
+            <if test="hcrm != null">hcrm = #{hcrm},</if>
+            <if test="hcrs != null">hcrs = #{hcrs},</if>
+            <if test="hcpm != null">hcpm = #{hcpm},</if>
+            <if test="hcps != null">hcps = #{hcps},</if>
             <if test="hchcm != null">hchcm = #{hchcm},</if>
-            <if test="gasUpper != null">gas_upper = #{gasUpper},</if>
-            <if test="gasLower != null">gas_lower = #{gasLower},</if>
-            <if test="timer1Enabled != null">timer1_enabled = #{timer1Enabled},</if>
-            <if test="timer1StartTime != null">timer1_start_time = #{timer1StartTime},</if>
-            <if test="timer1EndTime != null">timer1_end_time = #{timer1EndTime},</if>
-            <if test="timer1ProbeSensorId != null">timer1_probe_sensor_id = #{timer1ProbeSensorId},</if>
-            <if test="timer1StartTemp != null">timer1_start_temp = #{timer1StartTemp},</if>
-            <if test="timer1StopTemp != null">timer1_stop_temp = #{timer1StopTemp},</if>
-            <if test="timer2Enabled != null">timer2_enabled = #{timer2Enabled},</if>
-            <if test="timer2StartTime != null">timer2_start_time = #{timer2StartTime},</if>
-            <if test="timer2EndTime != null">timer2_end_time = #{timer2EndTime},</if>
-            <if test="timer2ProbeSensorId != null">timer2_probe_sensor_id = #{timer2ProbeSensorId},</if>
-            <if test="timer2StartTemp != null">timer2_start_temp = #{timer2StartTemp},</if>
-            <if test="timer2StopTemp != null">timer2_stop_temp = #{timer2StopTemp},</if>
-            <if test="timer3Enabled != null">timer3_enabled = #{timer3Enabled},</if>
-            <if test="timer3StartTime != null">timer3_start_time = #{timer3StartTime},</if>
-            <if test="timer3EndTime != null">timer3_end_time = #{timer3EndTime},</if>
-            <if test="timer3ProbeSensorId != null">timer3_probe_sensor_id = #{timer3ProbeSensorId},</if>
-            <if test="timer3StartTemp != null">timer3_start_temp = #{timer3StartTemp},</if>
-            <if test="timer3StopTemp != null">timer3_stop_temp = #{timer3StopTemp},</if>
+            <if test="ncnu != null">ncnu = #{ncnu},</if>
+            <if test="ncnd != null">ncnd = #{ncnd},</if>
+            <if test="ncrm != null">ncrm = #{ncrm},</if>
+            <if test="ncrs != null">ncrs = #{ncrs},</if>
+            <if test="ncpm != null">ncpm = #{ncpm},</if>
+            <if test="ncps != null">ncps = #{ncps},</if>
+            <if test="tict1nf != null">tict1nf = #{tict1nf},</if>
+            <if test="tict1nh != null">tict1nh = #{tict1nh},</if>
+            <if test="tict1nm != null">tict1nm = #{tict1nm},</if>
+            <if test="tict1fh != null">tict1fh = #{tict1fh},</if>
+            <if test="tict1fm != null">tict1fm = #{tict1fm},</if>
+            <if test="tict2nf != null">tict2nf = #{tict2nf},</if>
+            <if test="tict2nh != null">tict2nh = #{tict2nh},</if>
+            <if test="tict2nm != null">tict2nm = #{tict2nm},</if>
+            <if test="tict2fh != null">tict2fh = #{tict2fh},</if>
+            <if test="tict2fm != null">tict2fm = #{tict2fm},</if>
+            <if test="tict3nf != null">tict3nf = #{tict3nf},</if>
+            <if test="tict3nh != null">tict3nh = #{tict3nh},</if>
+            <if test="tict3nm != null">tict3nm = #{tict3nm},</if>
+            <if test="tict3fh != null">tict3fh = #{tict3fh},</if>
+            <if test="tict3fm != null">tict3fm = #{tict3fm},</if>
+            <if test="ticps != null">ticps = #{ticps},</if>
+            <if test="ticat != null">ticat = #{ticat},</if>
+            <if test="ticot != null">ticot = #{ticot},</if>
             <if test="tictitm != null">tictitm = #{tictitm},</if>
             updated_time = NOW()
         </set>

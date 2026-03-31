@@ -267,17 +267,7 @@ public class MqttService implements MqttCallback {
             // 为每个电机处理控制规则
             for (MotorFan motor : motors) {
                 try {
-                    // 获取该电机的探头传感器ID
-                    Long probeSensorId = motor.getProbeSensorId();
-                    Double currentSensorValue = null;
-
-                    if (probeSensorId != null) {
-                        // 从内存中的 sensorMap 获取传感器，避免多次数据库查询
-                        Sensor sensor = sensorMap.get(probeSensorId);
-                        if (sensor != null && sensor.getSensorValue() != null) {
-                            currentSensorValue = sensor.getSensorValue();
-                        }
-                    }
+                    Double currentSensorValue = getTempValueBySelection(sensorMap, motor.getTcps());
                     // 应用控制规则
                     motorControlRuleEngineService.processMotorControl(motor, currentSensorValue, deviceNum);
 
@@ -356,6 +346,51 @@ public class MqttService implements MqttCallback {
      */
     public boolean publishString(String topic, String message) {
         return publishMessage(topic, message, 1);
+    }
+
+    private Double getTempValueBySelection(Map<Long, Sensor> sensorMap, Integer selection) {
+        if (sensorMap == null || sensorMap.isEmpty() || selection == null) {
+            return null;
+        }
+
+        Map<String, Double> tempMap = new HashMap<>();
+        for (Sensor sensor : sensorMap.values()) {
+            if (sensor.getSensorCode() != null && sensor.getSensorValue() != null) {
+                tempMap.put(sensor.getSensorCode(), sensor.getSensorValue());
+            }
+        }
+
+        switch (selection) {
+            case 0:
+                return tempMap.get("ts1");
+            case 1:
+                return tempMap.get("ts2");
+            case 2:
+                return tempMap.get("ts3");
+            case 3:
+                return tempMap.get("ts4");
+            case 4:
+                return avg(tempMap.get("ts1"), tempMap.get("ts2"));
+            case 5:
+                return avg(tempMap.get("ts3"), tempMap.get("ts4"));
+            case 6:
+            case 7:
+                return avg(tempMap.get("ts1"), tempMap.get("ts2"), tempMap.get("ts3"), tempMap.get("ts4"));
+            default:
+                return null;
+        }
+    }
+
+    private Double avg(Double... values) {
+        double sum = 0D;
+        int count = 0;
+        for (Double value : values) {
+            if (value != null) {
+                sum += value;
+                count++;
+            }
+        }
+        return count == 0 ? null : sum / count;
     }
 
     /**

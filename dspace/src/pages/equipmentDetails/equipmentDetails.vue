@@ -218,6 +218,11 @@ export default {
   onLoad(options) {
     this.getDeviceInfo();
   },
+  onShow() {
+    if (this.$store.state.deviceDetail.currDevice?.id) {
+      this.getDeviceInfo();
+    }
+  },
   onUnload() {
     // 页面卸载时清除定时器
     // this.stopFanStatusUpdate();
