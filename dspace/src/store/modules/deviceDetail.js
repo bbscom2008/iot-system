@@ -71,10 +71,19 @@ const actions = {
   // 获取设备详情并保存到仓库
   async fetchDeviceInfo({ rootState,commit, state }) {
     console.log('-----fetchDeviceInfo -----');
-    
-    // if(!state.currDevice || rootState.device.currUpdateDeviceNum != state.currDevice.deviceNum){
-    //   return 
-    // }
+
+    if (!state.currDevice || !state.currDevice.id) {
+      return { success: false, skipped: true, reason: 'NO_CURRENT_DEVICE' }
+    }
+
+    // MQTT 推送只更新当前设备，避免无关刷新
+    if (
+      rootState.device.currUpdateDeviceNum &&
+      state.currDevice.deviceNum &&
+      rootState.device.currUpdateDeviceNum !== state.currDevice.deviceNum
+    ) {
+      return { success: false, skipped: true, reason: 'DEVICE_NOT_MATCHED' }
+    }
 
     try {
       const deviceId = state.currDevice.id
@@ -87,6 +96,15 @@ const actions = {
       if (!deviceInfo.frequencyMotors) deviceInfo.frequencyMotors = []
 
       commit('SET_DEVICE_INFO', deviceInfo)
+
+      // 关键：如果当前正在看风机详情，刷新后同步替换 currentMotorFan
+      if (state.currentMotorFan && state.currentMotorFan.id && Array.isArray(deviceInfo.motorFans)) {
+        const latestMotorFan = deviceInfo.motorFans.find(item => item.id === state.currentMotorFan.id)
+        if (latestMotorFan) {
+          commit('SET_CURRENT_MOTOR_FAN', { ...latestMotorFan })
+        }
+      }
+
       return { success: true, deviceInfo }
     } catch (err) {
       throw err

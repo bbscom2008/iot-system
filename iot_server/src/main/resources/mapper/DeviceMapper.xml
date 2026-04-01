@@ -267,5 +267,15 @@
         WHERE device_num = #{deviceNum}
     </update>
 
+    <update id="updateDeviceIdentity">
+        UPDATE devices
+        <set>
+            <if test="imei != null and imei != ''">imei = #{imei},</if>
+            <if test="iccid != null and iccid != ''">iccid = #{iccid},</if>
+            updated_time = NOW()
+        </set>
+        WHERE device_num = #{deviceNum}
+    </update>
+
 </mapper>
 

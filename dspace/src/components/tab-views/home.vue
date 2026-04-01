@@ -92,7 +92,7 @@
                 <SvgIcon name="alarm" :size="18" color="#cda109" />
               </view>
               <view class="device-number">{{ item.deviceName }}</view>
-              <view class="device-number">编号: {{ item.deviceNum }}</view>
+              <view class="device-number">编号: {{ item.deviceNum.length > 8 ? item.deviceNum.slice(-8) : item.deviceNum }}</view>
             </view>
 
             <!-- 状态指示器 -->

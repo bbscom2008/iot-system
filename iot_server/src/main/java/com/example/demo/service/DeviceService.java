@@ -26,6 +26,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -301,6 +302,16 @@ public class DeviceService {
             }
         }
         deviceMapper.updateDeviceState(device.getDeviceNum(), onlineState, warningStatus);
+    }
+
+    public void updateDeviceIdentity(String deviceNum, String imei, String iccid) {
+        if (!StringUtils.hasText(deviceNum)) {
+            return;
+        }
+        if (!StringUtils.hasText(imei) && !StringUtils.hasText(iccid)) {
+            return;
+        }
+        deviceMapper.updateDeviceIdentity(deviceNum, imei, iccid);
     }
 
     public Device findByDeviceNum(String deviceNum) {

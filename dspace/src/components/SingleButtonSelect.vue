@@ -105,7 +105,7 @@ export default {
 
 .single-button-select.chip .select-item {
   width: auto;
-  min-width: 100rpx;
+  min-width: 120rpx;
   font-size: 24rpx;
   padding: 0 18rpx;
 }

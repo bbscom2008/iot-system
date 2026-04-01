@@ -96,7 +96,8 @@
         <SvgIcon name="fan" color="#6a5acd" :fill="'#6a5acd'" />
       </view>
       <input class="fan-name-input" v-model="fanName" placeholder="请输入风机名称" />
-      <text class="realtime-value">实时温度: {{ realtimeTemp }}°C</text>
+      <!-- <text class="realtime-value">实时温度: {{ realtimeTemp }}°C</text> -->
+      <text class="realtime-value"></text>
     </view>
 
     <!-- 温控模式内容 -->
@@ -184,10 +185,10 @@
             { label: '降温', value: 0 },
             { label: '升温', value: 1 }
           ]"
-          variant="chip"
           itemMinWidth="100rpx"
           fontSize="24rpx"
         />
+          <!-- variant="chip" -->
       </view>
 
       <view class="instructions">
@@ -283,8 +284,8 @@
             { label: '升温', value: 1 },
             { label: '时间', value: 2 }
           ]"
+          itemMinWidth="120rpx"
           variant="chip"
-          itemMinWidth="100rpx"
           fontSize="24rpx"
         />
       </view>
@@ -364,10 +365,10 @@
             { label: '除湿', value: 0 },
             { label: '加湿', value: 1 }
           ]"
-          variant="chip"
           itemMinWidth="100rpx"
           fontSize="24rpx"
         />
+          <!-- variant="chip" -->
       </view>
 
       <view class="instructions">
@@ -561,10 +562,10 @@
             { label: '降温', value: 0 },
             { label: '升温', value: 1 }
           ]"
-          variant="chip"
           itemMinWidth="100rpx"
           fontSize="24rpx"
         />
+          <!-- variant="chip" -->
       </view>
 
       <view class="instructions">
@@ -951,33 +952,33 @@ export default {
       return [
         {
           enabled: this.currFan.tict1nf === 0,
-          startHour: this.currFan.tict1nh ?? '5',
-          startMinute: this.currFan.tict1nm ?? '5',
-          endHour: this.currFan.tict1fh ?? '6',
-          endMinute: this.currFan.tict1fm ?? '6',
+          startHour: this.currFan.tict1nh ?? '',
+          startMinute: this.currFan.tict1nm ?? '',
+          endHour: this.currFan.tict1fh ?? '',
+          endMinute: this.currFan.tict1fm ?? '',
           probeIndex: this.currFan.ticps ?? 0,
-          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
-          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '',
         },
         {
           enabled: this.currFan.tict2nf === 0,
-          startHour: this.currFan.tict2nh ?? '12',
-          startMinute: this.currFan.tict2nm ?? '0',
-          endHour: this.currFan.tict2fh ?? '14',
-          endMinute: this.currFan.tict2fm ?? '0',
+          startHour: this.currFan.tict2nh ?? '',
+          startMinute: this.currFan.tict2nm ?? '',
+          endHour: this.currFan.tict2fh ?? '',
+          endMinute: this.currFan.tict2fm ?? '',
           probeIndex: this.currFan.ticps ?? 0,
-          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
-          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '',
         },
         {
           enabled: this.currFan.tict3nf === 0,
-          startHour: this.currFan.tict3nh ?? '18',
-          startMinute: this.currFan.tict3nm ?? '0',
-          endHour: this.currFan.tict3fh ?? '20',
-          endMinute: this.currFan.tict3fm ?? '0',
+          startHour: this.currFan.tict3nh ?? '',
+          startMinute: this.currFan.tict3nm ?? '',
+          endHour: this.currFan.tict3fh ?? '',
+          endMinute: this.currFan.tict3fm ?? '',
           probeIndex: this.currFan.ticps ?? 0,
-          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '20',
-          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '30',
+          startTemp: this.currFan.ticat !== undefined ? String(this.currFan.ticat) : '',
+          stopTemp: this.currFan.ticot !== undefined ? String(this.currFan.ticot) : '',
         },
       ];
     },

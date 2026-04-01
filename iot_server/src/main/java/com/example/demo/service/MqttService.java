@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.example.demo.entity.Sensor;
 
 import java.util.HashMap;
@@ -147,16 +149,34 @@ public class MqttService implements MqttCallback {
         System.out.println(payload);
 
         try {
-            JsonNode node = objectMapper.readTree(payload);
+            JsonNode node = parsePayloadNode(payload);
+
+            // 新增：风机详情设置上报 device/report/{STM32ID}/{mtx}
+            if (isMotorFanDetailTopic(topic)) {
+                handleMotorFanDetailReport(topic, node);
+                return;
+            }
+
             JsonNode idNode = node.get("STM32ID");
+            String deviceNum = null;
             if (idNode != null && idNode.isTextual()) {
-                // 设备 ID ， 传感器设备的 父ID
-                String deviceNum = idNode.asText();
+                deviceNum = idNode.asText();
+            }
+            // 兼容：如果载荷缺少 STM32ID，则从 topic device/report/{STM32ID} 解析
+            if (!StringUtils.hasText(deviceNum) && topic != null && topic.startsWith(DEVICE_REPORT)) {
+                deviceNum = topic.substring(DEVICE_REPORT.length());
+            }
+
+            if (StringUtils.hasText(deviceNum)) {
                 // 存储 mqtt 消息
                 mqttMessageDataService.save(deviceNum, node);
 
                 Device device = deviceService.findByDeviceNum(deviceNum);
                 if (device != null) {
+                    String imei = node.hasNonNull("IMEI") ? node.get("IMEI").asText() : null;
+                    String iccid = node.hasNonNull("ICCID") ? node.get("ICCID").asText() : null;
+                    deviceService.updateDeviceIdentity(deviceNum, imei, iccid);
+
                     // 更新设备在线状态和报警状态
                     deviceService.updateDeviceState(device, node);
 
@@ -189,6 +209,267 @@ public class MqttService implements MqttCallback {
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
         }
+    }
+
+    /**
+     * 兼容解析设备上报：
+     * 1) 标准 JSON；
+     * 2) 非标准对象文本（如 key 未加双引号，按行 key:value）。
+     */
+    private JsonNode parsePayloadNode(String payload) throws JsonProcessingException {
+        try {
+            return objectMapper.readTree(payload);
+        } catch (JsonProcessingException ex) {
+            JsonNode looseNode = parseLooseObjectPayload(payload);
+            if (looseNode != null) {
+                return looseNode;
+            }
+            throw ex;
+        }
+    }
+
+    /**
+     * 解析类似：
+     * {
+     *   wm:1
+     *   tcps:4
+     * }
+     */
+    private JsonNode parseLooseObjectPayload(String payload) {
+        if (!StringUtils.hasText(payload)) {
+            return null;
+        }
+        String text = payload.trim();
+        if (!text.startsWith("{") || !text.endsWith("}")) {
+            return null;
+        }
+
+        String body = text.substring(1, text.length() - 1);
+        String[] lines = body.split("\\r?\\n");
+        ObjectNode root = objectMapper.createObjectNode();
+
+        for (String line : lines) {
+            if (!StringUtils.hasText(line)) {
+                continue;
+            }
+            String item = line.trim();
+            if (item.endsWith(",")) {
+                item = item.substring(0, item.length() - 1).trim();
+            }
+            if (!StringUtils.hasText(item)) {
+                continue;
+            }
+
+            int colonIndex = item.indexOf(':');
+            if (colonIndex <= 0 || colonIndex >= item.length() - 1) {
+                continue;
+            }
+
+            String key = item.substring(0, colonIndex).trim();
+            String valueText = item.substring(colonIndex + 1).trim();
+
+            if (!StringUtils.hasText(key)) {
+                continue;
+            }
+            if (key.startsWith("\"") && key.endsWith("\"") && key.length() >= 2) {
+                key = key.substring(1, key.length() - 1);
+            }
+
+            if (!StringUtils.hasText(valueText)) {
+                root.set(key, NullNode.instance);
+                continue;
+            }
+
+            JsonNode valueNode = parseLooseValue(valueText);
+            root.set(key, valueNode);
+        }
+
+        return root.size() == 0 ? null : root;
+    }
+
+    private JsonNode parseLooseValue(String valueText) {
+        String value = valueText.trim();
+        if (value.endsWith(",")) {
+            value = value.substring(0, value.length() - 1).trim();
+        }
+
+        if (!StringUtils.hasText(value) || "null".equalsIgnoreCase(value)) {
+            return NullNode.instance;
+        }
+
+        // 字符串（单双引号）
+        if ((value.startsWith("\"") && value.endsWith("\""))
+                || (value.startsWith("'") && value.endsWith("'"))) {
+            String str = value.substring(1, value.length() - 1);
+            return objectMapper.getNodeFactory().textNode(str);
+        }
+
+        if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+            return objectMapper.getNodeFactory().booleanNode(Boolean.parseBoolean(value));
+        }
+
+        try {
+            if (value.contains(".") || value.contains("e") || value.contains("E")) {
+                return objectMapper.getNodeFactory().numberNode(Double.parseDouble(value));
+            }
+            return objectMapper.getNodeFactory().numberNode(Long.parseLong(value));
+        } catch (NumberFormatException ignored) {
+        }
+
+        // 尝试让 Jackson 处理数组/对象等复杂值
+        try {
+            return objectMapper.readTree(value);
+        } catch (Exception ignored) {
+        }
+
+        // 最后回退为文本
+        return objectMapper.getNodeFactory().textNode(value);
+    }
+
+    private boolean isMotorFanDetailTopic(String topic) {
+        if (!StringUtils.hasText(topic)) {
+            return false;
+        }
+        String[] parts = topic.split("/");
+        return parts.length == 4
+                && "device".equals(parts[0])
+                && "report".equals(parts[1])
+                && StringUtils.hasText(parts[2])
+                && StringUtils.hasText(parts[3]);
+    }
+
+    private void handleMotorFanDetailReport(String topic, JsonNode node) {
+        try {
+            String[] parts = topic.split("/");
+            String stm32Id = parts[2];
+            String motorNum = parts[3];
+
+            Device device = deviceService.findByDeviceNum(stm32Id);
+            if (device == null) {
+                log.warn("风机详情上报忽略，设备不存在: stm32Id={}, topic={}", stm32Id, topic);
+                return;
+            }
+
+            MotorFan motorFan = motorFanService.findByDeviceIdAndMotorNum(device.getId(), motorNum);
+            if (motorFan == null) {
+                log.warn("风机详情上报忽略，风机不存在: stm32Id={}, motorNum={}", stm32Id, motorNum);
+                return;
+            }
+
+            MotorFan update = new MotorFan();
+            update.setId(motorFan.getId());
+
+            update.setWm(getInt(node, "wm"));
+            update.setTcps(getInt(node, "tcps"));
+            update.setTcat(getDouble(node, "tcat"));
+            update.setTcot(getDouble(node, "tcot"));
+            update.setTcltrm(getInt(node, "tcltrm"));
+            update.setTcltrs(getInt(node, "tcltrs"));
+            update.setTcltpm(getInt(node, "tcltpm"));
+            update.setTcltps(getInt(node, "tcltps"));
+            update.setTctcm(getInt(node, "tctcm"));
+
+            update.setCcps(getInt(node, "ccps"));
+            update.setCctu(getDouble(node, "cctu"));
+            update.setCctd(getDouble(node, "cctd"));
+            update.setCcrm(getInt(node, "ccrm"));
+            update.setCcrs(getInt(node, "ccrs"));
+            update.setCcpm(getInt(node, "ccpm"));
+            update.setCcpss(firstInt(node, "ccpss", "ccps_sec"));
+            update.setCccm(getInt(node, "cccm"));
+
+            update.setHchu(getDouble(node, "hchu"));
+            update.setHchd(getDouble(node, "hchd"));
+            update.setHcrm(getInt(node, "hcrm"));
+            update.setHcrs(getInt(node, "hcrs"));
+            update.setHcpm(getInt(node, "hcpm"));
+            update.setHcps(getInt(node, "hcps"));
+            update.setHchcm(getInt(node, "hchcm"));
+
+            update.setNcnu(getInt(node, "ncnu"));
+            update.setNcnd(getInt(node, "ncnd"));
+            update.setNcrm(getInt(node, "ncrm"));
+            update.setNcrs(getInt(node, "ncrs"));
+            update.setNcpm(getInt(node, "ncpm"));
+            update.setNcps(getInt(node, "ncps"));
+
+            update.setTict1nf(getInt(node, "tict1nf"));
+            update.setTict1nh(getInt(node, "tict1nh"));
+            update.setTict1nm(getInt(node, "tict1nm"));
+            update.setTict1fh(getInt(node, "tict1fh"));
+            update.setTict1fm(getInt(node, "tict1fm"));
+
+            update.setTict2nf(getInt(node, "tict2nf"));
+            update.setTict2nh(getInt(node, "tict2nh"));
+            update.setTict2nm(getInt(node, "tict2nm"));
+            update.setTict2fh(getInt(node, "tict2fh"));
+            update.setTict2fm(getInt(node, "tict2fm"));
+
+            update.setTict3nf(getInt(node, "tict3nf"));
+            update.setTict3nh(getInt(node, "tict3nh"));
+            update.setTict3nm(getInt(node, "tict3nm"));
+            update.setTict3fh(getInt(node, "tict3fh"));
+            update.setTict3fm(getInt(node, "tict3fm"));
+
+            update.setTicps(getInt(node, "ticps"));
+            update.setTicat(getDouble(node, "ticat"));
+            update.setTicot(getDouble(node, "ticot"));
+            update.setTictitm(getInt(node, "tictitm"));
+
+            motorFanService.update(update);
+            mqttMessageDataService.save(stm32Id, node);
+            notifyToUpdate(stm32Id);
+            log.info("风机详情上报已更新: stm32Id={}, motorNum={}, motorFanId={}", stm32Id, motorNum, motorFan.getId());
+        } catch (Exception e) {
+            log.error("处理风机详情上报失败: topic={}", topic, e);
+        }
+    }
+
+    private Integer getInt(JsonNode node, String key) {
+        JsonNode value = node.get(key);
+        if (value == null || value.isNull()) {
+            return null;
+        }
+        if (value.isInt() || value.isLong()) {
+            return value.asInt();
+        }
+        if (value.isNumber()) {
+            return (int) Math.round(value.asDouble());
+        }
+        if (value.isTextual() && StringUtils.hasText(value.asText())) {
+            try {
+                return Integer.parseInt(value.asText().trim());
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return null;
+    }
+
+    private Integer firstInt(JsonNode node, String... keys) {
+        for (String key : keys) {
+            Integer value = getInt(node, key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private Double getDouble(JsonNode node, String key) {
+        JsonNode value = node.get(key);
+        if (value == null || value.isNull()) {
+            return null;
+        }
+        if (value.isNumber()) {
+            return value.asDouble();
+        }
+        if (value.isTextual() && StringUtils.hasText(value.asText())) {
+            try {
+                return Double.parseDouble(value.asText().trim());
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return null;
     }
 
     /**

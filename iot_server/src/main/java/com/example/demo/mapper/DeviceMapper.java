@@ -100,6 +100,9 @@ public interface DeviceMapper {
     int updateDeviceState(@Param("deviceNum") String deviceNum, @Param("onlineState") Integer onlineState,
             @Param("warningStatus") Integer warningStatus);
 
+        int updateDeviceIdentity(@Param("deviceNum") String deviceNum, @Param("imei") String imei,
+            @Param("iccid") String iccid);
+
     @Update("UPDATE devices SET device_line_state = 0, warning_status = 0, updated_time = NOW()")
     int resetAllDeviceStates();
 }
