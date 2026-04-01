@@ -105,6 +105,14 @@ const actions = {
         }
       }
 
+      // 关键：如果当前正在看变频详情，刷新后同步替换 currentFrequencyMotor
+      if (state.currentFrequencyMotor && state.currentFrequencyMotor.id && Array.isArray(deviceInfo.frequencyMotors)) {
+        const latestFrequencyMotor = deviceInfo.frequencyMotors.find(item => item.id === state.currentFrequencyMotor.id)
+        if (latestFrequencyMotor) {
+          commit('SET_CURRENT_FREQUENCY_MOTOR', { ...latestFrequencyMotor })
+        }
+      }
+
       return { success: true, deviceInfo }
     } catch (err) {
       throw err

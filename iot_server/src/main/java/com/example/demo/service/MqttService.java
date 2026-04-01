@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Device;
+import com.example.demo.entity.FrequencyMotor;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.util.JsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -150,6 +151,12 @@ public class MqttService implements MqttCallback {
 
         try {
             JsonNode node = parsePayloadNode(payload);
+
+            // 新增：变频详情设置上报 device/report/{STM32ID}/{imtx}
+            if (isFrequencyMotorDetailTopic(topic)) {
+                handleFrequencyMotorDetailReport(topic, node);
+                return;
+            }
 
             // 新增：风机详情设置上报 device/report/{STM32ID}/{mtx}
             if (isMotorFanDetailTopic(topic)) {
@@ -335,7 +342,95 @@ public class MqttService implements MqttCallback {
                 && "device".equals(parts[0])
                 && "report".equals(parts[1])
                 && StringUtils.hasText(parts[2])
-                && StringUtils.hasText(parts[3]);
+                && StringUtils.hasText(parts[3])
+                && parts[3].toLowerCase().matches("^mt\\d+$");
+    }
+
+    private boolean isFrequencyMotorDetailTopic(String topic) {
+        if (!StringUtils.hasText(topic)) {
+            return false;
+        }
+        String[] parts = topic.split("/");
+        return parts.length == 4
+                && "device".equals(parts[0])
+                && "report".equals(parts[1])
+                && StringUtils.hasText(parts[2])
+                && StringUtils.hasText(parts[3])
+                && parts[3].toLowerCase().matches("^imt\\d+$");
+    }
+
+    private void handleFrequencyMotorDetailReport(String topic, JsonNode node) {
+        try {
+            String[] parts = topic.split("/");
+            String stm32Id = parts[2];
+            String imtx = parts[3];
+
+            Device device = deviceService.findByDeviceNum(stm32Id);
+            if (device == null) {
+                log.warn("变频详情上报忽略，设备不存在: stm32Id={}, topic={}", stm32Id, topic);
+                return;
+            }
+
+            List<FrequencyMotor> motors = frequencyMotorService.findByParentId(device.getId());
+            FrequencyMotor frequencyMotor = null;
+            if (motors != null) {
+                for (FrequencyMotor item : motors) {
+                    if (item != null && StringUtils.hasText(item.getDeviceNum())
+                            && item.getDeviceNum().equalsIgnoreCase(imtx)) {
+                        frequencyMotor = item;
+                        break;
+                    }
+                }
+            }
+
+            if (frequencyMotor == null) {
+                log.warn("变频详情上报忽略，变频器不存在: stm32Id={}, imtx={}", stm32Id, imtx);
+                return;
+            }
+
+            FrequencyMotor update = new FrequencyMotor();
+            update.setId(frequencyMotor.getId());
+
+            update.setFcm(getInt(node, "fcm"));
+            update.setMs(getDouble(node, "ms"));
+            update.setMrtm(getInt(node, "mrtm"));
+            update.setMrts(getInt(node, "mrts"));
+            update.setMptm(getInt(node, "mptm"));
+            update.setMpts(getInt(node, "mpts"));
+
+            update.setAtps(getInt(node, "atps"));
+            update.setAtls(getDouble(node, "atls"));
+            update.setAtul(getDouble(node, "atul"));
+            update.setAtdl(getDouble(node, "atdl"));
+            update.setAswt(getDouble(node, "aswt"));
+            update.setAtrtm(getInt(node, "atrtm"));
+            update.setAtrts(getInt(node, "atrts"));
+            update.setAtptm(getInt(node, "atptm"));
+            update.setAtpts(getInt(node, "atpts"));
+
+            update.setAhls(getDouble(node, "ahls"));
+            update.setAhul(getDouble(node, "ahul"));
+            update.setAhdl(getDouble(node, "ahdl"));
+            update.setAhrtm(getInt(node, "ahrtm"));
+            update.setAhrts(getInt(node, "ahrts"));
+            update.setAhptm(getInt(node, "ahptm"));
+            update.setAhpts(getInt(node, "ahpts"));
+
+            update.setAnls(getDouble(node, "anls"));
+            update.setAnul(getDouble(node, "anul"));
+            update.setAndl(getDouble(node, "andl"));
+            update.setAnrtm(getInt(node, "anrtm"));
+            update.setAnrts(getInt(node, "anrts"));
+            update.setAnptm(getInt(node, "anptm"));
+            update.setAnpts(getInt(node, "anpts"));
+
+            frequencyMotorService.update(update);
+            mqttMessageDataService.save(stm32Id, node);
+            notifyToUpdate(stm32Id);
+            log.info("变频详情上报已更新: stm32Id={}, imtx={}, frequencyMotorId={}", stm32Id, imtx, frequencyMotor.getId());
+        } catch (Exception e) {
+            log.error("处理变频详情上报失败: topic={}", topic, e);
+        }
     }
 
     private void handleMotorFanDetailReport(String topic, JsonNode node) {

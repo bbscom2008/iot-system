@@ -162,38 +162,44 @@
     <!-- 更新变频电机配置 -->
     <update id="update">
         UPDATE frequency_motor
-        SET fcm = #{fcm},
-            ms = #{ms},
-            mrtm = #{mrtm},
-            mrts = #{mrts},
-            mptm = #{mptm},
-            mpts = #{mpts},
-            atps = #{atps},
-            atls = #{atls},
-            atul = #{atul},
-            atdl = #{atdl},
-            aswt = #{aswt},
-            atrtm = #{atrtm},
-            atrts = #{atrts},
-            atptm = #{atptm},
-            atpts = #{atpts},
-            ahls = #{ahls},
-            ahul = #{ahul},
-            ahdl = #{ahdl},
-            ahrtm = #{ahrtm},
-            ahrts = #{ahrts},
-            ahptm = #{ahptm},
-            ahpts = #{ahpts},
-            anls = #{anls},
-            anul = #{anul},
-            andl = #{andl},
-            anrtm = #{anrtm},
-            anrts = #{anrts},
-            anptm = #{anptm},
-            anpts = #{anpts},
-            value = #{value},
-            device_name = #{deviceName},
+        <set>
+            <if test="fcm != null">fcm = #{fcm},</if>
+            <if test="ms != null">ms = #{ms},</if>
+            <if test="mrtm != null">mrtm = #{mrtm},</if>
+            <if test="mrts != null">mrts = #{mrts},</if>
+            <if test="mptm != null">mptm = #{mptm},</if>
+            <if test="mpts != null">mpts = #{mpts},</if>
+
+            <if test="atps != null">atps = #{atps},</if>
+            <if test="atls != null">atls = #{atls},</if>
+            <if test="atul != null">atul = #{atul},</if>
+            <if test="atdl != null">atdl = #{atdl},</if>
+            <if test="aswt != null">aswt = #{aswt},</if>
+            <if test="atrtm != null">atrtm = #{atrtm},</if>
+            <if test="atrts != null">atrts = #{atrts},</if>
+            <if test="atptm != null">atptm = #{atptm},</if>
+            <if test="atpts != null">atpts = #{atpts},</if>
+
+            <if test="ahls != null">ahls = #{ahls},</if>
+            <if test="ahul != null">ahul = #{ahul},</if>
+            <if test="ahdl != null">ahdl = #{ahdl},</if>
+            <if test="ahrtm != null">ahrtm = #{ahrtm},</if>
+            <if test="ahrts != null">ahrts = #{ahrts},</if>
+            <if test="ahptm != null">ahptm = #{ahptm},</if>
+            <if test="ahpts != null">ahpts = #{ahpts},</if>
+
+            <if test="anls != null">anls = #{anls},</if>
+            <if test="anul != null">anul = #{anul},</if>
+            <if test="andl != null">andl = #{andl},</if>
+            <if test="anrtm != null">anrtm = #{anrtm},</if>
+            <if test="anrts != null">anrts = #{anrts},</if>
+            <if test="anptm != null">anptm = #{anptm},</if>
+            <if test="anpts != null">anpts = #{anpts},</if>
+
+            <if test="value != null">value = #{value},</if>
+            <if test="deviceName != null and deviceName != ''">device_name = #{deviceName},</if>
             updated_time = NOW()
+        </set>
         WHERE id = #{id}
     </update>
 

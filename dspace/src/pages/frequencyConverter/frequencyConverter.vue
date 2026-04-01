@@ -476,6 +476,15 @@ export default {
     },
     
   },
+  watch: {
+    currMotor: {
+      handler() {
+        this.syncProbeIndexFromAtps();
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   data() {
     return {
 	  realtimeTemp: 15,
@@ -484,13 +493,18 @@ export default {
     };
   },
   onLoad() {
-    // 设置已选中的探头索引
-    if (this.currMotor && this.currMotor.atps !== undefined && this.currMotor.atps !== null && this.temperatureSensors) {
-      this.probeIndex = this.temperatureSensors.findIndex(sensor => Number(sensor.id) === Number(this.currMotor.atps));
-    }
+    this.syncProbeIndexFromAtps();
   },
   onUnload() {},
   methods: {
+    syncProbeIndexFromAtps() {
+      if (!this.currMotor || this.currMotor.atps === undefined || this.currMotor.atps === null) {
+        this.probeIndex = -1;
+        return;
+      }
+      const idx = this.temperatureSensors.findIndex(sensor => Number(sensor.id) === Number(this.currMotor.atps));
+      this.probeIndex = idx >= 0 ? idx : -1;
+    },
     switchMode(isAuto) {
       if (isAuto === 0) {
         this.currMotor.fcm = 0;
