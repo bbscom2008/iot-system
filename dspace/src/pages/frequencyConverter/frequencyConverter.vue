@@ -4,14 +4,14 @@
     <view class="tabbar">
       <view
         class="tab-item"
-        :class="{ active: currMotor.isAuto === 0 }"
+        :class="{ active: currMotor.fcm === 0 }"
         @tap="switchMode(0)"
       >
         手动
       </view>
       <view
         class="tab-item"
-        :class="{ active: currMotor.isAuto === 1 }"
+        :class="{ active: currMotor.fcm !== 0 }"
         @tap="switchMode(1)"
       >
         自动
@@ -19,7 +19,7 @@
     </view>
 
     <!-- 手动模式 -->
-    <view v-if="currMotor.isAuto === 0" class="manual-content">
+    <view v-if="currMotor.fcm === 0" class="manual-content">
       <!-- 设备信息 -->
       <view class="device-header">
         <view class="device-circle">
@@ -37,7 +37,7 @@
         <text class="form-label">手动转速:</text>
         <input
           class="form-input"
-          v-model="currMotor.manualSpeed"
+          v-model="currMotor.ms"
           placeholder="10"
         />
         <text class="form-unit">%</text>
@@ -46,9 +46,9 @@
       <!-- 运行时间设置 -->
       <view class="form-item">
         <text class="form-label">运行时间:</text>
-        <input class="form-input-small" v-model="runMinutes" placeholder="0" />
+        <input class="form-input-small" v-model="currMotor.mrtm" placeholder="0" />
         <text class="form-unit-small">分</text>
-        <input class="form-input-small" v-model="runSeconds" placeholder="0" />
+        <input class="form-input-small" v-model="currMotor.mrts" placeholder="0" />
         <text class="form-unit-small">秒</text>
       </view>
 
@@ -57,13 +57,13 @@
         <text class="form-label">暂停时间:</text>
         <input
           class="form-input-small"
-          v-model="pauseMinutes"
+          v-model="currMotor.mptm"
           placeholder="0"
         />
         <text class="form-unit-small">分</text>
         <input
           class="form-input-small"
-          v-model="pauseSeconds"
+          v-model="currMotor.mpts"
           placeholder="0"
         />
         <text class="form-unit-small">秒</text>
@@ -81,19 +81,19 @@
     </view>
 
     <!-- 自动模式 -->
-    <view v-if="currMotor.isAuto === 1" class="auto-content">
+    <view v-if="currMotor.fcm !== 0" class="auto-content">
       <!-- 控制选项：火控、温控、气体 -->
       <view class="control-options">
         <view
           class="control-option"
-          :class="{ active: currMotor.controlType === 1 }"
+          :class="{ active: currMotor.fcm === 1 }"
           @tap="switchControl(1)"
         >
           <view class="control-icon temp-icon">
             <SvgIcon
               name="temperature"
-              :color="currMotor.controlType === 1 ? 'red' : '#CCCCCC'"
-              :fill="currMotor.controlType === 1 ? 'red' : '#CCCCCC'"
+              :color="currMotor.fcm === 1 ? 'red' : '#CCCCCC'"
+              :fill="currMotor.fcm === 1 ? 'red' : '#CCCCCC'"
             />
           </view>
           <text class="control-label">温控</text>
@@ -101,14 +101,14 @@
 
         <view
           class="control-option"
-          :class="{ active: currMotor.controlType === 2 }"
+          :class="{ active: currMotor.fcm === 2 }"
           @tap="switchControl(2)"
         >
           <view class="control-icon fire-icon">
             <SvgIcon
               name="humidity"
-              :color="currMotor.controlType === 2 ? 'red' : '#CCCCCC'"
-              :fill="currMotor.controlType === 2 ? 'red' : '#CCCCCC'"
+              :color="currMotor.fcm === 2 ? 'red' : '#CCCCCC'"
+              :fill="currMotor.fcm === 2 ? 'red' : '#CCCCCC'"
             />
           </view>
           <text class="control-label">湿控</text>
@@ -116,14 +116,14 @@
 
         <view
           class="control-option"
-          :class="{ active: currMotor.controlType === 3 }"
+          :class="{ active: currMotor.fcm === 3 }"
           @tap="switchControl(3)"
         >
           <view class="control-icon gas-icon">
             <SvgIcon
               name="gas"
-              :color="currMotor.controlType === 3 ? 'red' : '#CCCCCC'"
-              :fill="currMotor.controlType === 3 ? 'red' : '#CCCCCC'"
+              :color="currMotor.fcm === 3 ? 'red' : '#CCCCCC'"
+              :fill="currMotor.fcm === 3 ? 'red' : '#CCCCCC'"
             />
           </view>
           <text class="control-label">气体</text>
@@ -133,7 +133,7 @@
       
 
       <!-- 温控内容 -->
-      <view v-if="currMotor.controlType === 1" class="control-content">
+      <view v-if="currMotor.fcm === 1" class="control-content">
         <view class="device-header">
           <view class="device-circle">
             <text class="device-number">{{ currMotor.value }}</text>
@@ -143,7 +143,7 @@
             v-model="currMotor.deviceName"
             placeholder="请输入设备名称"
           />
-          <text class="realtime-value">实时温度: {{ realtimeTemp }}°C</text>
+          <!-- <text class="realtime-value">实时温度: {{ realtimeTemp }}°C</text> -->
         </view>
 
         <view class="form-item">
@@ -164,10 +164,10 @@
         </view>
 
         <view class="form-item">
-          <text class="form-label">保护转速:</text>
+          <text class="form-label">最低转速:</text>
           <input
             class="form-input"
-            v-model="currMotor.protectSpeed"
+            v-model="currMotor.atls"
             placeholder="10"
           />
           <text class="form-unit">%</text>
@@ -177,7 +177,7 @@
           <text class="form-label">温度上限:</text>
           <input
             class="form-input"
-            v-model="currMotor.tempUpper"
+            v-model="currMotor.atul"
             placeholder="35"
           />
           <text class="form-unit">°C</text>
@@ -187,8 +187,18 @@
           <text class="form-label">温度下限:</text>
           <input
             class="form-input"
-            v-model="currMotor.tempLower"
+            v-model="currMotor.atdl"
             placeholder="33"
+          />
+          <text class="form-unit">°C</text>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">停止温度:</text>
+          <input
+            class="form-input"
+            v-model="currMotor.aswt"
+            placeholder="30"
           />
           <text class="form-unit">°C</text>
         </view>
@@ -197,13 +207,13 @@
           <text class="form-label">运行时间:</text>
           <input
             class="form-input-small"
-            v-model="runMinutes"
+            v-model="currMotor.atrtm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="runSeconds"
+            v-model="currMotor.atrts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -213,13 +223,13 @@
           <text class="form-label">暂停时间:</text>
           <input
             class="form-input-small"
-            v-model="pauseMinutes"
+            v-model="currMotor.atptm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="pauseSeconds"
+            v-model="currMotor.atpts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -242,7 +252,7 @@
       </view>
 
       <!-- 湿控内容 -->
-      <view v-if="currMotor.controlType === 2" class="control-content">
+      <view v-if="currMotor.fcm === 2" class="control-content">
         <view class="device-header">
           <view class="device-circle">
             <text class="device-number">{{ currMotor.value }}</text>
@@ -252,14 +262,14 @@
             v-model="currMotor.deviceName"
             placeholder="请输入设备名称"
           />
-          <text class="realtime-value">实时湿度: {{ humiditySensor.sensorValue }} %</text>
+          <!-- <text class="realtime-value">实时湿度: {{ humiditySensor.sensorValue }} %</text> -->
         </view>
 
         <view class="form-item">
-          <text class="form-label">保护转速:</text>
+          <text class="form-label">最低转速:</text>
           <input
             class="form-input"
-            v-model="currMotor.protectSpeed"
+            v-model="currMotor.ahls"
             placeholder="10"
           />
           <text class="form-unit">%</text>
@@ -269,7 +279,7 @@
           <text class="form-label">湿度上限:</text>
           <input
             class="form-input"
-            v-model="currMotor.humidityUpper"
+            v-model="currMotor.ahul"
             placeholder="70"
           />
           <text class="form-unit">%</text>
@@ -279,7 +289,7 @@
           <text class="form-label">湿度下限:</text>
           <input
             class="form-input"
-            v-model="currMotor.humidityLower"
+            v-model="currMotor.ahdl"
             placeholder="50"
           />
           <text class="form-unit">%</text>
@@ -289,13 +299,13 @@
           <text class="form-label">运行时间:</text>
           <input
             class="form-input-small"
-            v-model="runMinutes"
+            v-model="currMotor.ahrtm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="runSeconds"
+            v-model="currMotor.ahrts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -305,13 +315,13 @@
           <text class="form-label">暂停时间:</text>
           <input
             class="form-input-small"
-            v-model="pauseMinutes"
+            v-model="currMotor.ahptm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="pauseSeconds"
+            v-model="currMotor.ahpts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -334,7 +344,7 @@
       </view>
 
       <!-- 气体内容 -->
-      <view v-if="currMotor.controlType === 3" class="control-content">
+      <view v-if="currMotor.fcm === 3" class="control-content">
         <view class="device-header">
           <view class="device-circle">
             <text class="device-number">{{ currMotor.value }}</text>
@@ -344,14 +354,14 @@
             v-model="currMotor.deviceName"
             placeholder="请输入设备名称"
           />
-          <text class="realtime-value">实时气体: {{ gasSensor.sensorValue }} ppm</text>
+          <!-- <text class="realtime-value">实时气体: {{ gasSensor.sensorValue }} ppm</text> -->
         </view>
 
         <view class="form-item">
-          <text class="form-label">保护转速:</text>
+          <text class="form-label">最低转速:</text>
           <input
             class="form-input"
-            v-model="currMotor.protectSpeed"
+            v-model="currMotor.anls"
             placeholder="10"
           />
           <text class="form-unit">%</text>
@@ -361,33 +371,33 @@
           <text class="form-label">气体上限:</text>
           <input
             class="form-input"
-            v-model="currMotor.gasUpper"
+            v-model="currMotor.anul"
             placeholder="70"
           />
-          <text class="form-unit">°C</text>
+          <text class="form-unit">ppm</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">气体下限:</text>
           <input
             class="form-input"
-            v-model="currMotor.gasLower"
+            v-model="currMotor.andl"
             placeholder="50"
           />
-          <text class="form-unit">°C</text>
+          <text class="form-unit">ppm</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">运行时间:</text>
           <input
             class="form-input-small"
-            v-model="runMinutes"
+            v-model="currMotor.anrtm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="runSeconds"
+            v-model="currMotor.anrts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -397,13 +407,13 @@
           <text class="form-label">暂停时间:</text>
           <input
             class="form-input-small"
-            v-model="pauseMinutes"
+            v-model="currMotor.anptm"
             placeholder="0"
           />
           <text class="form-unit-small">分</text>
           <input
             class="form-input-small"
-            v-model="pauseSeconds"
+            v-model="currMotor.anpts"
             placeholder="0"
           />
           <text class="form-unit-small">秒</text>
@@ -446,7 +456,15 @@ export default {
     },
     // 温度传感器列表
     temperatureSensors() {
-      return this.$store.state.deviceDetail.deviceInfo.sensors.filter(sensor => sensor.sensorTypeId === 5);
+      return [
+        { id: 0, sensorName: '探头1' },
+        { id: 1, sensorName: '探头2' },
+        { id: 2, sensorName: '探头3' },
+        { id: 3, sensorName: '探头4' },
+        { id: 4, sensorName: '探头12' },
+        { id: 5, sensorName: '探头34' },
+        { id: 6, sensorName: '探头1234' },
+      ];
     },
     // 湿度传感器
     humiditySensor() {
@@ -460,64 +478,77 @@ export default {
   },
   data() {
     return {
-      runMinutes: 0,
-      runSeconds: 0,
-      pauseMinutes: 0,
-      pauseSeconds: 0,
 	  realtimeTemp: 15,
 	  probeIndex: -1,
       
     };
   },
   onLoad() {
-    this.runMinutes = Math.floor(this.currMotor.runTime / 60);
-    this.runSeconds = this.currMotor.runTime % 60;
-    this.pauseMinutes = Math.floor(this.currMotor.pauseTime / 60);
-    this.pauseSeconds = this.currMotor.pauseTime % 60;
-    
     // 设置已选中的探头索引
-    if (this.currMotor.tempSensorId && this.temperatureSensors) {
-      this.probeIndex = this.temperatureSensors.findIndex(sensor => sensor.id === this.currMotor.tempSensorId);
+    if (this.currMotor && this.currMotor.atps !== undefined && this.currMotor.atps !== null && this.temperatureSensors) {
+      this.probeIndex = this.temperatureSensors.findIndex(sensor => Number(sensor.id) === Number(this.currMotor.atps));
     }
   },
   onUnload() {},
   methods: {
     switchMode(isAuto) {
-      this.currMotor.isAuto = isAuto;
+      if (isAuto === 0) {
+        this.currMotor.fcm = 0;
+        return;
+      }
+      if (this.currMotor.fcm === 0 || this.currMotor.fcm === undefined || this.currMotor.fcm === null) {
+        this.currMotor.fcm = 1;
+      }
     },
     switchControl(controlType) {
-      this.currMotor.controlType = controlType;
+      this.currMotor.fcm = controlType;
     },
     // 探头选择变化
     onProbeChange(e) {
       this.probeIndex = parseInt(e.detail.value);
       if (this.probeIndex >= 0 && this.temperatureSensors && this.temperatureSensors[this.probeIndex]) {
-        this.currMotor.tempSensorId = this.temperatureSensors[this.probeIndex].id;
+        this.currMotor.atps = this.temperatureSensors[this.probeIndex].id;
       }
     },
     async handleSave() {
       try {
-        // 计算运行时间和暂停时间（秒）
-        const runTime = (this.runMinutes * 60) + this.runSeconds;
-        const pauseTime = (this.pauseMinutes * 60) + this.pauseSeconds;
-        
         // 更新变频器数据
         const updateData = {
           id: this.currMotor.id,
-          isAuto: this.currMotor.isAuto,
-          manualSpeed: this.currMotor.manualSpeed,
-          protectSpeed: this.currMotor.protectSpeed,
-          runTime: runTime,
-          pauseTime: pauseTime,
-          controlType: this.currMotor.controlType,
+          fcm: Number(this.currMotor.fcm ?? 0),
+          ms: Number(this.currMotor.ms ?? 0),
+          mrtm: Number(this.currMotor.mrtm ?? 0),
+          mrts: Number(this.currMotor.mrts ?? 0),
+          mptm: Number(this.currMotor.mptm ?? 0),
+          mpts: Number(this.currMotor.mpts ?? 0),
+
+          atps: Number(this.currMotor.atps ?? 0),
+          atls: Number(this.currMotor.atls ?? 0),
+          atul: Number(this.currMotor.atul ?? 0),
+          atdl: Number(this.currMotor.atdl ?? 0),
+          aswt: Number(this.currMotor.aswt ?? 0),
+          atrtm: Number(this.currMotor.atrtm ?? 0),
+          atrts: Number(this.currMotor.atrts ?? 0),
+          atptm: Number(this.currMotor.atptm ?? 0),
+          atpts: Number(this.currMotor.atpts ?? 0),
+
+          ahls: Number(this.currMotor.ahls ?? 0),
+          ahul: Number(this.currMotor.ahul ?? 0),
+          ahdl: Number(this.currMotor.ahdl ?? 0),
+          ahrtm: Number(this.currMotor.ahrtm ?? 0),
+          ahrts: Number(this.currMotor.ahrts ?? 0),
+          ahptm: Number(this.currMotor.ahptm ?? 0),
+          ahpts: Number(this.currMotor.ahpts ?? 0),
+
+          anls: Number(this.currMotor.anls ?? 0),
+          anul: Number(this.currMotor.anul ?? 0),
+          andl: Number(this.currMotor.andl ?? 0),
+          anrtm: Number(this.currMotor.anrtm ?? 0),
+          anrts: Number(this.currMotor.anrts ?? 0),
+          anptm: Number(this.currMotor.anptm ?? 0),
+          anpts: Number(this.currMotor.anpts ?? 0),
+
           value: this.currMotor.value,
-          tempSensorId: this.currMotor.tempSensorId,
-          tempUpper: this.currMotor.tempUpper,
-          tempLower: this.currMotor.tempLower,
-          humidityUpper: this.currMotor.humidityUpper,
-          humidityLower: this.currMotor.humidityLower,
-          gasUpper: this.currMotor.gasUpper,
-          gasLower: this.currMotor.gasLower,
           deviceName: this.currMotor.deviceName,
         };
         

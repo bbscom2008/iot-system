@@ -15,20 +15,41 @@ public class FrequencyMotor {
     private Long deviceId;          // 父设备的ID
     private String deviceNum;       // 变频器设备编码
     private String deviceName;      // 变频电机名称：变频1、变频2
-    private Double protectSpeed;    // 保护转速（Double类型）
-    private Integer isAuto;         // 运行模式：0-手动 1-自动
-    private Double manualSpeed;     // 手动转速（Double类型）
-    private Integer value;           // 当前值（整数，范围0-256）
-    private Integer runTime;        // 运行时间（秒）
-    private Integer pauseTime;      // 暂停时间（秒）
-    private Integer controlType;    // 控制类型：1-温控 2-湿控 3-气体
-    private Long tempSensorId;      // 变频器选择的温度传感器ID
-    private Double tempUpper;       // 温度上限（Double类型）
-    private Double tempLower;       // 温度下限（Double类型）
-    private Double humidityUpper;   // 湿度上限（Double类型）
-    private Double humidityLower;   // 湿度下限（Double类型）
-    private Double gasUpper;        // 气体上限（Double类型）
-    private Double gasLower;        // 气体下限（Double类型）
+    private Integer fcm;            // 变频模式：0手动，1自动温控，2自动湿控，3自动气体
+
+    private Double ms;              // 手动转速
+    private Integer mrtm;           // 手动运行时间-分
+    private Integer mrts;           // 手动运行时间-秒
+    private Integer mptm;           // 手动暂停时间-分
+    private Integer mpts;           // 手动暂停时间-秒
+
+    private Integer atps;           // 自动温控探头选择(0~6)
+    private Double atls;            // 自动温控最低转速
+    private Double atul;            // 自动温控温度上限
+    private Double atdl;            // 自动温控温度下限
+    private Double aswt;            // 自动温控停止工作温度
+    private Integer atrtm;          // 自动温控运行时间-分
+    private Integer atrts;          // 自动温控运行时间-秒
+    private Integer atptm;          // 自动温控暂停时间-分
+    private Integer atpts;          // 自动温控暂停时间-秒
+
+    private Double ahls;            // 自动湿控最低转速
+    private Double ahul;            // 自动湿控湿度上限
+    private Double ahdl;            // 自动湿控湿度下限
+    private Integer ahrtm;          // 自动湿控运行时间-分
+    private Integer ahrts;          // 自动湿控运行时间-秒
+    private Integer ahptm;          // 自动湿控暂停时间-分
+    private Integer ahpts;          // 自动湿控暂停时间-秒
+
+    private Double anls;            // 自动NH3最低转速
+    private Double anul;            // 自动NH3上限
+    private Double andl;            // 自动NH3下限
+    private Integer anrtm;          // 自动NH3运行时间-分
+    private Integer anrts;          // 自动NH3运行时间-秒
+    private Integer anptm;          // 自动NH3暂停时间-分
+    private Integer anpts;          // 自动NH3暂停时间-秒
+
+    private Integer value;          // 当前值（整数，范围0-256）
     
     // 关联的设备和用户信息
     private String parentDeviceName; // 父设备名称

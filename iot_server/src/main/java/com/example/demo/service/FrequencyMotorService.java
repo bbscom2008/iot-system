@@ -138,12 +138,31 @@ public class FrequencyMotorService {
         fan.setDeviceName(name);
 
         // 其他字段可以根据需要设置默认值
-        fan.setIsAuto(0); // 默认手动模式
-        fan.setProtectSpeed(0.0);
-        fan.setManualSpeed(0.0);
-        fan.setRunTime(0);
-        fan.setPauseTime(0);
-        fan.setControlType(1); // 默认温控
+        fan.setFcm(0); // 默认手动模式
+        fan.setMs(0.0);
+        fan.setMrtm(0);
+        fan.setMrts(0);
+        fan.setMptm(0);
+        fan.setMpts(0);
+
+        fan.setAtps(0);
+        fan.setAtls(0.0);
+        fan.setAtrtm(0);
+        fan.setAtrts(0);
+        fan.setAtptm(0);
+        fan.setAtpts(0);
+
+        fan.setAhls(0.0);
+        fan.setAhrtm(0);
+        fan.setAhrts(0);
+        fan.setAhptm(0);
+        fan.setAhpts(0);
+
+        fan.setAnls(0.0);
+        fan.setAnrtm(0);
+        fan.setAnrts(0);
+        fan.setAnptm(0);
+        fan.setAnpts(0);
         return fan;
     }
 }

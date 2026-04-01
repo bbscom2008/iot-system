@@ -11,7 +11,7 @@
  Target Server Version : 50744
  File Encoding         : 65001
 
- Date: 31/03/2026 22:15:35
+ Date: 01/04/2026 21:55:32
 */
 
 SET NAMES utf8mb4;
@@ -142,15 +142,15 @@ CREATE TABLE `devices`  (
 -- ----------------------------
 -- Records of devices
 -- ----------------------------
-INSERT INTO `devices` VALUES (1, 3, '928172361263', NULL, NULL, '1号鸡房01', 1, 0, 3, 85, 0, '2025-10-21 06:19:17', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
-INSERT INTO `devices` VALUES (2, 3, 'd002', NULL, NULL, '2号猪舍环控仪', 1, 0, 4, 93, 0, '2025-10-21 06:19:17', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 0, 0, 0, 0, 0, 1, 3, '[\"13812345678\",\"13412345698\"]');
-INSERT INTO `devices` VALUES (3, 3, 'd003', NULL, NULL, '2号鸡舍环控仪', 1, 0, 1, 15, 0, '2025-10-21 06:19:17', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
-INSERT INTO `devices` VALUES (4, 5, '123456789', NULL, NULL, '环控仪', 1, 0, 0, 100, 0, '2025-12-17 14:36:34', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
-INSERT INTO `devices` VALUES (5, 5, '666888', NULL, NULL, '环控仪', 1, 0, 0, 100, 0, '2025-12-18 11:00:48', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
-INSERT INTO `devices` VALUES (6, 5, 'a12345', NULL, NULL, '环控仪', 1, 0, 0, 100, 0, '2025-12-19 11:00:49', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 1, 3, '[\"13812345678\"]');
-INSERT INTO `devices` VALUES (8, 3, 'd004', NULL, NULL, '环控仪', 1, 0, 5, 100, 0, '2026-01-21 09:37:20', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
-INSERT INTO `devices` VALUES (10, 6, '0383883', NULL, NULL, '环控仪', 1, 0, 5, 100, 0, '2026-03-10 19:54:05', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
-INSERT INTO `devices` VALUES (11, 3, '25412589637', NULL, NULL, '环控仪', 1, 0, 5, 100, 0, '2026-03-17 20:43:57', '2026-03-31 21:54:08', '2026-03-31 21:54:08', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (1, 3, '928172361263', NULL, NULL, '1号鸡房01', 1, 1, 3, 85, 0, '2025-10-21 06:19:17', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 2, 3, '[\"13812345678\"]');
+INSERT INTO `devices` VALUES (2, 3, 'd002', NULL, NULL, '2号猪舍环控仪', 1, 1, 4, 93, 0, '2025-10-21 06:19:17', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 0, 0, 0, 0, 0, 1, 3, '[\"13812345678\",\"13412345698\"]');
+INSERT INTO `devices` VALUES (3, 3, 'd003', NULL, NULL, '2号鸡舍环控仪', 1, 1, 1, 15, 0, '2025-10-21 06:19:17', '2026-04-01 21:52:58', '2026-04-01 21:52:58', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (4, 5, '123456789', NULL, NULL, '环控仪', 1, 1, 0, 100, 0, '2025-12-17 14:36:34', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (5, 5, '666888', NULL, NULL, '环控仪', 1, 1, 0, 100, 0, '2025-12-18 11:00:48', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (6, 5, 'a12345', NULL, NULL, '环控仪', 1, 1, 0, 100, 0, '2025-12-19 11:00:49', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 10, 3000, 1000, 38.00, 30.00, 75.00, 45.00, 1, 1, 1, 1, 1, 1, 3, '[\"13812345678\"]');
+INSERT INTO `devices` VALUES (8, 3, 'd004', NULL, NULL, '环控仪', 1, 1, 5, 100, 0, '2026-01-21 09:37:20', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (10, 6, '0383883', NULL, NULL, '环控仪', 1, 1, 5, 100, 0, '2026-03-10 19:54:05', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
+INSERT INTO `devices` VALUES (11, 3, '464B21320F3936313', '86481407876', '89860124801774637', '环控仪', 1, 1, 5, 100, 0, '2026-03-17 20:43:57', '2026-04-01 21:52:57', '2026-04-01 21:52:57', 0, 0, 0, 0.00, 0.00, 0.00, 0.00, 1, 0, 1, 0, 0, 1, 3, NULL);
 
 -- ----------------------------
 -- Table structure for frequency_motor
@@ -161,22 +161,38 @@ CREATE TABLE `frequency_motor`  (
   `device_id` bigint(20) NOT NULL COMMENT '设备ID',
   `device_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备编号',
   `device_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '变频电机名称',
-  `protect_speed` decimal(10, 2) NULL DEFAULT NULL COMMENT '保护转速',
-  `is_auto` tinyint(4) NOT NULL DEFAULT 0 COMMENT '运行模式：0-手动 1-自动，默认手动',
-  `manual_speed` decimal(10, 2) NULL DEFAULT 10.00 COMMENT '手动转速，默认10',
+  `fcm` tinyint(4) NOT NULL DEFAULT 0 COMMENT '变频模式：0手动，1自动温控，2自动湿控，3自动氨气',
+  `ms` decimal(10, 2) NULL DEFAULT 10.00 COMMENT '手动转速',
+  `mrtm` int(11) NULL DEFAULT 0 COMMENT '手动运行时间-分',
+  `mrts` int(11) NULL DEFAULT 0 COMMENT '手动运行时间-秒',
+  `mptm` int(11) NULL DEFAULT 0 COMMENT '手动暂停时间-分',
+  `mpts` int(11) NULL DEFAULT 0 COMMENT '手动暂停时间-秒',
+  `atps` int(11) NULL DEFAULT 0 COMMENT '自动温控探头选择，0~6',
+  `atls` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '自动温控最低转速',
+  `atul` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动温控温度上限',
+  `atdl` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动温控温度下限',
+  `aswt` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动温控停止工作温度',
+  `atrtm` int(11) NULL DEFAULT 0 COMMENT '自动温控运行时间-分',
+  `atrts` int(11) NULL DEFAULT 0 COMMENT '自动温控运行时间-秒',
+  `atptm` int(11) NULL DEFAULT 0 COMMENT '自动温控暂停时间-分',
+  `atpts` int(11) NULL DEFAULT 0 COMMENT '自动温控暂停时间-秒',
+  `ahls` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '自动湿控最低转速',
+  `ahul` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动湿控湿度上限',
+  `ahdl` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动湿控湿度下限',
+  `ahrtm` int(11) NULL DEFAULT 0 COMMENT '自动湿控运行时间-分',
+  `ahrts` int(11) NULL DEFAULT 0 COMMENT '自动湿控运行时间-秒',
+  `ahptm` int(11) NULL DEFAULT 0 COMMENT '自动湿控暂停时间-分',
+  `ahpts` int(11) NULL DEFAULT 0 COMMENT '自动湿控暂停时间-秒',
+  `anls` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '自动NH3最低转速',
+  `anul` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动NH3上限',
+  `andl` decimal(10, 2) NULL DEFAULT NULL COMMENT '自动NH3下限',
+  `anrtm` int(11) NULL DEFAULT 0 COMMENT '自动NH3运行时间-分',
+  `anrts` int(11) NULL DEFAULT 0 COMMENT '自动NH3运行时间-秒',
+  `anptm` int(11) NULL DEFAULT 0 COMMENT '自动NH3暂停时间-分',
+  `anpts` int(11) NULL DEFAULT 0 COMMENT '自动NH3暂停时间-秒',
   `value` int(11) NULL DEFAULT 10 COMMENT '当前值，默认10',
-  `run_time` int(11) NULL DEFAULT 60 COMMENT '运行时间（秒），默认60秒',
-  `pause_time` int(11) NULL DEFAULT 30 COMMENT '暂停时间（秒），默认30秒',
-  `control_type` tinyint(4) NULL DEFAULT 1 COMMENT '控制类型：1-温控 2-湿控 3-气体，默认1',
-  `temp_upper` decimal(10, 2) NULL DEFAULT NULL COMMENT '温度上限',
-  `temp_lower` decimal(10, 2) NULL DEFAULT NULL COMMENT '温度下限',
-  `humidity_upper` decimal(10, 2) NULL DEFAULT NULL COMMENT '湿度上限',
-  `humidity_lower` decimal(10, 2) NULL DEFAULT NULL COMMENT '湿度下限',
-  `gas_upper` decimal(10, 2) NULL DEFAULT NULL COMMENT '气体上限',
-  `gas_lower` decimal(10, 2) NULL DEFAULT NULL COMMENT '气体下限',
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `temp_sensor_id` bigint(20) NULL DEFAULT NULL COMMENT '变频器选择的温度传感器ID',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_device_id`(`device_id`) USING BTREE,
   INDEX `idx_device_num`(`device_num`) USING BTREE
@@ -185,20 +201,20 @@ CREATE TABLE `frequency_motor`  (
 -- ----------------------------
 -- Records of frequency_motor
 -- ----------------------------
-INSERT INTO `frequency_motor` VALUES (1, 1, 'imt1', '变频cc', 30.00, 1, 10.00, 55, 130, 40, 3, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2026-01-08 10:56:09', 3);
-INSERT INTO `frequency_motor` VALUES (5, 1, 'imt2', '变频2', 50.00, 0, 10.00, 66, 60, 30, 1, 35.00, 20.00, 70.00, 40.00, 100.00, 0.00, '2025-10-27 07:32:17', '2026-01-08 10:56:09', NULL);
-INSERT INTO `frequency_motor` VALUES (8, 5, 'imt1', '变频1', 0.00, 0, 0.00, 55, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-19 09:02:59', '2025-12-19 10:57:50', NULL);
-INSERT INTO `frequency_motor` VALUES (9, 5, 'imt2', '变频2', 0.00, 0, 0.00, 66, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-19 09:02:59', '2025-12-19 10:57:50', NULL);
-INSERT INTO `frequency_motor` VALUES (10, 6, 'imt1', '变频1', 0.00, 0, 0.00, 55, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-19 11:02:24', '2025-12-20 08:30:02', NULL);
-INSERT INTO `frequency_motor` VALUES (11, 6, 'imt2', '变频2', 0.00, 0, 0.00, 66, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-19 11:02:24', '2025-12-20 08:30:02', NULL);
-INSERT INTO `frequency_motor` VALUES (12, 2, 'imt1', '变频1', 10.00, 1, 0.00, 30, 120, 60, 1, 36.00, 33.00, NULL, NULL, NULL, NULL, '2026-01-02 22:15:18', '2026-01-21 09:31:21', 9);
-INSERT INTO `frequency_motor` VALUES (13, 2, 'imt2', '变频2', 0.00, 0, 0.00, 60, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-02 22:15:18', '2026-01-21 09:31:21', NULL);
-INSERT INTO `frequency_motor` VALUES (16, 8, 'imt1', '变频1', 0.00, 0, 0.00, 40, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 09:37:26', '2026-03-17 20:40:08', NULL);
-INSERT INTO `frequency_motor` VALUES (17, 8, 'imt2', '变频2', 0.00, 0, 0.00, 60, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 09:37:26', '2026-03-17 20:40:08', NULL);
-INSERT INTO `frequency_motor` VALUES (18, 10, 'imt1', '变频1', 0.00, 0, 0.00, 40, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-10 19:56:01', '2026-03-19 17:13:55', NULL);
-INSERT INTO `frequency_motor` VALUES (19, 10, 'imt2', '变频2', 0.00, 0, 0.00, 60, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-10 19:56:01', '2026-03-19 17:13:55', NULL);
-INSERT INTO `frequency_motor` VALUES (20, 11, 'imt1', '变频1', 0.00, 0, 0.00, 40, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-17 20:45:09', '2026-03-19 22:32:48', NULL);
-INSERT INTO `frequency_motor` VALUES (21, 11, 'imt2', '变频2', 0.00, 0, 0.00, 60, 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-17 20:45:09', '2026-03-19 22:32:48', NULL);
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (1, 1, 'imt1', '变频cc', 3, 10.00, 2, 10, 0, 40, 3, 30.00, 35.00, 20.00, 20.00, 2, 10, 0, 40, 30.00, 70.00, 40.00, 2, 10, 0, 40, 30.00, 100.00, 0.00, 2, 10, 0, 40, 55, '2025-10-27 07:32:17', '2026-01-08 10:56:09');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (5, 1, 'imt2', '变频2', 0, 10.00, 1, 0, 0, 30, 0, 50.00, 35.00, 20.00, 20.00, 1, 0, 0, 30, 50.00, 70.00, 40.00, 1, 0, 0, 30, 50.00, 100.00, 0.00, 1, 0, 0, 30, 66, '2025-10-27 07:32:17', '2026-01-08 10:56:09');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (8, 5, 'imt1', '变频1', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 55, '2025-12-19 09:02:59', '2025-12-19 10:57:50');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (9, 5, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 66, '2025-12-19 09:02:59', '2025-12-19 10:57:50');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (10, 6, 'imt1', '变频1', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 55, '2025-12-19 11:02:24', '2025-12-20 08:30:02');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (11, 6, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 66, '2025-12-19 11:02:24', '2025-12-20 08:30:02');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (12, 2, 'imt1', '变频1', 1, 0.00, 2, 0, 1, 0, 0, 10.00, 36.00, 33.00, 33.00, 2, 0, 1, 0, 10.00, NULL, NULL, 2, 0, 1, 0, 10.00, NULL, NULL, 2, 0, 1, 0, 30, '2026-01-02 22:15:18', '2026-01-21 09:31:21');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (13, 2, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 60, '2026-01-02 22:15:18', '2026-01-21 09:31:21');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (16, 8, 'imt1', '变频1', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 40, '2026-01-21 09:37:26', '2026-03-17 20:40:08');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (17, 8, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 60, '2026-01-21 09:37:26', '2026-03-17 20:40:08');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (18, 10, 'imt1', '变频1', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 40, '2026-03-10 19:56:01', '2026-03-19 17:13:55');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (19, 10, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 60, '2026-03-10 19:56:01', '2026-03-19 17:13:55');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (20, 11, 'imt1', '变频1', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 40, '2026-03-17 20:45:09', '2026-03-19 22:32:48');
+INSERT INTO `frequency_motor` (`id`, `device_id`, `device_num`, `device_name`, `fcm`, `ms`, `mrtm`, `mrts`, `mptm`, `mpts`, `atps`, `atls`, `atul`, `atdl`, `aswt`, `atrtm`, `atrts`, `atptm`, `atpts`, `ahls`, `ahul`, `ahdl`, `ahrtm`, `ahrts`, `ahptm`, `ahpts`, `anls`, `anul`, `andl`, `anrtm`, `anrts`, `anptm`, `anpts`, `value`, `created_time`, `updated_time`) VALUES (21, 11, 'imt2', '变频2', 0, 0.00, 0, 0, 0, 0, 0, 0.00, NULL, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 0.00, NULL, NULL, 0, 0, 0, 0, 60, '2026-03-17 20:45:09', '2026-03-19 22:32:48');
 
 -- ----------------------------
 -- Table structure for motor_fan
@@ -346,12 +362,12 @@ INSERT INTO `motor_fan` VALUES (131, '风机7', 10, 'mt7', 1, 1, 1, NULL, 38.00,
 INSERT INTO `motor_fan` VALUES (132, '风机8', 10, 'mt8', 1, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-10 19:56:01', '2026-03-19 17:13:55');
 INSERT INTO `motor_fan` VALUES (133, '风机9', 10, 'mt9', 1, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-10 19:56:01', '2026-03-19 17:13:55');
 INSERT INTO `motor_fan` VALUES (134, '风机10', 10, 'mt10', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-10 19:56:01', '2026-03-19 17:13:55');
-INSERT INTO `motor_fan` VALUES (135, '风机1', 11, 'mt1', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
-INSERT INTO `motor_fan` VALUES (136, '风机2', 11, 'mt2', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
-INSERT INTO `motor_fan` VALUES (137, '风机3', 11, 'mt3', 1, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
-INSERT INTO `motor_fan` VALUES (138, '风机4', 11, 'mt4', 0, 2, 1, 41, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 1, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-31 00:52:28');
-INSERT INTO `motor_fan` VALUES (139, '风机5', 11, 'mt5', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
-INSERT INTO `motor_fan` VALUES (140, '风机6', 11, 'mt6', 1, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
+INSERT INTO `motor_fan` VALUES (135, '风机1', 11, 'mt1', 0, 0, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 7, 30.00, 20.00, 5, 6, 7, 8, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 08:43:44');
+INSERT INTO `motor_fan` VALUES (136, '风机2', 11, 'mt2', 0, 1, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 3, 30.00, 20.00, 5, 6, 7, 0, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 21:39:30');
+INSERT INTO `motor_fan` VALUES (137, '风机3', 11, 'mt3', 1, 1, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 7, 30.00, 20.00, 5, 6, 7, 8, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 08:35:25');
+INSERT INTO `motor_fan` VALUES (138, '风机4', 11, 'mt4', 0, 1, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 7, 30.00, 20.00, 5, 6, 7, 8, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 01:56:00');
+INSERT INTO `motor_fan` VALUES (139, '风机5', 11, 'mt5', 0, 1, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 7, 30.00, 20.00, 5, 6, 7, 8, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 01:57:38');
+INSERT INTO `motor_fan` VALUES (140, '风机6', 11, 'mt6', 1, 1, 1, 4, 25.00, 30.00, 3, 4, 5, 6, 1, 7, 30.00, 20.00, 5, 6, 7, 8, 0, 700.00, 400.00, 7, 8, 9, 10, 0, 35, 10, 6, 6, 6, 6, 0, 8, 0, 10, 0, 0, 30.00, 40.00, 0, 12, 0, 14, 0, 0, 16, 0, 20, 0, 1, '2026-03-17 20:45:08', '2026-04-01 01:58:09');
 INSERT INTO `motor_fan` VALUES (141, '风机7', 11, 'mt7', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
 INSERT INTO `motor_fan` VALUES (142, '风机8', 11, 'mt8', 0, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:08', '2026-03-19 22:32:48');
 INSERT INTO `motor_fan` VALUES (143, '风机9', 11, 'mt9', 1, 1, 1, NULL, 38.00, 30.00, 0, 5, 0, 5, 0, NULL, 38.00, 30.00, 0, 0, 0, 0, 0, 75.00, 45.00, 0, 0, 0, 0, 0, 3000, 1000, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 30.00, 38.00, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, '2026-03-17 20:45:09', '2026-03-19 22:32:48');
@@ -383,7 +399,7 @@ CREATE TABLE `mqtt_message_data`  (
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_device_num`(`device_num`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 196 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 206 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mqtt_message_data
@@ -583,6 +599,16 @@ INSERT INTO `mqtt_message_data` VALUES (192, '25412589637', 40.00, 33.00, 32.00,
 INSERT INTO `mqtt_message_data` VALUES (193, '25412589637', 40.00, 33.00, 32.00, 22.00, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 40, 60, '2026-03-19 21:53:11');
 INSERT INTO `mqtt_message_data` VALUES (194, '25412589637', 40.00, 33.00, 32.00, 22.00, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 40, 60, '2026-03-19 22:32:26');
 INSERT INTO `mqtt_message_data` VALUES (195, '25412589637', 36.00, 35.00, 32.00, 32.00, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 40, 60, '2026-03-19 22:32:48');
+INSERT INTO `mqtt_message_data` VALUES (196, '25412589637', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-31 23:32:29');
+INSERT INTO `mqtt_message_data` VALUES (197, '25412589637', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 00:08:17');
+INSERT INTO `mqtt_message_data` VALUES (198, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:31:23');
+INSERT INTO `mqtt_message_data` VALUES (199, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:32:25');
+INSERT INTO `mqtt_message_data` VALUES (200, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:35:05');
+INSERT INTO `mqtt_message_data` VALUES (201, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:56:00');
+INSERT INTO `mqtt_message_data` VALUES (202, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:57:38');
+INSERT INTO `mqtt_message_data` VALUES (203, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 01:58:09');
+INSERT INTO `mqtt_message_data` VALUES (204, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 08:35:25');
+INSERT INTO `mqtt_message_data` VALUES (205, '464B21320F3936313536374D', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-01 08:43:44');
 
 -- ----------------------------
 -- Table structure for role_type

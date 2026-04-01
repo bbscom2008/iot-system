@@ -82,23 +82,26 @@ public class FrequencyMotorController {
         }
         
         // 设置默认值
-        if (frequencyMotor.getIsAuto() == null) {
-            frequencyMotor.setIsAuto(0); // 默认手动
-        }
-        if (frequencyMotor.getControlType() == null) {
-            frequencyMotor.setControlType(1); // 默认温控
+        if (frequencyMotor.getFcm() == null) {
+            frequencyMotor.setFcm(0); // 默认手动
         }
         if (frequencyMotor.getValue() == null) {
             frequencyMotor.setValue(10); // 默认值
         }
-        if (frequencyMotor.getManualSpeed() == null) {
-            frequencyMotor.setManualSpeed(10.0); // 默认手动转速
+        if (frequencyMotor.getMs() == null) {
+            frequencyMotor.setMs(10.0); // 默认手动转速
         }
-        if (frequencyMotor.getRunTime() == null) {
-            frequencyMotor.setRunTime(60); // 默认运行时间
+        if (frequencyMotor.getMrtm() == null) {
+            frequencyMotor.setMrtm(1);
         }
-        if (frequencyMotor.getPauseTime() == null) {
-            frequencyMotor.setPauseTime(30); // 默认暂停时间
+        if (frequencyMotor.getMrts() == null) {
+            frequencyMotor.setMrts(0);
+        }
+        if (frequencyMotor.getMptm() == null) {
+            frequencyMotor.setMptm(0);
+        }
+        if (frequencyMotor.getMpts() == null) {
+            frequencyMotor.setMpts(30);
         }
         
         frequencyMotorService.insert(frequencyMotor);

@@ -9,20 +9,40 @@
         <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
-        <result column="protect_speed" property="protectSpeed" jdbcType="DOUBLE"/>
-        <result column="is_auto" property="isAuto" jdbcType="INTEGER"/>
-        <result column="manual_speed" property="manualSpeed" jdbcType="DOUBLE"/>
+        <result column="fcm" property="fcm" jdbcType="INTEGER"/>
+        <result column="ms" property="ms" jdbcType="DOUBLE"/>
+        <result column="mrtm" property="mrtm" jdbcType="INTEGER"/>
+        <result column="mrts" property="mrts" jdbcType="INTEGER"/>
+        <result column="mptm" property="mptm" jdbcType="INTEGER"/>
+        <result column="mpts" property="mpts" jdbcType="INTEGER"/>
+
+        <result column="atps" property="atps" jdbcType="INTEGER"/>
+        <result column="atls" property="atls" jdbcType="DOUBLE"/>
+        <result column="atul" property="atul" jdbcType="DOUBLE"/>
+        <result column="atdl" property="atdl" jdbcType="DOUBLE"/>
+        <result column="aswt" property="aswt" jdbcType="DOUBLE"/>
+        <result column="atrtm" property="atrtm" jdbcType="INTEGER"/>
+        <result column="atrts" property="atrts" jdbcType="INTEGER"/>
+        <result column="atptm" property="atptm" jdbcType="INTEGER"/>
+        <result column="atpts" property="atpts" jdbcType="INTEGER"/>
+
+        <result column="ahls" property="ahls" jdbcType="DOUBLE"/>
+        <result column="ahul" property="ahul" jdbcType="DOUBLE"/>
+        <result column="ahdl" property="ahdl" jdbcType="DOUBLE"/>
+        <result column="ahrtm" property="ahrtm" jdbcType="INTEGER"/>
+        <result column="ahrts" property="ahrts" jdbcType="INTEGER"/>
+        <result column="ahptm" property="ahptm" jdbcType="INTEGER"/>
+        <result column="ahpts" property="ahpts" jdbcType="INTEGER"/>
+
+        <result column="anls" property="anls" jdbcType="DOUBLE"/>
+        <result column="anul" property="anul" jdbcType="DOUBLE"/>
+        <result column="andl" property="andl" jdbcType="DOUBLE"/>
+        <result column="anrtm" property="anrtm" jdbcType="INTEGER"/>
+        <result column="anrts" property="anrts" jdbcType="INTEGER"/>
+        <result column="anptm" property="anptm" jdbcType="INTEGER"/>
+        <result column="anpts" property="anpts" jdbcType="INTEGER"/>
+
         <result column="value" property="value" jdbcType="INTEGER"/>
-        <result column="run_time" property="runTime" jdbcType="INTEGER"/>
-        <result column="pause_time" property="pauseTime" jdbcType="INTEGER"/>
-        <result column="control_type" property="controlType" jdbcType="INTEGER"/>
-        <result column="temp_sensor_id" property="tempSensorId" jdbcType="BIGINT"/>
-        <result column="temp_upper" property="tempUpper" jdbcType="DOUBLE"/>
-        <result column="temp_lower" property="tempLower" jdbcType="DOUBLE"/>
-        <result column="humidity_upper" property="humidityUpper" jdbcType="DOUBLE"/>
-        <result column="humidity_lower" property="humidityLower" jdbcType="DOUBLE"/>
-        <result column="gas_upper" property="gasUpper" jdbcType="DOUBLE"/>
-        <result column="gas_lower" property="gasLower" jdbcType="DOUBLE"/>
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
         
@@ -40,20 +60,36 @@
             fm.device_id,
             fm.device_num,
             fm.device_name,
-            fm.protect_speed,
-            fm.is_auto,
-            fm.manual_speed,
+            fm.fcm,
+            fm.ms,
+            fm.mrtm,
+            fm.mrts,
+            fm.mptm,
+            fm.mpts,
+            fm.atps,
+            fm.atls,
+            fm.atul,
+            fm.atdl,
+            fm.aswt,
+            fm.atrtm,
+            fm.atrts,
+            fm.atptm,
+            fm.atpts,
+            fm.ahls,
+            fm.ahul,
+            fm.ahdl,
+            fm.ahrtm,
+            fm.ahrts,
+            fm.ahptm,
+            fm.ahpts,
+            fm.anls,
+            fm.anul,
+            fm.andl,
+            fm.anrtm,
+            fm.anrts,
+            fm.anptm,
+            fm.anpts,
             fm.value,
-            fm.run_time,
-            fm.pause_time,
-            fm.control_type,
-            fm.temp_sensor_id,
-            fm.temp_upper,
-            fm.temp_lower,
-            fm.humidity_upper,
-            fm.humidity_lower,
-            fm.gas_upper,
-            fm.gas_lower,
             fm.created_time,
             fm.updated_time,
             d.device_name as parent_device_name,
@@ -108,32 +144,54 @@
     <!-- 新增变频电机 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO frequency_motor 
-        (device_id, device_num, device_name, protect_speed, is_auto, manual_speed, value, run_time, pause_time,
-         control_type, temp_sensor_id, temp_upper, temp_lower, humidity_upper, humidity_lower, gas_upper, gas_lower, 
-         created_time, updated_time)
+           (device_id, device_num, device_name, fcm, ms,
+            mrtm, mrts, mptm, mpts,
+            atps, atls, atul, atdl, aswt, atrtm, atrts, atptm, atpts,
+            ahls, ahul, ahdl, ahrtm, ahrts, ahptm, ahpts,
+            anls, anul, andl, anrtm, anrts, anptm, anpts,
+            value, created_time, updated_time)
         VALUES 
-        (#{deviceId}, #{deviceNum}, #{deviceName}, #{protectSpeed}, #{isAuto}, #{manualSpeed}, #{value}, #{runTime}, #{pauseTime},
-         #{controlType}, #{tempSensorId}, #{tempUpper}, #{tempLower}, #{humidityUpper}, #{humidityLower}, #{gasUpper}, #{gasLower},
-         NOW(), NOW())
+           (#{deviceId}, #{deviceNum}, #{deviceName}, #{fcm}, #{ms},
+            #{mrtm}, #{mrts}, #{mptm}, #{mpts},
+            #{atps}, #{atls}, #{atul}, #{atdl}, #{aswt}, #{atrtm}, #{atrts}, #{atptm}, #{atpts},
+            #{ahls}, #{ahul}, #{ahdl}, #{ahrtm}, #{ahrts}, #{ahptm}, #{ahpts},
+            #{anls}, #{anul}, #{andl}, #{anrtm}, #{anrts}, #{anptm}, #{anpts},
+            #{value}, NOW(), NOW())
     </insert>
 
     <!-- 更新变频电机配置 -->
     <update id="update">
         UPDATE frequency_motor
-        SET protect_speed = #{protectSpeed},
-            is_auto = #{isAuto},
-            manual_speed = #{manualSpeed},
+        SET fcm = #{fcm},
+            ms = #{ms},
+            mrtm = #{mrtm},
+            mrts = #{mrts},
+            mptm = #{mptm},
+            mpts = #{mpts},
+            atps = #{atps},
+            atls = #{atls},
+            atul = #{atul},
+            atdl = #{atdl},
+            aswt = #{aswt},
+            atrtm = #{atrtm},
+            atrts = #{atrts},
+            atptm = #{atptm},
+            atpts = #{atpts},
+            ahls = #{ahls},
+            ahul = #{ahul},
+            ahdl = #{ahdl},
+            ahrtm = #{ahrtm},
+            ahrts = #{ahrts},
+            ahptm = #{ahptm},
+            ahpts = #{ahpts},
+            anls = #{anls},
+            anul = #{anul},
+            andl = #{andl},
+            anrtm = #{anrtm},
+            anrts = #{anrts},
+            anptm = #{anptm},
+            anpts = #{anpts},
             value = #{value},
-            run_time = #{runTime},
-            pause_time = #{pauseTime},
-            control_type = #{controlType},
-            temp_sensor_id = #{tempSensorId},
-            temp_upper = #{tempUpper},
-            temp_lower = #{tempLower},
-            humidity_upper = #{humidityUpper},
-            humidity_lower = #{humidityLower},
-            gas_upper = #{gasUpper},
-            gas_lower = #{gasLower},
             device_name = #{deviceName},
             updated_time = NOW()
         WHERE id = #{id}
