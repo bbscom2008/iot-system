@@ -1,12 +1,16 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponse;
+import com.example.demo.entity.Device;
 import com.example.demo.entity.FrequencyMotor;
+import com.example.demo.service.DeviceService;
 import com.example.demo.service.FrequencyMotorService;
+import com.example.demo.service.MqttService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +21,8 @@ import java.util.Map;
 public class FrequencyMotorController {
 
     private final FrequencyMotorService frequencyMotorService;
+    private final DeviceService deviceService;
+    private final MqttService mqttService;
 
     /**
      * 获取所有变频电机列表（关联设备和用户信息）
@@ -128,7 +134,65 @@ public class FrequencyMotorController {
         if (affected <= 0) {
             throw new RuntimeException("更新失败，未影响任何行");
         }
+
+        // 保存成功后，通知设备：server/setting/{STM32ID}/{imtx}
+        FrequencyMotor latestMotor = frequencyMotorService.findById(frequencyMotor.getId());
+        if (latestMotor != null) {
+            Device parentDevice = deviceService.findByDeviceId(latestMotor.getDeviceId());
+            if (parentDevice != null
+                    && parentDevice.getDeviceNum() != null && !parentDevice.getDeviceNum().trim().isEmpty()
+                    && latestMotor.getDeviceNum() != null && !latestMotor.getDeviceNum().trim().isEmpty()) {
+
+                String stm32Id = parentDevice.getDeviceNum();
+                String imtx = latestMotor.getDeviceNum();
+                String topic = "server/setting/" + stm32Id + "/" + imtx;
+
+                Map<String, Object> payload = buildFrequencySettingPayload(latestMotor);
+                boolean published = mqttService.publishMessage(topic, payload, 1);
+                if (!published) {
+                    throw new RuntimeException("保存成功，但下发MQTT设置失败");
+                }
+            }
+        }
+
         return ApiResponse.success("更新成功");
+    }
+
+    private Map<String, Object> buildFrequencySettingPayload(FrequencyMotor motor) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("fcm", motor.getFcm());
+        payload.put("ms", motor.getMs());
+        payload.put("mrtm", motor.getMrtm());
+        payload.put("mrts", motor.getMrts());
+        payload.put("mptm", motor.getMptm());
+        payload.put("mpts", motor.getMpts());
+
+        payload.put("atps", motor.getAtps());
+        payload.put("atls", motor.getAtls());
+        payload.put("atul", motor.getAtul());
+        payload.put("atdl", motor.getAtdl());
+        payload.put("aswt", motor.getAswt());
+        payload.put("atrtm", motor.getAtrtm());
+        payload.put("atrts", motor.getAtrts());
+        payload.put("atptm", motor.getAtptm());
+        payload.put("atpts", motor.getAtpts());
+
+        payload.put("ahls", motor.getAhls());
+        payload.put("ahul", motor.getAhul());
+        payload.put("ahdl", motor.getAhdl());
+        payload.put("ahrtm", motor.getAhrtm());
+        payload.put("ahrts", motor.getAhrts());
+        payload.put("ahptm", motor.getAhptm());
+        payload.put("ahpts", motor.getAhpts());
+
+        payload.put("anls", motor.getAnls());
+        payload.put("anul", motor.getAnul());
+        payload.put("andl", motor.getAndl());
+        payload.put("anrtm", motor.getAnrtm());
+        payload.put("anrts", motor.getAnrts());
+        payload.put("anptm", motor.getAnptm());
+        payload.put("anpts", motor.getAnpts());
+        return payload;
     }
 
     /**

@@ -2,13 +2,17 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApiResponse;
 import com.example.demo.dto.MotorFanListDTO;
+import com.example.demo.entity.Device;
 import com.example.demo.entity.MotorFan;
+import com.example.demo.service.DeviceService;
 import com.example.demo.service.MotorControlRuleEngineService;
 import com.example.demo.service.MotorFanService;
+import com.example.demo.service.MqttService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +23,8 @@ import java.util.Map;
 public class MotorFanController {
 
     private final MotorFanService motorFanService;
+    private final DeviceService deviceService;
+    private final MqttService mqttService;
 
     private final MotorControlRuleEngineService motorControlProducerService;
 
@@ -115,9 +121,90 @@ public class MotorFanController {
         }
         
         motorFanService.update(motorFan);
-        // 使用新的规则控制电机
-        motorControlProducerService.processMotorControl(existFan, null, null);
+
+        MotorFan latestFan = motorFanService.findById(motorFan.getId());
+        if (latestFan != null) {
+            Device parentDevice = deviceService.findByDeviceId(latestFan.getDeviceId());
+            if (parentDevice != null
+                    && parentDevice.getDeviceNum() != null && !parentDevice.getDeviceNum().trim().isEmpty()
+                    && latestFan.getDeviceNum() != null && !latestFan.getDeviceNum().trim().isEmpty()) {
+
+                String stm32Id = parentDevice.getDeviceNum();
+                String mtx = latestFan.getDeviceNum();
+                String topic = "server/setting/" + stm32Id + "/" + mtx;
+
+                Map<String, Object> payload = buildMotorFanSettingPayload(latestFan);
+                boolean published = mqttService.publishMessage(topic, payload, 1);
+                if (!published) {
+                    throw new RuntimeException("保存成功，但下发MQTT设置失败");
+                }
+            }
+        }
+
+        // 使用新的规则控制电机（使用最新配置）
+        motorControlProducerService.processMotorControl(latestFan != null ? latestFan : existFan, null, null);
         return ApiResponse.success("更新成功");
+    }
+
+    private Map<String, Object> buildMotorFanSettingPayload(MotorFan fan) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("wm", fan.getWm());
+        payload.put("tcps", fan.getTcps());
+        payload.put("tcat", fan.getTcat());
+        payload.put("tcot", fan.getTcot());
+        payload.put("tcltrm", fan.getTcltrm());
+        payload.put("tcltrs", fan.getTcltrs());
+        payload.put("tcltpm", fan.getTcltpm());
+        payload.put("tcltps", fan.getTcltps());
+        payload.put("tctcm", fan.getTctcm());
+
+        payload.put("ccps", fan.getCcps());
+        payload.put("cctu", fan.getCctu());
+        payload.put("cctd", fan.getCctd());
+        payload.put("ccrm", fan.getCcrm());
+        payload.put("ccrs", fan.getCcrs());
+        payload.put("ccpm", fan.getCcpm());
+        payload.put("ccpss", fan.getCcpss());
+        payload.put("cccm", fan.getCccm());
+
+        payload.put("hchu", fan.getHchu());
+        payload.put("hchd", fan.getHchd());
+        payload.put("hcrm", fan.getHcrm());
+        payload.put("hcrs", fan.getHcrs());
+        payload.put("hcpm", fan.getHcpm());
+        payload.put("hcps", fan.getHcps());
+        payload.put("hchcm", fan.getHchcm());
+
+        payload.put("ncnu", fan.getNcnu());
+        payload.put("ncnd", fan.getNcnd());
+        payload.put("ncrm", fan.getNcrm());
+        payload.put("ncrs", fan.getNcrs());
+        payload.put("ncpm", fan.getNcpm());
+        payload.put("ncps", fan.getNcps());
+
+        payload.put("tict1nf", fan.getTict1nf());
+        payload.put("tict1nh", fan.getTict1nh());
+        payload.put("tict1nm", fan.getTict1nm());
+        payload.put("tict1fh", fan.getTict1fh());
+        payload.put("tict1fm", fan.getTict1fm());
+
+        payload.put("tict2nf", fan.getTict2nf());
+        payload.put("tict2nh", fan.getTict2nh());
+        payload.put("tict2nm", fan.getTict2nm());
+        payload.put("tict2fh", fan.getTict2fh());
+        payload.put("tict2fm", fan.getTict2fm());
+
+        payload.put("tict3nf", fan.getTict3nf());
+        payload.put("tict3nh", fan.getTict3nh());
+        payload.put("tict3nm", fan.getTict3nm());
+        payload.put("tict3fh", fan.getTict3fh());
+        payload.put("tict3fm", fan.getTict3fm());
+
+        payload.put("ticps", fan.getTicps());
+        payload.put("ticat", fan.getTicat());
+        payload.put("ticot", fan.getTicot());
+        payload.put("tictitm", fan.getTictitm());
+        return payload;
     }
 
     /**
