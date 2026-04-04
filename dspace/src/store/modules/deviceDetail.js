@@ -76,15 +76,6 @@ const actions = {
       return { success: false, skipped: true, reason: 'NO_CURRENT_DEVICE' }
     }
 
-    // MQTT 推送只更新当前设备，避免无关刷新
-    if (
-      rootState.device.currUpdateDeviceNum &&
-      state.currDevice.deviceNum &&
-      rootState.device.currUpdateDeviceNum !== state.currDevice.deviceNum
-    ) {
-      return { success: false, skipped: true, reason: 'DEVICE_NOT_MATCHED' }
-    }
-
     try {
       const deviceId = state.currDevice.id
       const res = await request.get(`/device/detail/${deviceId}`)

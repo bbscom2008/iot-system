@@ -17,9 +17,9 @@
           <view class="status-dot success"></view>
         </view>
         <view class="info-item">
-          <view class="info-label">最后离线时间:</view>
+          <view class="info-label">最后在线时间:</view>
           <view class="info-value">{{
-            deviceInfo.lastOfflineTime || "--"
+            deviceInfo.lastOnlineTime || "--"
           }}</view>
         </view>
       </view>

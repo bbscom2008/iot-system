@@ -25,7 +25,7 @@ public class Device {
     private Integer warningStatus;   // 报警状态：0-正常 1-报警
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
-    private LocalDateTime lastOfflineTime; // 最后离线时间
+    private LocalDateTime lastOnlineTime; // 最后在线时间（心跳时间）
     
     // 设备设置相关字段
     private Integer levelTime;              // 阶梯时间（秒），大于等于0的整数

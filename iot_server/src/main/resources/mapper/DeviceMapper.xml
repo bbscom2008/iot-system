@@ -18,7 +18,7 @@
         <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
-        <result column="last_offline_time" property="lastOfflineTime" jdbcType="TIMESTAMP"/>
+        <result column="last_online_time" property="lastOnlineTime" jdbcType="TIMESTAMP"/>
         <result column="level_time" property="levelTime" jdbcType="INTEGER"/>
         <result column="gas_upper_limit" property="gasUpperLimit" jdbcType="INTEGER"/>
         <result column="gas_lower_limit" property="gasLowerLimit" jdbcType="INTEGER"/>
@@ -52,7 +52,7 @@
         <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
-        <result column="last_offline_time" property="lastOfflineTime" jdbcType="TIMESTAMP"/>
+        <result column="last_online_time" property="lastOnlineTime" jdbcType="TIMESTAMP"/>
         <result column="temp_upper_limit" property="tempUpperLimit" jdbcType="DECIMAL"/>
         <result column="temp_lower_limit" property="tempLowerLimit" jdbcType="DECIMAL"/>
         <result column="humidity_upper_limit" property="humidityUpperLimit" jdbcType="DECIMAL"/>
@@ -66,7 +66,7 @@
         SELECT 
             d.id, d.user_id, d.device_num, d.imei, d.iccid, d.device_name, d.device_type, d.device_line_state, 
             d.signal, d.electric_quantity, d.warning_status, d.created_time, d.updated_time, 
-            d.last_offline_time, d.temp_upper_limit, d.temp_lower_limit, d.humidity_upper_limit, 
+            d.last_online_time, d.temp_upper_limit, d.temp_lower_limit, d.humidity_upper_limit, 
             d.humidity_lower_limit, d.gas_upper_limit, d.gas_lower_limit,
             u.nike_name as user_name,
             u.phone as user_phone
@@ -197,7 +197,7 @@
             <if test="signal != null">signal = #{signal},</if>
             <if test="electricQuantity != null">electric_quantity = #{electricQuantity},</if>
             <if test="warningStatus != null">warning_status = #{warningStatus},</if>
-            <if test="lastOfflineTime != null">last_offline_time = #{lastOfflineTime},</if>
+            <if test="lastOnlineTime != null">last_online_time = #{lastOnlineTime},</if>
             <if test="levelTime != null">level_time = #{levelTime},</if>
             <if test="gasUpperLimit != null">gas_upper_limit = #{gasUpperLimit},</if>
             <if test="gasLowerLimit != null">gas_lower_limit = #{gasLowerLimit},</if>
@@ -253,8 +253,7 @@
     <update id="updateDeviceOnlineState">
         UPDATE devices
         SET device_line_state = #{state},
-            updated_time = NOW(),
-            last_offline_time = NOW()
+            updated_time = NOW()
         WHERE device_num = #{deviceNum}
     </update>
 
@@ -263,7 +262,7 @@
         SET device_line_state = #{onlineState},
             warning_status = #{warningStatus},
             updated_time = NOW(),
-            last_offline_time = NOW()
+            last_online_time = NOW()
         WHERE device_num = #{deviceNum}
     </update>
 

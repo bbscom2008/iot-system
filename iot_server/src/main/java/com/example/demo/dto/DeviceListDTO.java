@@ -38,7 +38,7 @@ public class DeviceListDTO {
     private LocalDateTime updatedTime; // 更新时间
 
     @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
-    private LocalDateTime lastOfflineTime; // 最后离线时间
+    private LocalDateTime lastOnlineTime; // 最后在线时间
 
     private List<SensorDTO> sensors; // 传感器列表
 

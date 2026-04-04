@@ -116,7 +116,7 @@ CREATE TABLE `devices`  (
   `warning_status` int(11) NULL DEFAULT 0 COMMENT '报警状态：0-正常 1-报警',
   `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `last_offline_time` datetime NULL DEFAULT NULL COMMENT '最后离线时间',
+  `last_online_time` datetime NULL DEFAULT NULL COMMENT '最后在线时间',
   `level_time` int(11) NOT NULL DEFAULT 0 COMMENT '阶梯时间（秒），大于等于0的整数',
   `gas_upper_limit` int(11) NULL DEFAULT 0 COMMENT '气体上限（ppm）',
   `gas_lower_limit` int(11) NULL DEFAULT 0 COMMENT '气体下限（ppm）',

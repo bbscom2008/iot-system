@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class CheckDeviceStatus {
     @Autowired
     public DeviceMapper deviceMapper;
     /**
-      *  每 10 分钟检测一次设备更新时间，超过 1 分钟则标记为离线
+      *  每 20 分钟检测一次设备更新时间，超过 5 分钟则标记为离线
       */
     @Scheduled(fixedRate = 20 * 60 * 1000)
     public void scheduledCheckDeviceOnlineStatus() {
@@ -32,11 +31,11 @@ public class CheckDeviceStatus {
             List<Device> devices = deviceMapper.findList(new HashMap<>());
             LocalDateTime now = LocalDateTime.now();
             for (Device d : devices) {
-                LocalDateTime updated = d.getUpdatedTime();
+                LocalDateTime lastOnlineTime = d.getLastOnlineTime();
                 int state = 0;
-                if (updated != null) {
-                    Duration diff = Duration.between(updated, now);
-                    if (Math.abs(diff.getSeconds()) <= 60) {
+                if (lastOnlineTime != null) {
+                    Duration diff = Duration.between(lastOnlineTime, now);
+                    if (Math.abs(diff.getSeconds()) <= 5 * 60) {
                         state = 1;
                     } else {
                         state = 0;

@@ -24,7 +24,7 @@ ExecStart=/usr/bin/java \
     -XX:+HeapDumpOnOutOfMemoryError \
     -XX:HeapDumpPath=/opt/iot-app/dumps/ \
     -Dspring.profiles.active=prod \
-    -jar /opt/iot-app/demo-0.0.1-SNAPSHOT.jar
+    -jar /opt/iot-app/iot_server.jar
 
 # 重启策略
 Restart=on-failure
