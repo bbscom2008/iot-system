@@ -47,6 +47,7 @@ public class MqttService implements MqttCallback {
 
     /**
      * 服务器查询温控仪数据
+     *
      * @param deviceNum
      * @return
      */
@@ -238,8 +239,8 @@ public class MqttService implements MqttCallback {
     /**
      * 解析类似：
      * {
-     *   wm:1
-     *   tcps:4
+     * wm:1
+     * tcps:4
      * }
      */
     private JsonNode parseLooseObjectPayload(String payload) {
@@ -602,14 +603,13 @@ public class MqttService implements MqttCallback {
 //            mqttMessage.setQos(1);
 //            client.publish(MqttService.QUERY_DEVICE_STATUS(deviceNum), mqttMessage);
 
-            this.publishString(MqttService.QUERY_DEVICE_STATUS(deviceNum), "QUERY_DEVICE_STATUS");
+        this.publishString(MqttService.QUERY_DEVICE_STATUS(deviceNum), "QUERY_DEVICE_STATUS");
 
 //        } catch (MqttException e) {
 //            log.warn("notifyToUpdate 出错了");
 //            throw new RuntimeException(e);
 //        }
     }
-
 
 
     /**

@@ -839,6 +839,7 @@ page {
   height: 52rpx;
   border-radius: 30%;
   border: 4rpx solid var(--accent-color);
+  border-color: #00ff00;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -856,7 +857,8 @@ page {
 }
 
 .frequency-circle .circle-value {
-  color: var(--accent-color);
+  /* color: var(--accent-color); */
+  color: #00ff00;
   font-size: 28rpx;
   font-weight: bold;
 }

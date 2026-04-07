@@ -21,6 +21,7 @@
           <input
             class="setting-input"
             v-model="deviceCode"
+            disabled
             placeholder="867920077581750"
           />
 				</view>
