@@ -26,6 +26,11 @@ public interface DeviceWarningMapper {
     Long countWarning(Map<String, Object> params);
 
     /**
+     * 查询设备最近一条报警记录
+     */
+    DeviceWarning findLatestByDeviceNumAndUserId(@Param("deviceNum") String deviceNum, @Param("userId") Long userId);
+
+    /**
      * 清理设备报警（原“标记已读”）
      */
     int deleteByDeviceNumAndUserId(@Param("deviceNum") String deviceNum, @Param("userId") Long userId);

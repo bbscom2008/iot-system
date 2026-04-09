@@ -6,10 +6,12 @@ import com.example.demo.dto.DeviceStatistics;
 import com.example.demo.dto.PageResult;
 import com.example.demo.dto.SensorDTO;
 import com.example.demo.entity.Device;
+import com.example.demo.entity.DeviceWarning;
 import com.example.demo.entity.FrequencyMotor;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.entity.Sensor;
 import com.example.demo.enums.PlatformType;
+import com.example.demo.mapper.DeviceWarningMapper;
 import com.example.demo.mapper.DeviceMapper;
 import com.example.demo.mapper.FrequencyMotorMapper;
 import com.example.demo.mapper.MotorFanMapper;
@@ -18,11 +20,6 @@ import com.example.demo.mapper.SensorDataMapper;
 import com.example.demo.util.DtoConverter;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,19 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class DeviceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeviceService.class);
-
     private final DeviceMapper deviceMapper;
     private final SensorMapper sensorMapper;
     private final MotorFanMapper motorFanMapper;
     private final FrequencyMotorMapper frequencyMotorMapper;
+    private final DeviceWarningMapper deviceWarningMapper;
     private final SensorDataMapper sensorDataMapper;
     private final DtoConverter dtoConverter;
 
@@ -95,13 +89,43 @@ public class DeviceService {
             // mobile端：只查询当前用户的设备
             totalDevices = deviceMapper.countAllByUserId(userId);
             onlineDevices = deviceMapper.countOnlineByUserId(userId);
-            alarmDevices = deviceMapper.countWarningByUserId(userId);
+
+            // 按“每个设备最近一条报警记录”判断设备是否报警
+            Map<String, Object> params = new HashMap<>();
+            params.put("userId", userId);
+            List<Device> userDevices = deviceMapper.findList(params);
+
+            long warningDeviceCount = userDevices.stream()
+                    .filter(device -> StringUtils.hasText(device.getDeviceNum()))
+                    .filter(device -> {
+                        DeviceWarning latestWarning = deviceWarningMapper
+                                .findLatestByDeviceNumAndUserId(device.getDeviceNum(), userId);
+                        return isDeviceAlarmedByLatestWarning(latestWarning);
+                    })
+                    .count();
+            alarmDevices = warningDeviceCount;
         }
 
         // 计算离线设备数
         Long offlineDevices = totalDevices - onlineDevices;
 
         return new DeviceStatistics(totalDevices, onlineDevices, offlineDevices, alarmDevices);
+    }
+
+    private boolean isDeviceAlarmedByLatestWarning(DeviceWarning warning) {
+        if (warning == null) {
+            return false;
+        }
+        return isAlarm(warning.getTa1())
+                || isAlarm(warning.getTa2())
+                || isAlarm(warning.getTa3())
+                || isAlarm(warning.getTa4())
+                || isAlarm(warning.getHa())
+                || isAlarm(warning.getNa());
+    }
+
+    private boolean isAlarm(Integer alarmFlag) {
+        return alarmFlag != null && alarmFlag != 0;
     }
 
     /**

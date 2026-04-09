@@ -59,6 +59,17 @@
         </where>
     </select>
 
+    <select id="findLatestByDeviceNumAndUserId" resultMap="BaseResultMap">
+        SELECT *
+        FROM device_warnings
+        WHERE device_num = #{deviceNum}
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        ORDER BY created_at DESC, id DESC
+        LIMIT 1
+    </select>
+
     <!-- 清理设备报警 -->
     <delete id="deleteByDeviceNumAndUserId">
         DELETE FROM device_warnings

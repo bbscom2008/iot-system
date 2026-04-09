@@ -155,6 +155,12 @@ public class MqttService implements MqttCallback {
         try {
             JsonNode node = parsePayloadNode(payload);
 
+            // 新增：常规设备上报 device/report/{STM32ID}
+            if (isDeviceReportTopic(topic)) {
+                handleDeviceReport(topic, node);
+                return;
+            }
+
             // 新增：变频详情设置上报 device/report/{STM32ID}/{imtx}
             if (isFrequencyMotorDetailTopic(topic)) {
                 handleFrequencyMotorDetailReport(topic, node);
@@ -173,54 +179,7 @@ public class MqttService implements MqttCallback {
                 return;
             }
 
-            JsonNode idNode = node.get("STM32ID");
-            String deviceNum = null;
-            if (idNode != null && idNode.isTextual()) {
-                deviceNum = idNode.asText();
-            }
-            // 兼容：如果载荷缺少 STM32ID，则从 topic device/report/{STM32ID} 解析
-            if (!StringUtils.hasText(deviceNum) && topic != null && topic.startsWith(DEVICE_REPORT)) {
-                deviceNum = topic.substring(DEVICE_REPORT.length());
-            }
-
-            if (StringUtils.hasText(deviceNum)) {
-                // 存储 mqtt 消息
-                mqttMessageDataService.save(deviceNum, node);
-
-                Device device = deviceService.findByDeviceNum(deviceNum);
-                if (device != null) {
-                    String imei = node.hasNonNull("IMEI") ? node.get("IMEI").asText() : null;
-                    String iccid = node.hasNonNull("ICCID") ? node.get("ICCID").asText() : null;
-                    deviceService.updateDeviceIdentity(deviceNum, imei, iccid);
-
-                    // 仅更新设备在线状态
-                    deviceService.updateDeviceOnlineState(device.getDeviceNum(), 1);
-
-                    // 传感器的父ID，即当前设备的ID
-                    Long parentId = device.getId();
-
-                    //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
-                    List<JsonUtils.KV<Double>> sensorValues = JsonUtils.convertJsonSensors(node);
-                    sensorService.batchUpdateValueByParentId(parentId, sensorValues);
-
-                    // 批量更新电机运行状态
-                    List<JsonUtils.KV<Integer>> motorValues = JsonUtils.convertJsonMotors(node);
-                    motorFanService.batchUpdateRunningStatusByParentId(parentId, motorValues);
-
-                    // 批量更新变频电机的值
-                    // 处理 变频电机
-                    List<JsonUtils.KV<Integer>> freqMotorValues = JsonUtils.convertJsonIMotor(node);
-                    // 如果有需要更新的值，调用批量更新方法
-                    frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
-
-                    // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
-                    // 服务器只接收和发送数据，不对数据进行逻辑处理
-//                    processMotorControlRules(device.getId(), device.getDeviceNum());
-
-                    // 数据已经更新，发消息给前端更新数据
-                    notifyToUpdate(deviceNum);
-                }
-            }
+            
 
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
@@ -378,6 +337,72 @@ public class MqttService implements MqttCallback {
                 && "report".equals(parts[1])
                 && StringUtils.hasText(parts[2])
                 && "alarm".equalsIgnoreCase(parts[3]);
+    }
+
+    private boolean isDeviceReportTopic(String topic) {
+        if (!StringUtils.hasText(topic)) {
+            return false;
+        }
+        String[] parts = topic.split("/");
+        return parts.length == 3
+                && "device".equals(parts[0])
+                && "report".equals(parts[1])
+                && StringUtils.hasText(parts[2]);
+    }
+
+    private void handleDeviceReport(String topic, JsonNode node) {
+        JsonNode idNode = node.get("STM32ID");
+        String deviceNum = null;
+        if (idNode != null && idNode.isTextual()) {
+            deviceNum = idNode.asText();
+        }
+        // 兼容：如果载荷缺少 STM32ID，则从 topic device/report/{STM32ID} 解析
+        if (!StringUtils.hasText(deviceNum) && topic != null && topic.startsWith(DEVICE_REPORT)) {
+            deviceNum = topic.substring(DEVICE_REPORT.length());
+        }
+
+        if (!StringUtils.hasText(deviceNum)) {
+            return;
+        }
+
+        // 存储 mqtt 消息
+        mqttMessageDataService.save(deviceNum, node);
+
+        Device device = deviceService.findByDeviceNum(deviceNum);
+        if (device == null) {
+            return;
+        }
+
+        String imei = node.hasNonNull("IMEI") ? node.get("IMEI").asText() : null;
+        String iccid = node.hasNonNull("ICCID") ? node.get("ICCID").asText() : null;
+        deviceService.updateDeviceIdentity(deviceNum, imei, iccid);
+
+        // 仅更新设备在线状态
+        deviceService.updateDeviceOnlineState(device.getDeviceNum(), 1);
+
+        // 传感器的父ID，即当前设备的ID
+        Long parentId = device.getId();
+
+        //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
+        List<JsonUtils.KV<Double>> sensorValues = JsonUtils.convertJsonSensors(node);
+        sensorService.batchUpdateValueByParentId(parentId, sensorValues);
+
+        // 批量更新电机运行状态
+        List<JsonUtils.KV<Integer>> motorValues = JsonUtils.convertJsonMotors(node);
+        motorFanService.batchUpdateRunningStatusByParentId(parentId, motorValues);
+
+        // 批量更新变频电机的值
+        // 处理 变频电机
+        List<JsonUtils.KV<Integer>> freqMotorValues = JsonUtils.convertJsonIMotor(node);
+        // 如果有需要更新的值，调用批量更新方法
+        frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
+
+        // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
+        // 服务器只接收和发送数据，不对数据进行逻辑处理
+        // processMotorControlRules(device.getId(), device.getDeviceNum());
+
+        // 数据已经更新，发消息给前端更新数据
+        notifyToUpdate(deviceNum);
     }
 
     private void handleDeviceAlarmReport(String topic, JsonNode node) {
