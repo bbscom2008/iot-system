@@ -15,9 +15,25 @@ public class DeviceWarning {
     private Long deviceId;
     private String deviceNum;
     private Long userId;
-    private String warningType;
-    private String warningMsg;
-    private Integer isRead;         // 0-未读 1-已读
+
+    // 温度报警与温度值
+    private Integer ta1;
+    private Double ts1;
+    private Integer ta2;
+    private Double ts2;
+    private Integer ta3;
+    private Double ts3;
+    private Integer ta4;
+    private Double ts4;
+
+    // 湿度报警与湿度值
+    private Integer ha;
+    private Double hv;
+
+    // 氨气报警与氨气值
+    private Integer na;
+    private Double nv;
+
     private LocalDateTime createdAt;
 }
 

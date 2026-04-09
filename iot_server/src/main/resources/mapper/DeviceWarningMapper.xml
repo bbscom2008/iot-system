@@ -9,11 +9,31 @@
         <result column="device_id" property="deviceId" jdbcType="BIGINT"/>
         <result column="device_num" property="deviceNum" jdbcType="VARCHAR"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
-        <result column="warning_type" property="warningType" jdbcType="VARCHAR"/>
-        <result column="warning_msg" property="warningMsg" jdbcType="VARCHAR"/>
-        <result column="is_read" property="isRead" jdbcType="INTEGER"/>
+        <result column="ta1" property="ta1" jdbcType="INTEGER"/>
+        <result column="ts1" property="ts1" jdbcType="DOUBLE"/>
+        <result column="ta2" property="ta2" jdbcType="INTEGER"/>
+        <result column="ts2" property="ts2" jdbcType="DOUBLE"/>
+        <result column="ta3" property="ta3" jdbcType="INTEGER"/>
+        <result column="ts3" property="ts3" jdbcType="DOUBLE"/>
+        <result column="ta4" property="ta4" jdbcType="INTEGER"/>
+        <result column="ts4" property="ts4" jdbcType="DOUBLE"/>
+        <result column="ha" property="ha" jdbcType="INTEGER"/>
+        <result column="hv" property="hv" jdbcType="DOUBLE"/>
+        <result column="na" property="na" jdbcType="INTEGER"/>
+        <result column="nv" property="nv" jdbcType="DOUBLE"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO device_warnings
+        (device_id, device_num, user_id,
+         ta1, ts1, ta2, ts2, ta3, ts3, ta4, ts4,
+         ha, hv, na, nv, created_at)
+        VALUES
+        (#{deviceId}, #{deviceNum}, #{userId},
+         #{ta1}, #{ts1}, #{ta2}, #{ts2}, #{ta3}, #{ts3}, #{ta4}, #{ts4},
+         #{ha}, #{hv}, #{na}, #{nv}, NOW())
+    </insert>
 
     <!-- 查询报警列表 -->
     <select id="findList" resultMap="BaseResultMap">
@@ -21,9 +41,6 @@
         <where>
             <if test="userId != null">
                 AND user_id = #{userId}
-            </if>
-            <if test="isRead != null">
-                AND is_read = #{isRead}
             </if>
         </where>
         ORDER BY created_at DESC
@@ -39,18 +56,17 @@
             <if test="userId != null">
                 AND user_id = #{userId}
             </if>
-            <if test="isRead != null">
-                AND is_read = #{isRead}
-            </if>
         </where>
     </select>
 
-    <!-- 标记报警已读 -->
-    <update id="markRead">
-        UPDATE device_warnings
-        SET is_read = 1
-        WHERE device_num = #{deviceNum} AND user_id = #{userId} AND is_read = 0
-    </update>
+    <!-- 清理设备报警 -->
+    <delete id="deleteByDeviceNumAndUserId">
+        DELETE FROM device_warnings
+        WHERE device_num = #{deviceNum}
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+    </delete>
 
 </mapper>
 

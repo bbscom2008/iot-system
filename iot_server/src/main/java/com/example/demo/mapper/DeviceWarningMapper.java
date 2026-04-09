@@ -11,6 +11,11 @@ import java.util.Map;
 public interface DeviceWarningMapper {
 
     /**
+     * 新增报警记录
+     */
+    int insert(DeviceWarning warning);
+
+    /**
      * 查询报警列表
      */
     List<DeviceWarning> findList(Map<String, Object> params);
@@ -21,8 +26,8 @@ public interface DeviceWarningMapper {
     Long countWarning(Map<String, Object> params);
 
     /**
-     * 标记报警已读
+     * 清理设备报警（原“标记已读”）
      */
-    int markRead(@Param("deviceNum") String deviceNum, @Param("userId") Long userId);
+    int deleteByDeviceNumAndUserId(@Param("deviceNum") String deviceNum, @Param("userId") Long userId);
 }
 

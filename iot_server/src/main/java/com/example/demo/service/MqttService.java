@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Device;
+import com.example.demo.entity.DeviceWarning;
 import com.example.demo.entity.FrequencyMotor;
 import com.example.demo.entity.MotorFan;
 import com.example.demo.util.JsonUtils;
@@ -101,6 +102,7 @@ public class MqttService implements MqttCallback {
     private final SensorService sensorService;
     private final MotorFanService motorFanService;
     private final FrequencyMotorService frequencyMotorService;
+    private final DeviceWarningService deviceWarningService;
     private final MqttMessageDataService mqttMessageDataService;
     private final MotorControlRuleEngineService motorControlRuleEngineService;
 
@@ -165,6 +167,12 @@ public class MqttService implements MqttCallback {
                 return;
             }
 
+            // 新增：报警上报 device/report/{STM32ID}/alarm
+            if (isDeviceAlarmTopic(topic)) {
+                handleDeviceAlarmReport(topic, node);
+                return;
+            }
+
             JsonNode idNode = node.get("STM32ID");
             String deviceNum = null;
             if (idNode != null && idNode.isTextual()) {
@@ -185,8 +193,8 @@ public class MqttService implements MqttCallback {
                     String iccid = node.hasNonNull("ICCID") ? node.get("ICCID").asText() : null;
                     deviceService.updateDeviceIdentity(deviceNum, imei, iccid);
 
-                    // 更新设备在线状态和报警状态
-                    deviceService.updateDeviceState(device, node);
+                    // 仅更新设备在线状态
+                    deviceService.updateDeviceOnlineState(device.getDeviceNum(), 1);
 
                     // 传感器的父ID，即当前设备的ID
                     Long parentId = device.getId();
@@ -358,6 +366,68 @@ public class MqttService implements MqttCallback {
                 && StringUtils.hasText(parts[2])
                 && StringUtils.hasText(parts[3])
                 && parts[3].toLowerCase().matches("^imt\\d+$");
+    }
+
+    private boolean isDeviceAlarmTopic(String topic) {
+        if (!StringUtils.hasText(topic)) {
+            return false;
+        }
+        String[] parts = topic.split("/");
+        return parts.length == 4
+                && "device".equals(parts[0])
+                && "report".equals(parts[1])
+                && StringUtils.hasText(parts[2])
+                && "alarm".equalsIgnoreCase(parts[3]);
+    }
+
+    private void handleDeviceAlarmReport(String topic, JsonNode node) {
+        try {
+            String[] parts = topic.split("/");
+            String stm32Id = parts[2];
+            if (!StringUtils.hasText(stm32Id)) {
+                JsonNode idNode = node.get("STM32ID");
+                if (idNode != null && idNode.isTextual()) {
+                    stm32Id = idNode.asText();
+                }
+            }
+
+            if (!StringUtils.hasText(stm32Id)) {
+                log.warn("报警上报忽略，缺少设备编号: topic={}", topic);
+                return;
+            }
+
+            Device device = deviceService.findByDeviceNum(stm32Id);
+            if (device == null) {
+                log.warn("报警上报忽略，设备不存在: stm32Id={}, topic={}", stm32Id, topic);
+                return;
+            }
+
+            DeviceWarning warning = new DeviceWarning();
+            warning.setDeviceId(device.getId());
+            warning.setDeviceNum(device.getDeviceNum());
+            warning.setUserId(device.getUserId());
+
+            warning.setTa1(getInt(node, "ta1"));
+            warning.setTs1(getDouble(node, "ts1"));
+            warning.setTa2(getInt(node, "ta2"));
+            warning.setTs2(getDouble(node, "ts2"));
+            warning.setTa3(getInt(node, "ta3"));
+            warning.setTs3(getDouble(node, "ts3"));
+            warning.setTa4(getInt(node, "ta4"));
+            warning.setTs4(getDouble(node, "ts4"));
+            warning.setHa(getInt(node, "ha"));
+            warning.setHv(getDouble(node, "hv"));
+            warning.setNa(getInt(node, "na"));
+            warning.setNv(getDouble(node, "nv"));
+
+            deviceWarningService.saveWarning(warning);
+            mqttMessageDataService.save(stm32Id, node);
+            notifyToUpdate(stm32Id);
+
+            log.info("报警上报已保存: stm32Id={}, deviceId={}", stm32Id, device.getId());
+        } catch (Exception e) {
+            log.error("处理报警上报失败: topic={}", topic, e);
+        }
     }
 
     private void handleFrequencyMotorDetailReport(String topic, JsonNode node) {

@@ -89,17 +89,6 @@ public interface DeviceMapper {
 
     int updateDeviceOnlineState(@Param("deviceNum") String deviceNum, @Param("state") Integer state);
 
-    /**
-     * 更新设备状态,
-     * 
-     * @param deviceNum
-     * @param onlineState
-     * @param warningStatus
-     * @return
-     */
-    int updateDeviceState(@Param("deviceNum") String deviceNum, @Param("onlineState") Integer onlineState,
-            @Param("warningStatus") Integer warningStatus);
-
         int updateDeviceIdentity(@Param("deviceNum") String deviceNum, @Param("imei") String imei,
             @Param("iccid") String iccid);
 

@@ -27,7 +27,6 @@ public class DeviceWarningService {
         if (userId != null) {
             params.put("userId", userId);
         }
-        params.put("isRead", 0); // 只查询未读
 
         // 分页参数
         if (pageNum != null && pageSize != null) {
@@ -47,7 +46,15 @@ public class DeviceWarningService {
      */
     @Transactional
     public void markWarningRead(String deviceNum, Long userId) {
-        deviceWarningMapper.markRead(deviceNum, userId);
+        deviceWarningMapper.deleteByDeviceNumAndUserId(deviceNum, userId);
+    }
+
+    @Transactional
+    public void saveWarning(DeviceWarning warning) {
+        if (warning == null || warning.getDeviceId() == null) {
+            return;
+        }
+        deviceWarningMapper.insert(warning);
     }
 }
 

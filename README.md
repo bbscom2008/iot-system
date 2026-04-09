@@ -12,19 +12,10 @@ username: {STM32ID}
 password: {IMEI}
 ```
 
+## 温控仪数据上报
+主题:  **device/report/{STM32ID}**
+> {STM32ID} : STM32单片机ID
 
-## 1- 查询设备状态 （暂无）
-> 说明：服务器添加设备后，发送该消息查询状态，设备收到后上报当前设备的状态。
-
-主题:   `device/query-status/{STM32ID}`
-数据格式：
-```
-QUERY_DEVICE_STATUS
-```
-
-
-## 2- 温控仪数据上报
-主题:   `device/report/{STM32ID}`
 数据格式：
 ```json
 {
@@ -49,23 +40,105 @@ QUERY_DEVICE_STATUS
     "imt2": 60
 }
 ```
-> STM32ID: STM32单片机ID
-> IMEI: 是4G模块的中的维一识别码。
-> ICCID: IC卡的唯一ID
+> STM32ID : STM32单片机ID
+> IMEI : 是4G模块的中的维一识别码。
+> ICCID : IC卡的唯一ID
 > ts1 - ts4 ：是 4个温度传感器，如果没有可以不传。
 > mt1 - mt10 ：是10个电机，1 运行  0 停止
 > imt1 - imt2 ： 是2个变频电机 数值是 0 - 100 
 > power : 电量 0 - 100 的值
 > signal : 信号强度 ，具体值是什么？ 1 - 10 还是多少？
 
-## 3- 风机详情设置
+## 设备报警
+主题:  **device/report/{STM32ID}/alarm**
+> {STM32ID} : STM32单片机ID
+
+数据格式：
+```json
+{
+  "ta1": 0,
+  "ts1": 30,
+  "ta2": 0,
+  "ts2": 33,
+  "ta3": 0,
+  "ts3": 32,
+  "ta4": 0,
+  "ts4": 22,
+  "ha": 0,
+  "hv": 50,
+  "na": 0,
+  "nv": 20
+}
+
+```
+> ta1-ta4 : 4个温度报警，0未报警、1低温报警 、2高温报警、3传感器断开报警。
+> ts1-ts4 : 4个温度传感器的值。
+> ha : 湿度报警，0未报警、1低湿报警、2高湿报警。
+> hv : 湿度传感器的值
+> na : 氨气报警，0未报警、1低浓度报警、2高浓度报警。
+> nv : 氨气传感器的值
+
+## 工厂设置
+主题: 
+设备to服务器 ：**device/report/{STM32ID}/factoryset**
+服务器to设备 ：**server/setting/{STM32ID}/factoryset**
+> {STM32ID} : STM32单片机ID
+
+数据格式：
+```json
+{
+  "taul": 380,
+  "tadl": 100,
+  "haul": 800,
+  "hadl": 300,
+  "naul": 35,
+  "nadl": 0,
+  "tcv1": 0,
+  "tcv2": 0,
+  "tcv3": 0,
+  "tcv4": 0,
+  "hcv": 0,
+  "ncv": 0,
+  "tof1": 0,
+  "tof2": 0,
+  "tof3": 0,
+  "tof4": 0,
+  "lt": 1,
+  "hr": 100,
+  "nr": 100,
+  "tb": 10,
+  "hb": 1,
+  "nb": 1
+}
+
+```
+> taul：温度报警上限（380代表38°C）
+> tadl：温度报警下限
+> haul：湿度报警上限
+> hadl：湿度报警下限
+> naul：氨气报警上限
+> nadl：氨气报警下限
+> tcv1-tcv4：温度补偿值
+> hcv：湿度补偿值，*10
+> ncv：氨气补偿值
+> tof1-tof4：4个温度开关标志位，0开1关
+> lt: 延时时间（阶梯时间）
+> hr：湿度里程
+> nr：氨气里程
+> tb：温度回差
+> hb：湿度回差
+> nb：氨气回差
+
+
+
+## 风机设置
 主题 Topic
-设备to服务器 ：device/report/{STM32ID}/{mtx}
-服务器to设备 ：server/setting/{STM32ID}/{mtx}
+设备to服务器 ：**device/report/{STM32ID}/{mtx}**
+服务器to设备 ：**server/setting/{STM32ID}/{mtx}**
 > {STM32ID} : 芯片ID
 > {mtx} : 设备mt1-mt10
+> 
 > 如：
->  
 >  device/report/464B21320F3936313536374D/mt1
 >  
 >  server/setting/464B21320F3936313536374D/mt2
@@ -181,7 +254,7 @@ QUERY_DEVICE_STATUS
 > ticot:定时停止温度
 > tictitm:定时温控模式0降温1升温
 
-## 变频详情设置
+## 变频设置
 
 主题 Topic
 设备to服务器 ：device/report/{STM32ID}/{imtx}
@@ -191,8 +264,8 @@ QUERY_DEVICE_STATUS
 > {imtx} : 设备imt1-imt2
 > 
 > 如：
->  device/report/464B21320F3936313536374D/mt1
->  server/setting/464B21320F3936313536374D/mt2
+>  device/report/464B21320F3936313536374D/imt1
+>  server/setting/464B21320F3936313536374D/imt1
 
 
 数据格式：
