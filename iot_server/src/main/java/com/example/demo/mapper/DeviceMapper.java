@@ -87,6 +87,11 @@ public interface DeviceMapper {
      */
     Long countWarning();
 
+    /**
+     * 按设备编号更新上报字段（身份、在线状态、信号、电量）
+     */
+    int updateDeviceByDeviceNum(Device device);
+
     int updateDeviceOnlineState(@Param("deviceNum") String deviceNum, @Param("state") Integer state);
 
         int updateDeviceIdentity(@Param("deviceNum") String deviceNum, @Param("imei") String imei,

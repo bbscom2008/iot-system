@@ -103,7 +103,6 @@ public class MqttService implements MqttCallback {
     private final MotorFanService motorFanService;
     private final FrequencyMotorService frequencyMotorService;
     private final DeviceWarningService deviceWarningService;
-    private final MqttMessageDataService mqttMessageDataService;
     private final MotorControlRuleEngineService motorControlRuleEngineService;
 
     @PostConstruct
@@ -362,11 +361,9 @@ public class MqttService implements MqttCallback {
         }
 
         if (!StringUtils.hasText(deviceNum)) {
+            log.warn("设备上报忽略，缺少设备编号: topic={}, payload={}", topic, node.toString());
             return;
         }
-
-        // 存储 mqtt 消息
-        mqttMessageDataService.save(deviceNum, node);
 
         Device device = deviceService.findByDeviceNum(deviceNum);
         if (device == null) {
@@ -375,10 +372,9 @@ public class MqttService implements MqttCallback {
 
         String imei = node.hasNonNull("IMEI") ? node.get("IMEI").asText() : null;
         String iccid = node.hasNonNull("ICCID") ? node.get("ICCID").asText() : null;
-        deviceService.updateDeviceIdentity(deviceNum, imei, iccid);
-
-        // 仅更新设备在线状态
-        deviceService.updateDeviceOnlineState(device.getDeviceNum(), 1);
+        Integer signal = getInt(node, "signal");
+        Integer power = getInt(node, "power");
+        deviceService.updateDevice(deviceNum, imei, iccid, 1, signal, power);
 
         // 传感器的父ID，即当前设备的ID
         Long parentId = device.getId();
@@ -399,7 +395,7 @@ public class MqttService implements MqttCallback {
 
         // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
         // 服务器只接收和发送数据，不对数据进行逻辑处理
-        // processMotorControlRules(device.getId(), device.getDeviceNum());
+        processMotorControlRules(device.getId(), device.getDeviceNum());
 
         // 数据已经更新，发消息给前端更新数据
         notifyToUpdate(deviceNum);
@@ -446,7 +442,6 @@ public class MqttService implements MqttCallback {
             warning.setNv(getDouble(node, "nv"));
 
             deviceWarningService.saveWarning(warning);
-            mqttMessageDataService.save(stm32Id, node);
             notifyToUpdate(stm32Id);
 
             log.info("报警上报已保存: stm32Id={}, deviceId={}", stm32Id, device.getId());
@@ -521,7 +516,6 @@ public class MqttService implements MqttCallback {
             update.setAnpts(getInt(node, "anpts"));
 
             frequencyMotorService.update(update);
-            mqttMessageDataService.save(stm32Id, node);
             notifyToUpdate(stm32Id);
             log.info("变频详情上报已更新: stm32Id={}, imtx={}, frequencyMotorId={}", stm32Id, imtx, frequencyMotor.getId());
         } catch (Exception e) {
@@ -608,7 +602,6 @@ public class MqttService implements MqttCallback {
             update.setTictitm(getInt(node, "tictitm"));
 
             motorFanService.update(update);
-            mqttMessageDataService.save(stm32Id, node);
             notifyToUpdate(stm32Id);
             log.info("风机详情上报已更新: stm32Id={}, motorNum={}, motorFanId={}", stm32Id, motorNum, motorFan.getId());
         } catch (Exception e) {

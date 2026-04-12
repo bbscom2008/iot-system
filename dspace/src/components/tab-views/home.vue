@@ -100,23 +100,23 @@
               <view class="status-item">
                 <view
                   class="status-icon wifi-icon"
-                  :class="{ active: item.signal > 1 }"
+                  :class="{ active: item.signal > 60 }"
                 >
                   <SvgIcon name="wifi" :size="18" />
                 </view>
                 <text
                   class="status-text"
-                  :class="{ active: item.signal > 1 }"
-                  >{{ item.signal > 1 ? "网络正常" : "网络异常" }}</text
+                  :class="{ active: item.signal > 60 }"
+                  >{{ item.signal > 60 ? "网络正常" : "网络异常" }}</text
                 >
               </view>
               <view class="status-item">
                 <view
                   class="status-icon battery-icon"
-                  :class="{ active: item.power > 20 }"
+                  :class="{ active: item.power > 50 }"
                 >
                   <SvgIcon
-                    v-if="item.power > 20"
+                    v-if="item.power > 50"
                     name="power-full"
                     :size="18"
                   />
@@ -124,9 +124,9 @@
                 </view>
                 <text
                   class="status-text"
-                  :class="{ active: item.power > 20 }"
+                  :class="{ active: item.power > 50 }"
                   >{{
-                    item.power > 20 ? "电量充足" : "电量不足"
+                    item.power > 50 ? "电量充足" : "电量不足"
                   }}</text
                 >
               </view>

@@ -291,6 +291,21 @@ public class DeviceService {
         deviceMapper.updateDeviceOnlineState(deviceNum, state);
     }
 
+    public void updateDevice(String deviceNum, String imei, String iccid,
+            Integer deviceLineState, Integer signal, Integer power) {
+        if (!StringUtils.hasText(deviceNum)) {
+            return;
+        }
+        Device update = new Device();
+        update.setDeviceNum(deviceNum);
+        update.setImei(imei);
+        update.setIccid(iccid);
+        update.setDeviceLineState(deviceLineState);
+        update.setSignal(signal);
+        update.setPower(power);
+        deviceMapper.updateDeviceByDeviceNum(update);
+    }
+
     public void updateDeviceIdentity(String deviceNum, String imei, String iccid) {
         if (!StringUtils.hasText(deviceNum)) {
             return;

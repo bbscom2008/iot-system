@@ -6,7 +6,7 @@
 
 /**
  * 设备数据消息解析器
- * 对应后端的 MqttMessageData 数据模型
+ * 对应后端设备上报消息结构
  */
 export class DeviceDataParser {
   /**
