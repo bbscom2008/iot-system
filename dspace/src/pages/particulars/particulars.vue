@@ -23,7 +23,7 @@
 			</view>
 			<view class="info-item">
 				<view class="label">电池电量：</view>
-				<view class="value">{{ deviceInfo.electricQuantity }}%</view>
+				<view class="value">{{ deviceInfo.power }}%</view>
 			</view>
 
 			<!-- 传感器数据 -->

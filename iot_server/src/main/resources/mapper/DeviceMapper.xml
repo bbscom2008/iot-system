@@ -14,7 +14,7 @@
         <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
         <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
         <result column="signal" property="signal" jdbcType="INTEGER"/>
-        <result column="electric_quantity" property="electricQuantity" jdbcType="INTEGER"/>
+        <result column="power" property="power" jdbcType="INTEGER"/>
         <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
@@ -48,7 +48,7 @@
         <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
         <result column="device_line_state" property="deviceLineState" jdbcType="INTEGER"/>
         <result column="signal" property="signal" jdbcType="INTEGER"/>
-        <result column="electric_quantity" property="electricQuantity" jdbcType="INTEGER"/>
+        <result column="power" property="power" jdbcType="INTEGER"/>
         <result column="warning_status" property="warningStatus" jdbcType="INTEGER"/>
         <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
@@ -65,7 +65,7 @@
     <select id="findListWithUser" resultMap="DeviceListResultMap">
         SELECT 
             d.id, d.user_id, d.device_num, d.imei, d.iccid, d.device_name, d.device_type, d.device_line_state, 
-            d.signal, d.electric_quantity, d.warning_status, d.created_time, d.updated_time, 
+            d.signal, d.power, d.warning_status, d.created_time, d.updated_time, 
             d.last_online_time, d.temp_upper_limit, d.temp_lower_limit, d.humidity_upper_limit, 
             d.humidity_lower_limit, d.gas_upper_limit, d.gas_lower_limit,
             u.nike_name as user_name,
@@ -195,7 +195,7 @@
             <if test="deviceType != null">device_type = #{deviceType},</if>
             <if test="deviceLineState != null">device_line_state = #{deviceLineState},</if>
             <if test="signal != null">signal = #{signal},</if>
-            <if test="electricQuantity != null">electric_quantity = #{electricQuantity},</if>
+            <if test="power != null">power = #{power},</if>
             <if test="warningStatus != null">warning_status = #{warningStatus},</if>
             <if test="lastOnlineTime != null">last_online_time = #{lastOnlineTime},</if>
             <if test="levelTime != null">level_time = #{levelTime},</if>

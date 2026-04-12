@@ -61,7 +61,7 @@
           <view class="status-indicator">
             <view class="battery-icon">🔋</view>
             <text class="status-text"
-              >{{ deviceInfo.electricQuantity || "--" }}%</text
+              >{{ deviceInfo.power || "--" }}%</text
             >
           </view>
           <view class="status-indicator">

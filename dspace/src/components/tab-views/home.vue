@@ -113,10 +113,10 @@
               <view class="status-item">
                 <view
                   class="status-icon battery-icon"
-                  :class="{ active: item.electricQuantity > 20 }"
+                  :class="{ active: item.power > 20 }"
                 >
                   <SvgIcon
-                    v-if="item.electricQuantity > 20"
+                    v-if="item.power > 20"
                     name="power-full"
                     :size="18"
                   />
@@ -124,9 +124,9 @@
                 </view>
                 <text
                   class="status-text"
-                  :class="{ active: item.electricQuantity > 20 }"
+                  :class="{ active: item.power > 20 }"
                   >{{
-                    item.electricQuantity > 20 ? "电量充足" : "电量不足"
+                    item.power > 20 ? "电量充足" : "电量不足"
                   }}</text
                 >
               </view>

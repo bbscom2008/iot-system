@@ -26,7 +26,7 @@ public class DeviceDetailDTO {
     private Integer deviceType;      // 设备类型ID
     private Integer deviceLineState; // 0-离线 1-在线
     private Integer signal;          // 信号强度
-    private Integer electricQuantity; // 电量（0-100）
+    private Integer power; // 电量（0-100）
     private Integer warningStatus;   // 报警状态：0-正常 1-报警
     
     @JsonFormat(pattern = DateUtils.DATE_TIME_FORMAT, timezone = DateUtils.TIME_ZONE)
