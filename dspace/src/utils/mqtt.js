@@ -150,6 +150,8 @@ class MqttClient {
 
             // 存储订阅信息和回调
             topicArray.forEach((topic) => {
+              console.log('=====订阅的主题======', topic);
+              
               this.subscriptions.set(topic, {
                 qos: opts.qos,
                 callback,

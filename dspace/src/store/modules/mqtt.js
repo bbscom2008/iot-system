@@ -203,9 +203,13 @@ const actions = {
    */
   async handleMessage({ commit, dispatch }, { topic, message }) {
     // 匹配设备数据主题：wxapi/{deviceId}
+
+    console.log("=====收到 mqtt 消息=======");
+    console.log("Topic:", topic);
+    console.log("Message:", message);
+
     if (topic.startsWith('wxapi/') ) {
       const deviceId = topic.split('/')[1];
-
 
       // 更新设备首页信息
       dispatch('device/updateDeviceHome', {
@@ -327,7 +331,7 @@ const actions = {
       const currentSubscriptions = state.subscriptions;
       const newTopics = topics.filter(topic => !currentSubscriptions.includes(topic));
       if (newTopics.length > 0) {
-        await mqttClient.subscribe(newTopics, { qos: 1 });
+        await mqttClient.subscribe(newTopics, { qos: 2 });
         commit('SET_SUBSCRIPTIONS', mqttClient.getSubscriptions());
       }
     } catch (error) {

@@ -178,8 +178,6 @@ public class MqttService implements MqttCallback {
                 return;
             }
 
-            
-
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
         }
@@ -338,6 +336,11 @@ public class MqttService implements MqttCallback {
                 && "alarm".equalsIgnoreCase(parts[3]);
     }
 
+    /**
+     * 判断是否是设备常规上报 topic，如 device/report/{STM32ID}
+     * @param topic
+     * @return
+     */
     private boolean isDeviceReportTopic(String topic) {
         if (!StringUtils.hasText(topic)) {
             return false;
@@ -367,6 +370,7 @@ public class MqttService implements MqttCallback {
 
         Device device = deviceService.findByDeviceNum(deviceNum);
         if (device == null) {
+            log.warn("设备上报忽略，设备不存在: deviceNum={}, topic={}", deviceNum, topic);
             return;
         }
 
@@ -394,11 +398,11 @@ public class MqttService implements MqttCallback {
         frequencyMotorService.batchUpdateValueByParentId(parentId, freqMotorValues);
 
         // 应用电机控制规则 - 基于自动模式和控制模式管理电机状态
-        // 服务器只接收和发送数据，不对数据进行逻辑处理
-        processMotorControlRules(device.getId(), device.getDeviceNum());
+        // 注释 下面这行，现在 服务器只接收和发送数据，不对数据进行逻辑处理
+        // processMotorControlRules(device.getId(), device.getDeviceNum());
 
         // 数据已经更新，发消息给前端更新数据
-        notifyToUpdate(deviceNum);
+        notifyToUpdate(deviceNum, topic);
     }
 
     private void handleDeviceAlarmReport(String topic, JsonNode node) {
@@ -442,7 +446,7 @@ public class MqttService implements MqttCallback {
             warning.setNv(getDouble(node, "nv"));
 
             deviceWarningService.saveWarning(warning);
-            notifyToUpdate(stm32Id);
+            notifyToUpdate(stm32Id, topic);
 
             log.info("报警上报已保存: stm32Id={}, deviceId={}", stm32Id, device.getId());
         } catch (Exception e) {
@@ -516,7 +520,7 @@ public class MqttService implements MqttCallback {
             update.setAnpts(getInt(node, "anpts"));
 
             frequencyMotorService.update(update);
-            notifyToUpdate(stm32Id);
+            notifyToUpdate(stm32Id, topic);
             log.info("变频详情上报已更新: stm32Id={}, imtx={}, frequencyMotorId={}", stm32Id, imtx, frequencyMotor.getId());
         } catch (Exception e) {
             log.error("处理变频详情上报失败: topic={}", topic, e);
@@ -602,7 +606,7 @@ public class MqttService implements MqttCallback {
             update.setTictitm(getInt(node, "tictitm"));
 
             motorFanService.update(update);
-            notifyToUpdate(stm32Id);
+            notifyToUpdate(stm32Id, topic);
             log.info("风机详情上报已更新: stm32Id={}, motorNum={}, motorFanId={}", stm32Id, motorNum, motorFan.getId());
         } catch (Exception e) {
             log.error("处理风机详情上报失败: topic={}", topic, e);
@@ -661,14 +665,16 @@ public class MqttService implements MqttCallback {
      *
      * @param deviceNum
      */
-    public void notifyToUpdate(String deviceNum) {
+    public void notifyToUpdate(String deviceNum, String topic) {
         try {
+            log.info("发送更新通知: deviceNum={}, topic={}", deviceNum, topic);
+
             Map<String, Object> messageMap = new HashMap<>();
-            messageMap.put("topic", MqttService.DEVICE_REPORT + deviceNum);
+            messageMap.put("topic", topic);
             messageMap.put("payload", "UPDATE_DEVICES");
             // qos 1 确保消息到达
             MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
-            mqttMessage.setQos(1);
+            mqttMessage.setQos(2);
             client.publish(MqttService.WX_CTRL + deviceNum, mqttMessage);
         } catch (MqttException | JsonProcessingException e) {
             log.warn("notifyToUpdate 出错了");
@@ -694,7 +700,6 @@ public class MqttService implements MqttCallback {
         this.publishString(MqttService.QUERY_DEVICE_STATUS(deviceNum), "QUERY_DEVICE_STATUS");
 
 //        } catch (MqttException e) {
-//            log.warn("notifyToUpdate 出错了");
 //            throw new RuntimeException(e);
 //        }
     }

@@ -541,8 +541,8 @@ public class MotorControlRuleEngineService {
 
             log.warn("MQTT消息发送成功: driverNum={}, motorNum={}", deviceNum, motorNum);
 
-            // 通知前端页面，更新状态
-            mqttService.notifyToUpdate(deviceNum);
+            // 通知前端页面，更新状态 // 临时 topic 这个地方现在已经不用了
+            mqttService.notifyToUpdate(deviceNum, "device/updateMotorFanState");
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

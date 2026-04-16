@@ -158,9 +158,6 @@ public class SensorService {
                 addSensor(sensor);
             }
         }
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("parentId", parentId);
-//        params.put("valuesList", skvList);
         sensorMapper.batchUpdateValueByParentId(parentId, skvList);
     }
 
