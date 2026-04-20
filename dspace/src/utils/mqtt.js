@@ -18,6 +18,8 @@ class MqttClient {
     this.messageHandlers = new Map(); // 消息处理器
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 10;
+    this.recentUpdateMessages = new Map(); // 短时间重复消息去重
+    this.updateDedupWindowMs = 1500;
   }
 
   /**
@@ -186,19 +188,21 @@ class MqttClient {
       const opts = { qos: options.qos || this.config.qos, ...options };
 
       try {
-        this.client.subscribe(topicArray, opts, (error, granted) => {
-          if (error) {
-            console.error('[MQTT] Pending subscribe error:', error);
-            if (reject) reject(error);
-          } else {
-            console.log('[MQTT] Pending subscribed to:', granted);
-            topicArray.forEach((topic) => {
-              this.subscriptions.set(topic, { qos: opts.qos, callback });
-            });
-            this.emit('subscribed', topicArray);
-            if (resolve) resolve(granted);
-          }
-        });
+        console.log("====处理在未连接期间缓存的订阅请求====");
+        this.subscribe(topicArray, opts, callback).then(resolve).catch(reject);
+        // this.client.subscribe(topicArray, opts, (error, granted) => {
+        //   if (error) {
+        //     console.error('[MQTT] Pending subscribe error:', error);
+        //     if (reject) reject(error);
+        //   } else {
+        //     console.log('[MQTT] Pending subscribed to:', granted);
+        //     topicArray.forEach((topic) => {
+        //       this.subscriptions.set(topic, { qos: opts.qos, callback });
+        //     });
+        //     this.emit('subscribed', topicArray);
+        //     if (resolve) resolve(granted);
+        //   }
+        // });
       } catch (error) {
         console.error('[MQTT] Pending subscribe failed:', error);
         if (reject) reject(error);
@@ -300,8 +304,13 @@ class MqttClient {
       } catch (e) {
         parsedMessage = messageStr;
       }
-
       console.log('[MQTT] Received message on', topic, ':', parsedMessage);
+
+      // 针对 wxapi 更新通知做短窗口去重（避免 QoS 重投或重复监听造成的重复处理）
+      if (this.shouldDropDuplicateUpdateMessage(topic, parsedMessage)) {
+        return;
+      }
+
 
       // 调用特定主题的回调
       const subscription = this.subscriptions.get(topic);
@@ -320,6 +329,35 @@ class MqttClient {
     } catch (error) {
       console.error('[MQTT] Error handling message:', error);
     }
+  }
+
+  /**
+   * 是否应丢弃重复的更新通知
+   * @private
+   */
+  shouldDropDuplicateUpdateMessage(topic, parsedMessage) {
+    if (!topic || !topic.startsWith('wxapi/')) return false;
+    if (!parsedMessage || typeof parsedMessage !== 'object') return false;
+    if (parsedMessage.payload !== 'UPDATE_DEVICES') return false;
+
+    const key = `${topic}|${parsedMessage.payload}|${parsedMessage.topic || ''}`;
+    const now = Date.now();
+    const last = this.recentUpdateMessages.get(key);
+
+    // 清理过期缓存
+    this.recentUpdateMessages.forEach((timestamp, k) => {
+      if (now - timestamp > this.updateDedupWindowMs) {
+        this.recentUpdateMessages.delete(k);
+      }
+    });
+
+    if (last && now - last <= this.updateDedupWindowMs) {
+      console.warn('[MQTT] Duplicate UPDATE_DEVICES dropped:', key);
+      return true;
+    }
+
+    this.recentUpdateMessages.set(key, now);
+    return false;
   }
 
   /**
@@ -372,7 +410,10 @@ class MqttClient {
     if (!this.messageHandlers.has(event)) {
       this.messageHandlers.set(event, []);
     }
-    this.messageHandlers.get(event).push(callback);
+    const handlers = this.messageHandlers.get(event);
+    if (!handlers.includes(callback)) {
+      handlers.push(callback);
+    }
   }
 
   /**
@@ -381,11 +422,23 @@ class MqttClient {
    * @param {Function} callback - 回调函数
    */
   off(event, callback) {
+    if (!this.messageHandlers.has(event)) return;
+
+    // 不传 callback 时移除该事件全部监听
+    if (!callback) {
+      this.messageHandlers.delete(event);
+      return;
+    }
+
     const handlers = this.messageHandlers.get(event);
     if (handlers) {
       const index = handlers.indexOf(callback);
       if (index > -1) {
         handlers.splice(index, 1);
+      }
+
+      if (handlers.length === 0) {
+        this.messageHandlers.delete(event);
       }
     }
   }

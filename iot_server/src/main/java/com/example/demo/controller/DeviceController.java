@@ -82,6 +82,12 @@ public class DeviceController {
     }
 
 
+    /**
+     * 已经废弃，暂时不用了
+     * @param deviceNum
+     * @return
+     */
+    @Deprecated
     @PostMapping("/notifyUpdateStatus")
     public ApiResponse<String> notifyUpdateStatus( @RequestBody String deviceNum){
         // 通知设备，让设备上报数据

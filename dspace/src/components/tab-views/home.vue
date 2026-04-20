@@ -88,7 +88,7 @@
           <view class="device-info">
             <!-- 设备编号 -->
             <view class="base-info">
-              <view v-if="hasAnyOutOfRange(item)" class="alarm-icon">
+              <view v-if="item.warning_status" class="alarm-icon">
                 <SvgIcon name="alarm" :size="18" color="#cda109" />
               </view>
               <view class="device-number">{{ item.deviceName }}</view>
@@ -231,8 +231,15 @@ export default {
   },
   
   mounted() {
-    this.getSwiperList();
-    this.equipmentState();
+    this.handleDeviceUpdate();
+    // 监听设备更新事件
+    uni.$on("device/update", this.handleDeviceUpdate);
+    uni.$on("device/alarm", this.handleDeviceUpdate);
+  },
+  beforeDestroy() {
+    // 移除设备更新事件监听
+    uni.$off("device/update", this.handleDeviceUpdate);
+    uni.$off("device/alarm", this.handleDeviceUpdate);
   },
   methods: {
     ...mapActions('device', [
@@ -241,11 +248,16 @@ export default {
       'fetchDeviceList',
       'fetchDeviceStats'
     ]),
+    handleDeviceUpdate(){
+      console.log("刷新设备列表和统计");
+      this.getDeviceList();
+      this.equipmentState();
+    },
     // 切换 Tab
     switchTab(index) {
       this.currentTab = index;
       if (index === 0) {
-        this.getSwiperList();
+        this.handleDeviceUpdate();
       } else {
         this.getRechargeList();
       }
@@ -255,7 +267,7 @@ export default {
       console.log("获取充值列表");
     },
     // 获取设备列表（使用 Vuex action）
-    async getSwiperList() {
+    async getDeviceList() {
       try {
         await this.fetchDeviceList();
       } catch (err) {
@@ -294,8 +306,7 @@ export default {
           icon: "success",
         });
         // 刷新设备列表
-        this.getSwiperList();
-        this.equipmentState();
+        this.handleDeviceUpdate();
       } catch (err) {
         uni.showToast({
           title: err.msg || "绑定失败",
@@ -383,9 +394,9 @@ export default {
         // 进入设备详情
         // 通知更新设备数据
 
-        request.post("/device/notifyUpdateStatus", {
-          deviceNum: item.deviceNum,
-        });
+        // request.post("/device/notifyUpdateStatus", {
+        //   deviceNum: item.deviceNum,
+        // });
 
 
         uni.navigateTo({
@@ -475,21 +486,7 @@ export default {
       }
       return false;
     },
-    // 判断设备是否有任何传感器超出限制
-    hasAnyOutOfRange(device) {
-      if (!device || device.deviceLineState !== 1) return false;
-      if (!device.sensors || !Array.isArray(device.sensors)) return false;
-      
-      // 检查是否有任何传感器超出限制
-      for (let sensor of device.sensors) {
-        if (this.isTemperatureOutOfRange(sensor, device) ||
-            this.isHumidityOutOfRange(sensor, device) ||
-            this.isGasOutOfRange(sensor, device)) {
-          return true;
-        }
-      }
-      return false;
-    },
+    
   },
 };
 </script>

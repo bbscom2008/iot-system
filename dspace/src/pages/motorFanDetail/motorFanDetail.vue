@@ -1004,8 +1004,13 @@ export default {
     };
   },
   onLoad() {
-    console.log('风机详情:', this.currFan);
+    uni.$on("device/motorFanUpdate", this.fetchMotorFanDetail);
   },
+  onUnload() {
+    // 离开页面时重置风机详情数据
+    this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", null);
+    uni.$off("device/motorFanUpdate", this.fetchMotorFanDetail);
+  },  
   methods: {
     switchControlMode(mode) {
       this.controlMode = mode;

@@ -216,20 +216,30 @@ export default {
   //   },
   // },
   onLoad(options) {
-    this.getDeviceInfo();
+    // this.getDeviceInfo();
+    uni.$on("device/update", this.handleDeviceUpdate);
+    uni.$on("device/alarm", this.handleDeviceUpdate);
   },
   onShow() {
-    if (this.$store.state.deviceDetail.currDevice?.id) {
+    // if (this.$store.state.deviceDetail.currDevice?.id) {
       this.getDeviceInfo();
-    }
+    // }
   },
   onUnload() {
-    // 页面卸载时清除定时器
-    // this.stopFanStatusUpdate();
-    // 清空
     this.$store.state.deviceDetail.currDevice = null;
+    uni.$off("device/update", this.handleDeviceUpdate);
+    uni.$off("device/alarm", this.handleDeviceUpdate);
   },
   methods: {
+    handleDeviceUpdate({ deviceNum, message }) {
+      if (deviceNum === this.deviceId) {
+        console.log("当前设备有更新，重新获取设备信息");
+        this.getDeviceInfo();
+      }else{
+        console.log("其他设备更新，不刷新当前设备信息");
+      }
+
+    },
     // 获取设备信息（通过 Vuex action）
     async getDeviceInfo() {
       try {
