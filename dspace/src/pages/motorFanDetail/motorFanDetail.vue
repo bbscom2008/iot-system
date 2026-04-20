@@ -1012,6 +1012,31 @@ export default {
     uni.$off("device/motorFanUpdate", this.fetchMotorFanDetail);
   },  
   methods: {
+    async fetchMotorFanDetail({ deviceNum } = {}) {
+      try {
+        const currDevice = this.$store.state.deviceDetail.currDevice || {};
+        const currDeviceNum = currDevice.deviceNum || currDevice.id;
+
+        // 只处理当前设备的更新
+        if (deviceNum && currDeviceNum && String(deviceNum) !== String(currDeviceNum)) {
+          return;
+        }
+
+        const currentFanId = this.currFan && this.currFan.id;
+        if (!currentFanId) return;
+
+        const res = await this.$store.dispatch("deviceDetail/fetchDeviceInfo");
+        const deviceInfo = (res && res.deviceInfo) || this.$store.state.deviceDetail.deviceInfo || {};
+        const motorFans = Array.isArray(deviceInfo.motorFans) ? deviceInfo.motorFans : [];
+        const latest = motorFans.find((item) => String(item.id) === String(currentFanId));
+
+        if (latest) {
+          this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", { ...latest });
+        }
+      } catch (error) {
+        console.error("刷新风机详情失败:", error);
+      }
+    },
     switchControlMode(mode) {
       this.controlMode = mode;
     },

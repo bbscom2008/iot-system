@@ -39,7 +39,7 @@ public class MotorFanController {
             @RequestParam(required = false) String deviceName,
             @RequestParam(required = false) String deviceNum,
             @RequestParam(required = false) String fanName) {
-        
+
         // 构造查询参数
         Map<String, Object> params = new HashMap<>();
         params.put("userName", userName);
@@ -47,7 +47,7 @@ public class MotorFanController {
         params.put("deviceName", deviceName);
         params.put("deviceNum", deviceNum);
         params.put("fanName", fanName);
-        
+
         List<MotorFanListDTO> motorFans = motorFanService.findAll(params);
         return ApiResponse.success(motorFans);
     }
@@ -88,7 +88,7 @@ public class MotorFanController {
         if (motorFan.getDeviceNum() == null || motorFan.getDeviceNum().trim().isEmpty()) {
             throw new RuntimeException("风机编码不能为空");
         }
-        
+
         // 设置默认值
         if (motorFan.getIsRunning() == null) {
             motorFan.setIsRunning(0); // 默认停止
@@ -99,7 +99,7 @@ public class MotorFanController {
         if (motorFan.getAutoMode() == null) {
             motorFan.setAutoMode(1); // 默认自动
         }
-        
+
         motorFanService.insert(motorFan);
         return ApiResponse.success("风机添加成功");
     }
@@ -114,12 +114,12 @@ public class MotorFanController {
         if (motorFan.getId() == null) {
             throw new RuntimeException("风机ID不能为空");
         }
-        
+
         MotorFan existFan = motorFanService.findById(motorFan.getId());
         if (existFan == null) {
             throw new RuntimeException("风机不存在");
         }
-        
+
         motorFanService.update(motorFan);
 
         MotorFan latestFan = motorFanService.findById(motorFan.getId());
@@ -149,61 +149,75 @@ public class MotorFanController {
     private Map<String, Object> buildMotorFanSettingPayload(MotorFan fan) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("wm", fan.getWm());
-        payload.put("tcps", fan.getTcps());
-        payload.put("tcat", fan.getTcat());
-        payload.put("tcot", fan.getTcot());
-        payload.put("tcltrm", fan.getTcltrm());
-        payload.put("tcltrs", fan.getTcltrs());
-        payload.put("tcltpm", fan.getTcltpm());
-        payload.put("tcltps", fan.getTcltps());
-        payload.put("tctcm", fan.getTctcm());
 
-        payload.put("ccps", fan.getCcps());
-        payload.put("cctu", fan.getCctu());
-        payload.put("cctd", fan.getCctd());
-        payload.put("ccrm", fan.getCcrm());
-        payload.put("ccrs", fan.getCcrs());
-        payload.put("ccpm", fan.getCcpm());
-        payload.put("ccpss", fan.getCcpss());
-        payload.put("cccm", fan.getCccm());
+        // 0温控，1循环，2湿控，3氨气，4定时
+        switch (fan.getWm()) {
+            case 0: // 温控
+                payload.put("tcps", fan.getTcps());
+                payload.put("tcat", fan.getTcat());
+                payload.put("tcot", fan.getTcot());
+                payload.put("tcltrm", fan.getTcltrm());
+                payload.put("tcltrs", fan.getTcltrs());
+                payload.put("tcltpm", fan.getTcltpm());
+                payload.put("tcltps", fan.getTcltps());
+                payload.put("tctcm", fan.getTctcm());
+                break;
+            case 1: // 1循环
+                payload.put("ccps", fan.getCcps());
+                payload.put("cctu", fan.getCctu());
+                payload.put("cctd", fan.getCctd());
+                payload.put("ccrm", fan.getCcrm());
+                payload.put("ccrs", fan.getCcrs());
+                payload.put("ccpm", fan.getCcpm());
+                payload.put("ccpss", fan.getCcpss());
+                payload.put("cccm", fan.getCccm());
+                break;
+            case 2: // 湿控
+                payload.put("hchu", fan.getHchu());
+                payload.put("hchd", fan.getHchd());
+                payload.put("hcrm", fan.getHcrm());
+                payload.put("hcrs", fan.getHcrs());
+                payload.put("hcpm", fan.getHcpm());
+                payload.put("hcps", fan.getHcps());
+                payload.put("hchcm", fan.getHchcm());
+                break;
+            case 3: // 氨气
+                payload.put("ncnu", fan.getNcnu());
+                payload.put("ncnd", fan.getNcnd());
+                payload.put("ncrm", fan.getNcrm());
+                payload.put("ncrs", fan.getNcrs());
+                payload.put("ncpm", fan.getNcpm());
+                payload.put("ncps", fan.getNcps());
+                break;
+            case 4: // 定时
+                payload.put("tict1nf", fan.getTict1nf());
+                payload.put("tict1nh", fan.getTict1nh());
+                payload.put("tict1nm", fan.getTict1nm());
+                payload.put("tict1fh", fan.getTict1fh());
+                payload.put("tict1fm", fan.getTict1fm());
 
-        payload.put("hchu", fan.getHchu());
-        payload.put("hchd", fan.getHchd());
-        payload.put("hcrm", fan.getHcrm());
-        payload.put("hcrs", fan.getHcrs());
-        payload.put("hcpm", fan.getHcpm());
-        payload.put("hcps", fan.getHcps());
-        payload.put("hchcm", fan.getHchcm());
+                payload.put("tict2nf", fan.getTict2nf());
+                payload.put("tict2nh", fan.getTict2nh());
+                payload.put("tict2nm", fan.getTict2nm());
+                payload.put("tict2fh", fan.getTict2fh());
+                payload.put("tict2fm", fan.getTict2fm());
 
-        payload.put("ncnu", fan.getNcnu());
-        payload.put("ncnd", fan.getNcnd());
-        payload.put("ncrm", fan.getNcrm());
-        payload.put("ncrs", fan.getNcrs());
-        payload.put("ncpm", fan.getNcpm());
-        payload.put("ncps", fan.getNcps());
+                payload.put("tict3nf", fan.getTict3nf());
+                payload.put("tict3nh", fan.getTict3nh());
+                payload.put("tict3nm", fan.getTict3nm());
+                payload.put("tict3fh", fan.getTict3fh());
+                payload.put("tict3fm", fan.getTict3fm());
 
-        payload.put("tict1nf", fan.getTict1nf());
-        payload.put("tict1nh", fan.getTict1nh());
-        payload.put("tict1nm", fan.getTict1nm());
-        payload.put("tict1fh", fan.getTict1fh());
-        payload.put("tict1fm", fan.getTict1fm());
+                payload.put("ticps", fan.getTicps());
+                payload.put("ticat", fan.getTicat());
+                payload.put("ticot", fan.getTicot());
+                payload.put("tictitm", fan.getTictitm());
+                break;
 
-        payload.put("tict2nf", fan.getTict2nf());
-        payload.put("tict2nh", fan.getTict2nh());
-        payload.put("tict2nm", fan.getTict2nm());
-        payload.put("tict2fh", fan.getTict2fh());
-        payload.put("tict2fm", fan.getTict2fm());
+            default:
+                break;
+        }
 
-        payload.put("tict3nf", fan.getTict3nf());
-        payload.put("tict3nh", fan.getTict3nh());
-        payload.put("tict3nm", fan.getTict3nm());
-        payload.put("tict3fh", fan.getTict3fh());
-        payload.put("tict3fm", fan.getTict3fm());
-
-        payload.put("ticps", fan.getTicps());
-        payload.put("ticat", fan.getTicat());
-        payload.put("ticot", fan.getTicot());
-        payload.put("tictitm", fan.getTictitm());
         return payload;
     }
 
@@ -217,7 +231,7 @@ public class MotorFanController {
         if (existFan == null) {
             throw new RuntimeException("风机不存在");
         }
-        
+
         motorFanService.deleteById(id);
         return ApiResponse.success("风机删除成功");
     }

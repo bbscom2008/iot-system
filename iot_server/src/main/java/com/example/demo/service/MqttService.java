@@ -39,10 +39,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MqttService implements MqttCallback {
 
-
     /**
      * 温控仪数据上报 topic
-     * 如  device/report/123123123
+     * 如 device/report/123123123
      */
     public static final String DEVICE_REPORT = "device/report/";
 
@@ -68,7 +67,7 @@ public class MqttService implements MqttCallback {
 
     /**
      * 服务器向 前端 发送更新通知的 topic
-     * 如  wxapi/d002
+     * 如 wxapi/d002
      */
     public static final String WX_CTRL = "wxapi/";
 
@@ -154,25 +153,25 @@ public class MqttService implements MqttCallback {
         try {
             JsonNode node = parsePayloadNode(payload);
 
-            // 新增：常规设备上报 device/report/{STM32ID}
+            // 常规设备上报 device/report/{STM32ID}
             if (isDeviceReportTopic(topic)) {
                 handleDeviceReport(topic, node);
                 return;
             }
 
-            // 新增：变频详情设置上报 device/report/{STM32ID}/{imtx}
+            // 变频详情设置上报 device/report/{STM32ID}/{imtx}
             if (isFrequencyMotorDetailTopic(topic)) {
                 handleFrequencyMotorDetailReport(topic, node);
                 return;
             }
 
-            // 新增：风机详情设置上报 device/report/{STM32ID}/{mtx}
+            // 风机详情设置上报 device/report/{STM32ID}/{mtx}
             if (isMotorFanDetailTopic(topic)) {
                 handleMotorFanDetailReport(topic, node);
                 return;
             }
 
-            // 新增：报警上报 device/report/{STM32ID}/alarm
+            // 报警上报 device/report/{STM32ID}/alarm
             if (isDeviceAlarmTopic(topic)) {
                 handleDeviceAlarmReport(topic, node);
                 return;
@@ -338,6 +337,7 @@ public class MqttService implements MqttCallback {
 
     /**
      * 判断是否是设备常规上报 topic，如 device/report/{STM32ID}
+     * 
      * @param topic
      * @return
      */
@@ -383,7 +383,7 @@ public class MqttService implements MqttCallback {
         // 传感器的父ID，即当前设备的ID
         Long parentId = device.getId();
 
-        //  批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
+        // 批量更新传感器值，如果没有对应的传感器，就创建一个新的传感器
         List<JsonUtils.KV<Double>> sensorValues = JsonUtils.convertJsonSensors(node);
         sensorService.batchUpdateValueByParentId(parentId, sensorValues);
 
@@ -454,6 +454,12 @@ public class MqttService implements MqttCallback {
         }
     }
 
+    /**
+     * 变频详情设置上报 device/report/{STM32ID}/{imtx}
+     * 
+     * @param topic
+     * @param node
+     */
     private void handleFrequencyMotorDetailReport(String topic, JsonNode node) {
         try {
             String[] parts = topic.split("/");
@@ -487,37 +493,53 @@ public class MqttService implements MqttCallback {
             update.setId(frequencyMotor.getId());
 
             update.setFcm(getInt(node, "fcm"));
-            update.setMs(getDouble(node, "ms"));
-            update.setMrtm(getInt(node, "mrtm"));
-            update.setMrts(getInt(node, "mrts"));
-            update.setMptm(getInt(node, "mptm"));
-            update.setMpts(getInt(node, "mpts"));
 
-            update.setAtps(getInt(node, "atps"));
-            update.setAtls(getDouble(node, "atls"));
-            update.setAtul(getDouble(node, "atul"));
-            update.setAtdl(getDouble(node, "atdl"));
-            update.setAswt(getDouble(node, "aswt"));
-            update.setAtrtm(getInt(node, "atrtm"));
-            update.setAtrts(getInt(node, "atrts"));
-            update.setAtptm(getInt(node, "atptm"));
-            update.setAtpts(getInt(node, "atpts"));
+            // fcm : 变频模式选择：0手动，1自动温控，2自动湿控，3自动氨气
 
-            update.setAhls(getDouble(node, "ahls"));
-            update.setAhul(getDouble(node, "ahul"));
-            update.setAhdl(getDouble(node, "ahdl"));
-            update.setAhrtm(getInt(node, "ahrtm"));
-            update.setAhrts(getInt(node, "ahrts"));
-            update.setAhptm(getInt(node, "ahptm"));
-            update.setAhpts(getInt(node, "ahpts"));
-
-            update.setAnls(getDouble(node, "anls"));
-            update.setAnul(getDouble(node, "anul"));
-            update.setAndl(getDouble(node, "andl"));
-            update.setAnrtm(getInt(node, "anrtm"));
-            update.setAnrts(getInt(node, "anrts"));
-            update.setAnptm(getInt(node, "anptm"));
-            update.setAnpts(getInt(node, "anpts"));
+            switch (update.getFcm()) {
+                case 0:
+                    // 手动模式
+                    update.setMs(getDouble(node, "ms"));
+                    update.setMrtm(getInt(node, "mrtm"));
+                    update.setMrts(getInt(node, "mrts"));
+                    update.setMptm(getInt(node, "mptm"));
+                    update.setMpts(getInt(node, "mpts"));
+                    break;
+                case 1:
+                    // 自动温控
+                    update.setAtps(getInt(node, "atps"));
+                    update.setAtls(getDouble(node, "atls"));
+                    update.setAtul(getDouble(node, "atul"));
+                    update.setAtdl(getDouble(node, "atdl"));
+                    update.setAswt(getDouble(node, "aswt"));
+                    update.setAtrtm(getInt(node, "atrtm"));
+                    update.setAtrts(getInt(node, "atrts"));
+                    update.setAtptm(getInt(node, "atptm"));
+                    update.setAtpts(getInt(node, "atpts"));
+                    break;
+                case 2:
+                    // 自动湿控
+                    update.setAhls(getDouble(node, "ahls"));
+                    update.setAhul(getDouble(node, "ahul"));
+                    update.setAhdl(getDouble(node, "ahdl"));
+                    update.setAhrtm(getInt(node, "ahrtm"));
+                    update.setAhrts(getInt(node, "ahrts"));
+                    update.setAhptm(getInt(node, "ahptm"));
+                    update.setAhpts(getInt(node, "ahpts"));
+                    break;
+                case 3:
+                    // 自动氨气
+                    update.setAnls(getDouble(node, "anls"));
+                    update.setAnul(getDouble(node, "anul"));
+                    update.setAndl(getDouble(node, "andl"));
+                    update.setAnrtm(getInt(node, "anrtm"));
+                    update.setAnrts(getInt(node, "anrts"));
+                    update.setAnptm(getInt(node, "anptm"));
+                    update.setAnpts(getInt(node, "anpts"));
+                    break;
+                default:
+                    break;
+            }
 
             frequencyMotorService.update(update);
             notifyToUpdate(stm32Id, topic);
@@ -527,6 +549,9 @@ public class MqttService implements MqttCallback {
         }
     }
 
+    /**
+     * 风机详情设置上报 device/report/{STM32ID}/{mtx}
+     */
     private void handleMotorFanDetailReport(String topic, JsonNode node) {
         try {
             String[] parts = topic.split("/");
@@ -547,63 +572,73 @@ public class MqttService implements MqttCallback {
 
             MotorFan update = new MotorFan();
             update.setId(motorFan.getId());
-
             update.setWm(getInt(node, "wm"));
-            update.setTcps(getInt(node, "tcps"));
-            update.setTcat(getDouble(node, "tcat"));
-            update.setTcot(getDouble(node, "tcot"));
-            update.setTcltrm(getInt(node, "tcltrm"));
-            update.setTcltrs(getInt(node, "tcltrs"));
-            update.setTcltpm(getInt(node, "tcltpm"));
-            update.setTcltps(getInt(node, "tcltps"));
-            update.setTctcm(getInt(node, "tctcm"));
 
-            update.setCcps(getInt(node, "ccps"));
-            update.setCctu(getDouble(node, "cctu"));
-            update.setCctd(getDouble(node, "cctd"));
-            update.setCcrm(getInt(node, "ccrm"));
-            update.setCcrs(getInt(node, "ccrs"));
-            update.setCcpm(getInt(node, "ccpm"));
-            update.setCcpss(firstInt(node, "ccpss", "ccps_sec"));
-            update.setCccm(getInt(node, "cccm"));
+            switch (update.getWm()) {
+                case 0: // 温控
+                    update.setTcps(getInt(node, "tcps"));
+                    update.setTcat(getDouble(node, "tcat"));
+                    update.setTcot(getDouble(node, "tcot"));
+                    update.setTcltrm(getInt(node, "tcltrm"));
+                    update.setTcltrs(getInt(node, "tcltrs"));
+                    update.setTcltpm(getInt(node, "tcltpm"));
+                    update.setTcltps(getInt(node, "tcltps"));
+                    update.setTctcm(getInt(node, "tctcm"));
+                    break;
+                case 1: // 循环
+                    update.setCcps(getInt(node, "ccps"));
+                    update.setCctu(getDouble(node, "cctu"));
+                    update.setCctd(getDouble(node, "cctd"));
+                    update.setCcrm(getInt(node, "ccrm"));
+                    update.setCcrs(getInt(node, "ccrs"));
+                    update.setCcpm(getInt(node, "ccpm"));
+                    update.setCcpss(getInt(node, "ccpss"));
+                    update.setCccm(getInt(node, "cccm"));
+                    break;
+                case 2: // 湿控
+                    update.setHchu(getDouble(node, "hchu"));
+                    update.setHchd(getDouble(node, "hchd"));
+                    update.setHcrm(getInt(node, "hcrm"));
+                    update.setHcrs(getInt(node, "hcrs"));
+                    update.setHcpm(getInt(node, "hcpm"));
+                    update.setHcps(getInt(node, "hcps"));
+                    update.setHchcm(getInt(node, "hchcm"));
+                    break;
+                case 3: // 氨气
+                    update.setNcnu(getInt(node, "ncnu"));
+                    update.setNcnd(getInt(node, "ncnd"));
+                    update.setNcrm(getInt(node, "ncrm"));
+                    update.setNcrs(getInt(node, "ncrs"));
+                    update.setNcpm(getInt(node, "ncpm"));
+                    update.setNcps(getInt(node, "ncps"));
+                    break;
+                case 4: // 定时
+                    update.setTict1nf(getInt(node, "tict1nf"));
+                    update.setTict1nh(getInt(node, "tict1nh"));
+                    update.setTict1nm(getInt(node, "tict1nm"));
+                    update.setTict1fh(getInt(node, "tict1fh"));
+                    update.setTict1fm(getInt(node, "tict1fm"));
 
-            update.setHchu(getDouble(node, "hchu"));
-            update.setHchd(getDouble(node, "hchd"));
-            update.setHcrm(getInt(node, "hcrm"));
-            update.setHcrs(getInt(node, "hcrs"));
-            update.setHcpm(getInt(node, "hcpm"));
-            update.setHcps(getInt(node, "hcps"));
-            update.setHchcm(getInt(node, "hchcm"));
+                    update.setTict2nf(getInt(node, "tict2nf"));
+                    update.setTict2nh(getInt(node, "tict2nh"));
+                    update.setTict2nm(getInt(node, "tict2nm"));
+                    update.setTict2fh(getInt(node, "tict2fh"));
+                    update.setTict2fm(getInt(node, "tict2fm"));
 
-            update.setNcnu(getInt(node, "ncnu"));
-            update.setNcnd(getInt(node, "ncnd"));
-            update.setNcrm(getInt(node, "ncrm"));
-            update.setNcrs(getInt(node, "ncrs"));
-            update.setNcpm(getInt(node, "ncpm"));
-            update.setNcps(getInt(node, "ncps"));
+                    update.setTict3nf(getInt(node, "tict3nf"));
+                    update.setTict3nh(getInt(node, "tict3nh"));
+                    update.setTict3nm(getInt(node, "tict3nm"));
+                    update.setTict3fh(getInt(node, "tict3fh"));
+                    update.setTict3fm(getInt(node, "tict3fm"));
 
-            update.setTict1nf(getInt(node, "tict1nf"));
-            update.setTict1nh(getInt(node, "tict1nh"));
-            update.setTict1nm(getInt(node, "tict1nm"));
-            update.setTict1fh(getInt(node, "tict1fh"));
-            update.setTict1fm(getInt(node, "tict1fm"));
-
-            update.setTict2nf(getInt(node, "tict2nf"));
-            update.setTict2nh(getInt(node, "tict2nh"));
-            update.setTict2nm(getInt(node, "tict2nm"));
-            update.setTict2fh(getInt(node, "tict2fh"));
-            update.setTict2fm(getInt(node, "tict2fm"));
-
-            update.setTict3nf(getInt(node, "tict3nf"));
-            update.setTict3nh(getInt(node, "tict3nh"));
-            update.setTict3nm(getInt(node, "tict3nm"));
-            update.setTict3fh(getInt(node, "tict3fh"));
-            update.setTict3fm(getInt(node, "tict3fm"));
-
-            update.setTicps(getInt(node, "ticps"));
-            update.setTicat(getDouble(node, "ticat"));
-            update.setTicot(getDouble(node, "ticot"));
-            update.setTictitm(getInt(node, "tictitm"));
+                    update.setTicps(getInt(node, "ticps"));
+                    update.setTicat(getDouble(node, "ticat"));
+                    update.setTicot(getDouble(node, "ticot"));
+                    update.setTictitm(getInt(node, "tictitm"));
+                    break;
+                default:
+                    break;
+            }
 
             motorFanService.update(update);
             notifyToUpdate(stm32Id, topic);
@@ -688,22 +723,22 @@ public class MqttService implements MqttCallback {
      * @param deviceNum
      */
     public void queryDeviceStatus(String deviceNum) {
-//        try {
-//            Map<String, Object> messageMap = new HashMap<>();
-//            messageMap.put("topic", MqttService.QUERY_DEVICE_STATUS(deviceNum));
-//            messageMap.put("payload", "QUERY_DEVICE_STATUS");
-//            // qos 1 确保消息到达
-//            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
-//            mqttMessage.setQos(1);
-//            client.publish(MqttService.QUERY_DEVICE_STATUS(deviceNum), mqttMessage);
+        // try {
+        // Map<String, Object> messageMap = new HashMap<>();
+        // messageMap.put("topic", MqttService.QUERY_DEVICE_STATUS(deviceNum));
+        // messageMap.put("payload", "QUERY_DEVICE_STATUS");
+        // // qos 1 确保消息到达
+        // MqttMessage mqttMessage = new
+        // MqttMessage(objectMapper.writeValueAsBytes(messageMap));
+        // mqttMessage.setQos(1);
+        // client.publish(MqttService.QUERY_DEVICE_STATUS(deviceNum), mqttMessage);
 
         this.publishString(MqttService.QUERY_DEVICE_STATUS(deviceNum), "QUERY_DEVICE_STATUS");
 
-//        } catch (MqttException e) {
-//            throw new RuntimeException(e);
-//        }
+        // } catch (MqttException e) {
+        // throw new RuntimeException(e);
+        // }
     }
-
 
     /**
      * 处理设备所有电机的控制规则
@@ -871,4 +906,3 @@ public class MqttService implements MqttCallback {
         return client != null && client.isConnected();
     }
 }
-

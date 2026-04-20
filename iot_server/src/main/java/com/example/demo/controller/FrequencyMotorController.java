@@ -36,7 +36,7 @@ public class FrequencyMotorController {
             @RequestParam(required = false) String deviceNum,
             @RequestParam(required = false) String motorName,
             @RequestParam(required = false) String motorCode) {
-        
+
         // 构造查询参数
         Map<String, Object> params = new HashMap<>();
         params.put("userName", userName);
@@ -45,7 +45,7 @@ public class FrequencyMotorController {
         params.put("deviceNum", deviceNum);
         params.put("motorName", motorName);
         params.put("motorCode", motorCode);
-        
+
         List<FrequencyMotor> frequencyMotors = frequencyMotorService.findAll(params);
         return ApiResponse.success(frequencyMotors);
     }
@@ -71,7 +71,7 @@ public class FrequencyMotorController {
     }
 
     /**
-     * 新增变频电机
+     * 新增变频电机 -- 暂时无用
      * POST /frequency-motor
      */
     @PostMapping
@@ -86,7 +86,7 @@ public class FrequencyMotorController {
         if (frequencyMotor.getDeviceNum() == null || frequencyMotor.getDeviceNum().trim().isEmpty()) {
             throw new RuntimeException("变频器设备编码不能为空");
         }
-        
+
         // 设置默认值
         if (frequencyMotor.getFcm() == null) {
             frequencyMotor.setFcm(0); // 默认手动
@@ -109,7 +109,7 @@ public class FrequencyMotorController {
         if (frequencyMotor.getMpts() == null) {
             frequencyMotor.setMpts(30);
         }
-        
+
         frequencyMotorService.insert(frequencyMotor);
         return ApiResponse.success("变频电机添加成功");
     }
@@ -124,7 +124,7 @@ public class FrequencyMotorController {
         if (frequencyMotor.getId() == null) {
             throw new RuntimeException("变频电机ID不能为空");
         }
-        
+
         FrequencyMotor existMotor = frequencyMotorService.findById(frequencyMotor.getId());
         if (existMotor == null) {
             throw new RuntimeException("变频电机不存在");
@@ -160,38 +160,53 @@ public class FrequencyMotorController {
 
     private Map<String, Object> buildFrequencySettingPayload(FrequencyMotor motor) {
         Map<String, Object> payload = new LinkedHashMap<>();
+        // fcm : 变频模式选择：0手动，1 自动温控，2 自动湿控，3自动氨气
         payload.put("fcm", motor.getFcm());
-        payload.put("ms", motor.getMs());
-        payload.put("mrtm", motor.getMrtm());
-        payload.put("mrts", motor.getMrts());
-        payload.put("mptm", motor.getMptm());
-        payload.put("mpts", motor.getMpts());
+        switch (motor.getFcm()) {
+            case 0:
+                // 手动模式
+                payload.put("ms", motor.getMs());
+                payload.put("mrtm", motor.getMrtm());
+                payload.put("mrts", motor.getMrts());
+                payload.put("mptm", motor.getMptm());
+                payload.put("mpts", motor.getMpts());
+                break;
+            case 1:
+                // 自动温控
+                payload.put("atps", motor.getAtps());
+                payload.put("atls", motor.getAtls());
+                payload.put("atul", motor.getAtul());
+                payload.put("atdl", motor.getAtdl());
+                payload.put("aswt", motor.getAswt());
+                payload.put("atrtm", motor.getAtrtm());
+                payload.put("atrts", motor.getAtrts());
+                payload.put("atptm", motor.getAtptm());
+                payload.put("atpts", motor.getAtpts());
+                break;
+            case 2:
+                // 自动湿控
+                payload.put("ahls", motor.getAhls());
+                payload.put("ahul", motor.getAhul());
+                payload.put("ahdl", motor.getAhdl());
+                payload.put("ahrtm", motor.getAhrtm());
+                payload.put("ahrts", motor.getAhrts());
+                payload.put("ahptm", motor.getAhptm());
+                payload.put("ahpts", motor.getAhpts());
+                break;
+            case 3:
+                // 自动氨气
+                payload.put("anls", motor.getAnls());
+                payload.put("anul", motor.getAnul());
+                payload.put("andl", motor.getAndl());
+                payload.put("anrtm", motor.getAnrtm());
+                payload.put("anrts", motor.getAnrts());
+                payload.put("anptm", motor.getAnptm());
+                payload.put("anpts", motor.getAnpts());
+                break;
+            default:
+                break;
+        }
 
-        payload.put("atps", motor.getAtps());
-        payload.put("atls", motor.getAtls());
-        payload.put("atul", motor.getAtul());
-        payload.put("atdl", motor.getAtdl());
-        payload.put("aswt", motor.getAswt());
-        payload.put("atrtm", motor.getAtrtm());
-        payload.put("atrts", motor.getAtrts());
-        payload.put("atptm", motor.getAtptm());
-        payload.put("atpts", motor.getAtpts());
-
-        payload.put("ahls", motor.getAhls());
-        payload.put("ahul", motor.getAhul());
-        payload.put("ahdl", motor.getAhdl());
-        payload.put("ahrtm", motor.getAhrtm());
-        payload.put("ahrts", motor.getAhrts());
-        payload.put("ahptm", motor.getAhptm());
-        payload.put("ahpts", motor.getAhpts());
-
-        payload.put("anls", motor.getAnls());
-        payload.put("anul", motor.getAnul());
-        payload.put("andl", motor.getAndl());
-        payload.put("anrtm", motor.getAnrtm());
-        payload.put("anrts", motor.getAnrts());
-        payload.put("anptm", motor.getAnptm());
-        payload.put("anpts", motor.getAnpts());
         return payload;
     }
 
@@ -205,7 +220,7 @@ public class FrequencyMotorController {
         if (existMotor == null) {
             throw new RuntimeException("变频电机不存在");
         }
-        
+
         frequencyMotorService.deleteById(id);
         return ApiResponse.success("变频电机删除成功");
     }
