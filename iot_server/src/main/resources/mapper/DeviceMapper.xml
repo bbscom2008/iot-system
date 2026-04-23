@@ -26,11 +26,10 @@
         <result column="temp_lower_limit" property="tempLowerLimit" jdbcType="DECIMAL"/>
         <result column="humidity_upper_limit" property="humidityUpperLimit" jdbcType="DECIMAL"/>
         <result column="humidity_lower_limit" property="humidityLowerLimit" jdbcType="DECIMAL"/>
-        <result column="master_switch" property="masterSwitch" jdbcType="INTEGER"/>
-        <result column="power_off_switch" property="powerOffSwitch" jdbcType="INTEGER"/>
-        <result column="temp_switch" property="tempSwitch" jdbcType="INTEGER"/>
-        <result column="humidity_switch" property="humiditySwitch" jdbcType="INTEGER"/>
-        <result column="gas_switch" property="gasSwitch" jdbcType="INTEGER"/>
+        <result column="tof1" property="tof1" jdbcType="INTEGER"/>
+        <result column="tof2" property="tof2" jdbcType="INTEGER"/>
+        <result column="tof3" property="tof3" jdbcType="INTEGER"/>
+        <result column="tof4" property="tof4" jdbcType="INTEGER"/>
         <result column="dialing_method" property="dialingMethod" jdbcType="TINYINT"/>
         <result column="alarm_method" property="alarmMethod" jdbcType="TINYINT"/>
         <result column="alarm_phones" property="alarmPhones" jdbcType="VARCHAR" typeHandler="com.example.demo.handler.StringListTypeHandler"/>
@@ -205,11 +204,10 @@
             <if test="tempLowerLimit != null">temp_lower_limit = #{tempLowerLimit},</if>
             <if test="humidityUpperLimit != null">humidity_upper_limit = #{humidityUpperLimit},</if>
             <if test="humidityLowerLimit != null">humidity_lower_limit = #{humidityLowerLimit},</if>
-            <if test="masterSwitch != null">master_switch = #{masterSwitch},</if>
-            <if test="powerOffSwitch != null">power_off_switch = #{powerOffSwitch},</if>
-            <if test="tempSwitch != null">temp_switch = #{tempSwitch},</if>
-            <if test="humiditySwitch != null">humidity_switch = #{humiditySwitch},</if>
-            <if test="gasSwitch != null">gas_switch = #{gasSwitch},</if>
+            <if test="tof1 != null">tof1 = #{tof1},</if>
+            <if test="tof2 != null">tof2 = #{tof2},</if>
+            <if test="tof3 != null">tof3 = #{tof3},</if>
+            <if test="tof4 != null">tof4 = #{tof4},</if>
             <if test="dialingMethod != null">dialing_method = #{dialingMethod},</if>
             <if test="alarmMethod != null">alarm_method = #{alarmMethod},</if>
             <if test="alarmPhones != null">alarm_phones = #{alarmPhones,typeHandler=com.example.demo.handler.StringListTypeHandler},</if>

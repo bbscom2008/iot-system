@@ -1,6 +1,6 @@
 <template>
   <view class="radio-group">
-    <Radio
+    <MyRadio
       v-for="option in options"
       :key="option.value"
       :value="option.value"
@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import Radio from "./Radio.vue";
+import MyRadio from "./Radio.vue";
 
 export default {
   name: "RadioGroup",
   components: {
-    Radio
+    MyRadio
   },
   props: {
     value: {
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     handleChange(value) {
-      this.$emit('input', value);
+      console.log('-handleChange---', value);
       this.$emit('change', value);
     }
   }

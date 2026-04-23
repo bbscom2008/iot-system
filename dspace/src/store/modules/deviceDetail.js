@@ -26,8 +26,13 @@ const mutations = {
 
   // 更新设备字段
   UPDATE_DEVICE_FIELD(state, { field, value }) {
+    console.log('----UPDATE_DEVICE_FIELD----', field, value);
+    
     if (state.deviceInfo) {
-      state.deviceInfo[field] = value
+      state.deviceInfo={
+        ...state.deviceInfo,
+        [field]: value
+      }
     }
   },
 

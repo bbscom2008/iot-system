@@ -1,1 +1,0 @@
--- mqtt_message_data 已废弃，不再创建该表。

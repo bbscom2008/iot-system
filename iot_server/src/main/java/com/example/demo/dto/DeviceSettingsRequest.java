@@ -29,12 +29,11 @@ public class DeviceSettingsRequest {
     private Double tempLowerLimit;       // 温度下限（°C）
     private Double humidityUpperLimit;   // 湿度上限（%）
     private Double humidityLowerLimit;   // 湿度下限（%）
-    
-    private Integer masterSwitch;        // 总开关：0-关闭 1-开启
-    private Integer powerOffSwitch;      // 断电开关：0-关闭 1-开启
-    private Integer tempSwitch;          // 温度开关：0-关闭 1-开启
-    private Integer humiditySwitch;      // 湿度开关：0-关闭 1-开启
-    private Integer gasSwitch;           // 气体开关：0-关闭 1-开启
+
+    private Integer tof1;                // 温度开关1：0-开 1-关
+    private Integer tof2;                // 温度开关2：0-开 1-关
+    private Integer tof3;                // 温度开关3：0-开 1-关
+    private Integer tof4;                // 温度开关4：0-开 1-关
     
     private Integer dialingMethod;       // 拨打方式：1-同时拨打 2-依次拨打
     private Integer alarmMethod;         // 报警方式：1-打电话 2-发短信 3-打电话和发短信
