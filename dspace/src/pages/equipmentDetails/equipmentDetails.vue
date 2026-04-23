@@ -60,9 +60,7 @@
           </view>
           <view class="status-indicator">
             <view class="battery-icon">🔋</view>
-            <text class="status-text"
-              >{{ deviceInfo.power || "--" }}%</text
-            >
+            <text class="status-text">{{ deviceInfo.power || "--" }}%</text>
           </view>
           <view class="status-indicator">
             <view
@@ -107,11 +105,8 @@
             @tap="goToSensorDetail(sensor)"
           >
             <view class="monitor-circle">
-              <text class="circle-value"
-                >{{ sensor.sensorValue || "--" }}</text
-              >
+              <text class="circle-value">{{ sensor.sensorValue || "--" }}</text>
               <text class="circle-unit">°C</text>
-              
             </view>
             <text class="circle-label">{{ sensor.sensorName }}</text>
           </view>
@@ -182,10 +177,10 @@
 </template>
 
 <script>
-import request from "@/utils/request.js";
-import SvgIcon from "@/components/SvgIcon.vue";
-import FanControl from "@/components/FanControl.vue";
-import { mapState } from 'vuex'
+import request from "@/utils/request.js"
+import SvgIcon from "@/components/SvgIcon.vue"
+import FanControl from "@/components/FanControl.vue"
+import { mapState } from "vuex"
 
 export default {
   name: "EquipmentDetails",
@@ -194,14 +189,14 @@ export default {
     return {
       // deviceInfo 从 Vuex 仓库读取，移除本地初始化
       fanUpdateTimer: null, // 风扇状态更新定时器
-    };
+    }
   },
 
   computed: {
-    ...mapState('deviceDetail', {
-      deviceInfo: state => state.deviceInfo || {},
-      deviceId: state => state.currDevice.id
-    })
+    ...mapState("deviceDetail", {
+      deviceInfo: (state) => state.deviceInfo || {},
+      deviceId: (state) => state.currDevice.id,
+    }),
   },
   // watch: {
   //   // 监听 currUpdateDeviceNum 的变化
@@ -215,72 +210,74 @@ export default {
   //     },
   //   },
   // },
-  onLoad(options) {
-    // this.getDeviceInfo();
-    uni.$on("device/update", this.handleDeviceUpdate);
-    uni.$on("device/alarm", this.handleDeviceUpdate);
-  },
+  // onLoad(options) {
+  // this.getDeviceInfo();
+  // },
   onShow() {
-    // if (this.$store.state.deviceDetail.currDevice?.id) {
-      this.getDeviceInfo();
-    // }
+    this.getDeviceInfo()
+    uni.$on("device/update", this.handleDeviceUpdate)
+    uni.$on("device/alarm", this.handleDeviceUpdate)
   },
-  onUnload() {
-    this.$store.state.deviceDetail.currDevice = null;
-    uni.$off("device/update", this.handleDeviceUpdate);
-    uni.$off("device/alarm", this.handleDeviceUpdate);
+  onHide() {
+    // 页面隐藏时停止风扇状态更新
+    uni.$off("device/update", this.handleDeviceUpdate)
+    uni.$off("device/alarm", this.handleDeviceUpdate)
   },
+  // onUnload() {
+  // },
   methods: {
     handleDeviceUpdate({ deviceNum, message }) {
-      if (deviceNum === this.deviceId) {
-        console.log("当前设备有更新，重新获取设备信息");
-        this.getDeviceInfo();
-      }else{
-        console.log("其他设备更新，不刷新当前设备信息");
-      }
+      console.log("deviceNum : ", deviceNum)
+      console.log("this.deviceId : ", this.deviceId)
 
+      if (deviceNum === this.deviceInfo.deviceNum) {
+        console.log("当前设备有更新，重新获取设备信息")
+        this.getDeviceInfo()
+      } else {
+        console.log("其他设备更新，不刷新当前设备信息")
+      }
     },
     // 获取设备信息（通过 Vuex action）
     async getDeviceInfo() {
       try {
-        const res = await this.$store.dispatch('deviceDetail/fetchDeviceInfo')
-        console.log('设备详情API响应（已保存到仓库）:', res)
+        const res = await this.$store.dispatch("deviceDetail/fetchDeviceInfo")
+        console.log("设备详情API响应（已保存到仓库）:", res)
       } catch (err) {
-        console.log('获取设备信息失败', err)
-        uni.showToast({ title: '获取设备信息失败', icon: 'none' })
+        console.log("获取设备信息失败", err)
+        uni.showToast({ title: "获取设备信息失败", icon: "none" })
       }
     },
 
     // 处理风机点击事件 - 跳转到风机详情页面
     handleFanToggle(e) {
       // 通过 data-id 取值（小程序跨线程安全方式），再查找展开为纯对象
-      const fanId = e.currentTarget.dataset.id;
-      const fans = this.deviceInfo.motorFans || [];
-      const found = fans.find(f => f.id === fanId);
-      if (!found) return;
-      const plainFan = { ...found };
-      this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", plainFan);
+      const fanId = e.currentTarget.dataset.id
+      const fans = this.deviceInfo.motorFans || []
+      const found = fans.find((f) => f.id === fanId)
+      if (!found) return
+      const plainFan = { ...found }
+      this.$store.commit("deviceDetail/SET_CURRENT_MOTOR_FAN", plainFan)
 
       // 跳转到风机详情页面
       uni.navigateTo({
         url: "/pages/motorFanDetail/motorFanDetail",
-      });
+      })
     },
     // 查看曲线
     viewCurve() {
       uni.navigateTo({
         url: "/pages/curveChart/curveChart?deviceId=" + this.deviceId,
-      });
+      })
     },
     // 获取温度传感器（sensor_type_id = 5）
     getTemperatureSensors(sensors) {
-      if (!sensors || !Array.isArray(sensors)) return [];
-      return sensors.filter((s) => s.sensorTypeId === 5);
+      if (!sensors || !Array.isArray(sensors)) return []
+      return sensors.filter((s) => s.sensorTypeId === 5)
     },
     // 获取其他传感器（sensor_type_id != 5）
     getOtherSensors(sensors) {
-      if (!sensors || !Array.isArray(sensors)) return [];
-      return sensors.filter((s) => s.sensorTypeId !== 5);
+      if (!sensors || !Array.isArray(sensors)) return []
+      return sensors.filter((s) => s.sensorTypeId !== 5)
     },
     // 获取控制类型名称
     getControlTypeName(controlType) {
@@ -288,8 +285,8 @@ export default {
         1: "温控",
         2: "湿控",
         3: "气体控制",
-      };
-      return typeMap[controlType] || "未知";
+      }
+      return typeMap[controlType] || "未知"
     },
     // 启动风扇状态随机更新（模拟 WebSocket）
     // startFanStatusUpdate() {
@@ -322,30 +319,30 @@ export default {
     // 处理变频器点击事件
     handleFrequencyMotorClick(e) {
       // 通过 data-id 取值（小程序跨线程安全方式），再查找展开为纯对象
-      const motorId = e.currentTarget.dataset.id;
-      const motors = this.deviceInfo.frequencyMotors || [];
-      const found = motors.find(m => m.id === motorId);
-      if (!found) return;
-      const plainMotor = { ...found };
-      this.$store.commit("deviceDetail/SET_CURRENT_FREQUENCY_MOTOR", plainMotor);
+      const motorId = e.currentTarget.dataset.id
+      const motors = this.deviceInfo.frequencyMotors || []
+      const found = motors.find((m) => m.id === motorId)
+      if (!found) return
+      const plainMotor = { ...found }
+      this.$store.commit("deviceDetail/SET_CURRENT_FREQUENCY_MOTOR", plainMotor)
 
       // 跳转到变频器详情页面
       uni.navigateTo({
         url: "/pages/frequencyConverter/frequencyConverter",
-      });
+      })
     },
     // 跳转到设备设置页面
     goToDeviceSettings() {
       uni.navigateTo({
         url: "/pages/deviceSettings/deviceSettings?deviceId=" + this.deviceId,
-      });
+      })
     },
     // 跳转到传感器详情页面
     goToSensorDetail(sensor) {
-      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR_ID", sensor.id);
+      this.$store.commit("deviceDetail/SET_CURRENT_SENSOR_ID", sensor.id)
       uni.navigateTo({
         url: `/pages/sensorDetail/sensorDetail`,
-      });
+      })
     },
     // 删除设备
     handleDelete() {
@@ -358,18 +355,18 @@ export default {
               uni.showToast({
                 title: "删除成功",
                 icon: "success",
-              });
+              })
               // 获取设备列表更新 Vuex
-              this.$store.dispatch('device/fetchDeviceList')
+              this.$store.dispatch("device/fetchDeviceList")
 
-              uni.navigateBack();
-            });
+              uni.navigateBack()
+            })
           }
         },
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style scoped>

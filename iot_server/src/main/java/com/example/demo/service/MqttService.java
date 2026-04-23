@@ -433,15 +433,15 @@ public class MqttService implements MqttCallback {
             warning.setUserId(device.getUserId());
 
             warning.setTa1(getInt(node, "ta1"));
-            warning.setTs1(getDouble(node, "ts1"));
+            warning.setTs1(getScaledDecimal(node, "ts1"));
             warning.setTa2(getInt(node, "ta2"));
-            warning.setTs2(getDouble(node, "ts2"));
+            warning.setTs2(getScaledDecimal(node, "ts2"));
             warning.setTa3(getInt(node, "ta3"));
-            warning.setTs3(getDouble(node, "ts3"));
+            warning.setTs3(getScaledDecimal(node, "ts3"));
             warning.setTa4(getInt(node, "ta4"));
-            warning.setTs4(getDouble(node, "ts4"));
+            warning.setTs4(getScaledDecimal(node, "ts4"));
             warning.setHa(getInt(node, "ha"));
-            warning.setHv(getDouble(node, "hv"));
+            warning.setHv(getScaledDecimal(node, "hv"));
             warning.setNa(getInt(node, "na"));
             warning.setNv(getDouble(node, "nv"));
 
@@ -509,9 +509,9 @@ public class MqttService implements MqttCallback {
                     // 自动温控
                     update.setAtps(getInt(node, "atps"));
                     update.setAtls(getDouble(node, "atls"));
-                    update.setAtul(getDouble(node, "atul"));
-                    update.setAtdl(getDouble(node, "atdl"));
-                    update.setAswt(getDouble(node, "aswt"));
+                    update.setAtul(getScaledDecimal(node, "atul"));
+                    update.setAtdl(getScaledDecimal(node, "atdl"));
+                    update.setAswt(getScaledDecimal(node, "aswt"));
                     update.setAtrtm(getInt(node, "atrtm"));
                     update.setAtrts(getInt(node, "atrts"));
                     update.setAtptm(getInt(node, "atptm"));
@@ -520,8 +520,8 @@ public class MqttService implements MqttCallback {
                 case 2:
                     // 自动湿控
                     update.setAhls(getDouble(node, "ahls"));
-                    update.setAhul(getDouble(node, "ahul"));
-                    update.setAhdl(getDouble(node, "ahdl"));
+                    update.setAhul(getScaledDecimal(node, "ahul"));
+                    update.setAhdl(getScaledDecimal(node, "ahdl"));
                     update.setAhrtm(getInt(node, "ahrtm"));
                     update.setAhrts(getInt(node, "ahrts"));
                     update.setAhptm(getInt(node, "ahptm"));
@@ -577,8 +577,8 @@ public class MqttService implements MqttCallback {
             switch (update.getWm()) {
                 case 0: // 温控
                     update.setTcps(getInt(node, "tcps"));
-                    update.setTcat(getDouble(node, "tcat"));
-                    update.setTcot(getDouble(node, "tcot"));
+                    update.setTcat(getScaledDecimal(node, "tcat"));
+                    update.setTcot(getScaledDecimal(node, "tcot"));
                     update.setTcltrm(getInt(node, "tcltrm"));
                     update.setTcltrs(getInt(node, "tcltrs"));
                     update.setTcltpm(getInt(node, "tcltpm"));
@@ -587,8 +587,8 @@ public class MqttService implements MqttCallback {
                     break;
                 case 1: // 循环
                     update.setCcps(getInt(node, "ccps"));
-                    update.setCctu(getDouble(node, "cctu"));
-                    update.setCctd(getDouble(node, "cctd"));
+                    update.setCctu(getScaledDecimal(node, "cctu"));
+                    update.setCctd(getScaledDecimal(node, "cctd"));
                     update.setCcrm(getInt(node, "ccrm"));
                     update.setCcrs(getInt(node, "ccrs"));
                     update.setCcpm(getInt(node, "ccpm"));
@@ -596,8 +596,8 @@ public class MqttService implements MqttCallback {
                     update.setCccm(getInt(node, "cccm"));
                     break;
                 case 2: // 湿控
-                    update.setHchu(getDouble(node, "hchu"));
-                    update.setHchd(getDouble(node, "hchd"));
+                    update.setHchu(getScaledDecimal(node, "hchu"));
+                    update.setHchd(getScaledDecimal(node, "hchd"));
                     update.setHcrm(getInt(node, "hcrm"));
                     update.setHcrs(getInt(node, "hcrs"));
                     update.setHcpm(getInt(node, "hcpm"));
@@ -632,8 +632,8 @@ public class MqttService implements MqttCallback {
                     update.setTict3fm(getInt(node, "tict3fm"));
 
                     update.setTicps(getInt(node, "ticps"));
-                    update.setTicat(getDouble(node, "ticat"));
-                    update.setTicot(getDouble(node, "ticot"));
+                    update.setTicat(getScaledDecimal(node, "ticat"));
+                    update.setTicot(getScaledDecimal(node, "ticot"));
                     update.setTictitm(getInt(node, "tictitm"));
                     break;
                 default:
@@ -695,6 +695,14 @@ public class MqttService implements MqttCallback {
         return null;
     }
 
+    private Double getScaledDecimal(JsonNode node, String key) {
+        Double value = getDouble(node, key);
+        if (value == null) {
+            return null;
+        }
+        return value / 10D;
+    }
+
     /**
      * 通知前端 更新页面
      *
@@ -709,7 +717,7 @@ public class MqttService implements MqttCallback {
             messageMap.put("payload", "UPDATE_DEVICES");
             // qos 1 确保消息到达
             MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
-            mqttMessage.setQos(2);
+            mqttMessage.setQos(1);
             client.publish(MqttService.WX_CTRL + deviceNum, mqttMessage);
         } catch (MqttException | JsonProcessingException e) {
             log.warn("notifyToUpdate 出错了");

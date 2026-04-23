@@ -79,7 +79,7 @@
     </view>
 
     <!-- 状态切换栏 -->
-    <view class="status-bar">
+    <!-- <view class="status-bar">
       <SingleButtonSelect
         v-model="autoMode"
         :options="[
@@ -88,7 +88,7 @@
           { label: '关', value: 3 }
         ]"
       />
-    </view>
+    </view> -->
 
     <!-- 风机信息 -->
     <view class="fan-info">
@@ -1186,7 +1186,7 @@ export default {
           icon: "success",
         });
 
-        uni.navigateBack();
+        // uni.navigateBack();
 
       } catch (error) {
         console.error('保存失败:', error);

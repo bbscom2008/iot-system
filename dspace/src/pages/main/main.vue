@@ -2,7 +2,7 @@
 	<view class="main-container">
 		<!-- 内容区域 -->
 		<view class="content-container">
-			<HomeView v-if="currentTab === 0" />
+			<HomeView v-if="currentTab === 0" :visible="isPageVisible && currentTab === 0" />
 			<AlarmView v-else-if="currentTab === 1" />
 			<MyMineView v-else-if="currentTab === 2" />
 		</view>
@@ -28,8 +28,15 @@ export default {
 	},
 	data() {
 		return {
-			currentTab: 0
+			currentTab: 0,
+			isPageVisible: true
 		}
+	},
+	onShow() {
+		this.isPageVisible = true
+	},
+	onHide() {
+		this.isPageVisible = false
 	},
 	onLoad(options) {
 		// 如果有传入 tab 参数，则切换到对应 tab

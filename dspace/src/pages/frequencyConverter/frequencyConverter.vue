@@ -35,20 +35,24 @@
       <!-- 手动转速设置 -->
       <view class="form-item">
         <text class="form-label">手动转速:</text>
-        <input
-          class="form-input"
-          v-model="currMotor.ms"
-          placeholder="10"
-        />
+        <input class="form-input" v-model="currMotor.ms" placeholder="10" />
         <text class="form-unit">%</text>
       </view>
 
       <!-- 运行时间设置 -->
       <view class="form-item">
         <text class="form-label">运行时间:</text>
-        <input class="form-input-small" v-model="currMotor.mrtm" placeholder="0" />
+        <input
+          class="form-input-small"
+          v-model="currMotor.mrtm"
+          placeholder="0"
+        />
         <text class="form-unit-small">分</text>
-        <input class="form-input-small" v-model="currMotor.mrts" placeholder="0" />
+        <input
+          class="form-input-small"
+          v-model="currMotor.mrts"
+          placeholder="0"
+        />
         <text class="form-unit-small">秒</text>
       </view>
 
@@ -130,8 +134,6 @@
         </view>
       </view>
 
-      
-
       <!-- 温控内容 -->
       <view v-if="currMotor.fcm === 1" class="control-content">
         <view class="device-header">
@@ -156,8 +158,12 @@
             range-key="sensorName"
           >
             <view class="picker-input">
-              <text :class="{ 'placeholder': probeIndex < 0 }">
-                {{ probeIndex >= 0 ? temperatureSensors[probeIndex].sensorName : '请选择探头' }}
+              <text :class="{ placeholder: probeIndex < 0 }">
+                {{
+                  probeIndex >= 0
+                    ? temperatureSensors[probeIndex].sensorName
+                    : "请选择探头"
+                }}
               </text>
             </view>
           </picker>
@@ -165,41 +171,25 @@
 
         <view class="form-item">
           <text class="form-label">最低转速:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.atls"
-            placeholder="10"
-          />
+          <input class="form-input" v-model="currMotor.atls" placeholder="10" />
           <text class="form-unit">%</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">温度上限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.atul"
-            placeholder="35"
-          />
+          <input class="form-input" v-model="currMotor.atul" placeholder="35" />
           <text class="form-unit">°C</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">温度下限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.atdl"
-            placeholder="33"
-          />
+          <input class="form-input" v-model="currMotor.atdl" placeholder="33" />
           <text class="form-unit">°C</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">停止温度:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.aswt"
-            placeholder="30"
-          />
+          <input class="form-input" v-model="currMotor.aswt" placeholder="30" />
           <text class="form-unit">°C</text>
         </view>
 
@@ -267,31 +257,19 @@
 
         <view class="form-item">
           <text class="form-label">最低转速:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.ahls"
-            placeholder="10"
-          />
+          <input class="form-input" v-model="currMotor.ahls" placeholder="10" />
           <text class="form-unit">%</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">湿度上限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.ahul"
-            placeholder="70"
-          />
+          <input class="form-input" v-model="currMotor.ahul" placeholder="70" />
           <text class="form-unit">%</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">湿度下限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.ahdl"
-            placeholder="50"
-          />
+          <input class="form-input" v-model="currMotor.ahdl" placeholder="50" />
           <text class="form-unit">%</text>
         </view>
 
@@ -359,31 +337,19 @@
 
         <view class="form-item">
           <text class="form-label">最低转速:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.anls"
-            placeholder="10"
-          />
+          <input class="form-input" v-model="currMotor.anls" placeholder="10" />
           <text class="form-unit">%</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">气体上限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.anul"
-            placeholder="70"
-          />
+          <input class="form-input" v-model="currMotor.anul" placeholder="70" />
           <text class="form-unit">ppm</text>
         </view>
 
         <view class="form-item">
           <text class="form-label">气体下限:</text>
-          <input
-            class="form-input"
-            v-model="currMotor.andl"
-            placeholder="50"
-          />
+          <input class="form-input" v-model="currMotor.andl" placeholder="50" />
           <text class="form-unit">ppm</text>
         </view>
 
@@ -442,8 +408,8 @@
 </template>
 
 <script>
-import SvgIcon from "@/components/SvgIcon.vue";
-import request from "@/utils/request";
+import SvgIcon from "@/components/SvgIcon.vue"
+import request from "@/utils/request"
 
 export default {
   name: "FrequencyConverter",
@@ -452,34 +418,37 @@ export default {
   },
   computed: {
     currMotor() {
-      return this.$store.state.deviceDetail.currentFrequencyMotor;
+      return this.$store.state.deviceDetail.currentFrequencyMotor
     },
     // 温度传感器列表
     temperatureSensors() {
       return [
-        { id: 0, sensorName: '探头1' },
-        { id: 1, sensorName: '探头2' },
-        { id: 2, sensorName: '探头3' },
-        { id: 3, sensorName: '探头4' },
-        { id: 4, sensorName: '探头12' },
-        { id: 5, sensorName: '探头34' },
-        { id: 6, sensorName: '探头1234' },
-      ];
+        { id: 0, sensorName: "探头1" },
+        { id: 1, sensorName: "探头2" },
+        { id: 2, sensorName: "探头3" },
+        { id: 3, sensorName: "探头4" },
+        { id: 4, sensorName: "探头12" },
+        { id: 5, sensorName: "探头34" },
+        { id: 6, sensorName: "探头1234" },
+      ]
     },
     // 湿度传感器
     humiditySensor() {
-      return this.$store.state.deviceDetail.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 6);
+      return this.$store.state.deviceDetail.deviceInfo.sensors.find(
+        (sensor) => sensor.sensorTypeId === 6
+      )
     },
     // 气体传感器
     gasSensor() {
-      return this.$store.state.deviceDetail.deviceInfo.sensors.find(sensor => sensor.sensorTypeId === 7);
+      return this.$store.state.deviceDetail.deviceInfo.sensors.find(
+        (sensor) => sensor.sensorTypeId === 7
+      )
     },
-    
   },
   watch: {
     currMotor: {
       handler() {
-        this.syncProbeIndexFromAtps();
+        this.syncProbeIndexFromAtps()
       },
       deep: true,
       immediate: true,
@@ -487,41 +456,74 @@ export default {
   },
   data() {
     return {
-	  realtimeTemp: 15,
-	  probeIndex: -1,
-      
-    };
+      realtimeTemp: 15,
+      probeIndex: -1,
+    }
   },
   onLoad() {
-    this.syncProbeIndexFromAtps();
+    this.syncProbeIndexFromAtps()
+  },
+  onShow() {
+    uni.$on("device/frequencyMotorUpdate", this.handleDeviceUpdate)
+  },
+  onHide() {
+    uni.$off("device/frequencyMotorUpdate", this.handleDeviceUpdate)
   },
   onUnload() {},
   methods: {
-    syncProbeIndexFromAtps() {
-      if (!this.currMotor || this.currMotor.atps === undefined || this.currMotor.atps === null) {
-        this.probeIndex = -1;
-        return;
+    async handleDeviceUpdate({ deviceNum, message }) {
+      if (deviceNum === this.$store.state.deviceDetail.deviceInfo.deviceNum) {
+        try {
+          const res = await this.$store.dispatch("deviceDetail/fetchDeviceInfo")
+          console.log("设备详情API响应（已保存到仓库）:", res)
+        } catch (err) {
+          console.log("获取设备信息失败", err)
+          uni.showToast({ title: "获取设备信息失败", icon: "none" })
+        }
+      }else{
+        console.log('==其他变频，不关心==');
+        
       }
-      const idx = this.temperatureSensors.findIndex(sensor => Number(sensor.id) === Number(this.currMotor.atps));
-      this.probeIndex = idx >= 0 ? idx : -1;
+    },
+    syncProbeIndexFromAtps() {
+      if (
+        !this.currMotor ||
+        this.currMotor.atps === undefined ||
+        this.currMotor.atps === null
+      ) {
+        this.probeIndex = -1
+        return
+      }
+      const idx = this.temperatureSensors.findIndex(
+        (sensor) => Number(sensor.id) === Number(this.currMotor.atps)
+      )
+      this.probeIndex = idx >= 0 ? idx : -1
     },
     switchMode(isAuto) {
       if (isAuto === 0) {
-        this.currMotor.fcm = 0;
-        return;
+        this.currMotor.fcm = 0
+        return
       }
-      if (this.currMotor.fcm === 0 || this.currMotor.fcm === undefined || this.currMotor.fcm === null) {
-        this.currMotor.fcm = 1;
+      if (
+        this.currMotor.fcm === 0 ||
+        this.currMotor.fcm === undefined ||
+        this.currMotor.fcm === null
+      ) {
+        this.currMotor.fcm = 1
       }
     },
     switchControl(controlType) {
-      this.currMotor.fcm = controlType;
+      this.currMotor.fcm = controlType
     },
     // 探头选择变化
     onProbeChange(e) {
-      this.probeIndex = parseInt(e.detail.value);
-      if (this.probeIndex >= 0 && this.temperatureSensors && this.temperatureSensors[this.probeIndex]) {
-        this.currMotor.atps = this.temperatureSensors[this.probeIndex].id;
+      this.probeIndex = parseInt(e.detail.value)
+      if (
+        this.probeIndex >= 0 &&
+        this.temperatureSensors &&
+        this.temperatureSensors[this.probeIndex]
+      ) {
+        this.currMotor.atps = this.temperatureSensors[this.probeIndex].id
       }
     },
     async handleSave() {
@@ -564,30 +566,30 @@ export default {
 
           value: this.currMotor.value,
           deviceName: this.currMotor.deviceName,
-        };
-        
+        }
+
         // 调用更新接口
-        await request.put('/frequencyMotor/update', updateData);
-        
+        await request.put("/frequencyMotor/update", updateData)
+
         uni.showToast({
           title: "保存成功",
           icon: "success",
-        });
-        
+        })
+
         // 延迟返回上一页
         // setTimeout(() => {
         //   uni.navigateBack();
         // }, 1500);
       } catch (error) {
-        console.error('保存失败:', error);
+        console.error("保存失败:", error)
         uni.showToast({
           title: error.message || "保存失败",
           icon: "none",
-        });
+        })
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -924,8 +926,8 @@ export default {
 }
 
 .save-btn:active {
-   background-color: #5a4acd;
- }
+  background-color: #5a4acd;
+}
 
 /* 选择器样式 */
 .picker-wrapper {

@@ -6,8 +6,8 @@ const state = {
   // currentSensor: null, // 当前选中的传感器信息
   currentSensorId: null, // 当前选中的传感器ID
   currentMotorFan: null, // 当前选中的风机信息
-  deviceInfo: null, // 设备信息
-  currDevice: null,
+  deviceInfo: null, // 当前设备的详细信息
+  currDevice: null, // 设备列表中点击的设备条目
 }
 
 const mutations = {
@@ -69,8 +69,8 @@ const mutations = {
 
 const actions = {
   // 获取设备详情并保存到仓库
-  async fetchDeviceInfo({ rootState,commit, state }) {
-    console.log('-----fetchDeviceInfo -----');
+  async fetchDeviceInfo({ rootState, commit, state }) {
+    console.log('-----fetchDeviceInfo -----', state.currDevice);
 
     if (!state.currDevice || !state.currDevice.id) {
       return { success: false, skipped: true, reason: 'NO_CURRENT_DEVICE' }
@@ -89,20 +89,20 @@ const actions = {
       commit('SET_DEVICE_INFO', deviceInfo)
 
       // 关键：如果当前正在看风机详情，刷新后同步替换 currentMotorFan
-      // if (state.currentMotorFan && state.currentMotorFan.id && Array.isArray(deviceInfo.motorFans)) {
-      //   const latestMotorFan = deviceInfo.motorFans.find(item => item.id === state.currentMotorFan.id)
-      //   if (latestMotorFan) {
-      //     commit('SET_CURRENT_MOTOR_FAN', { ...latestMotorFan })
-      //   }
-      // }
+      if (state.currentMotorFan && state.currentMotorFan.id && Array.isArray(deviceInfo.motorFans)) {
+        const latestMotorFan = deviceInfo.motorFans.find(item => item.id === state.currentMotorFan.id)
+        if (latestMotorFan) {
+          commit('SET_CURRENT_MOTOR_FAN', { ...latestMotorFan })
+        }
+      }
 
       // 关键：如果当前正在看变频详情，刷新后同步替换 currentFrequencyMotor
-      // if (state.currentFrequencyMotor && state.currentFrequencyMotor.id && Array.isArray(deviceInfo.frequencyMotors)) {
-      //   const latestFrequencyMotor = deviceInfo.frequencyMotors.find(item => item.id === state.currentFrequencyMotor.id)
-      //   if (latestFrequencyMotor) {
-      //     commit('SET_CURRENT_FREQUENCY_MOTOR', { ...latestFrequencyMotor })
-      //   }
-      // }
+      if (state.currentFrequencyMotor && state.currentFrequencyMotor.id && Array.isArray(deviceInfo.frequencyMotors)) {
+        const latestFrequencyMotor = deviceInfo.frequencyMotors.find(item => item.id === state.currentFrequencyMotor.id)
+        if (latestFrequencyMotor) {
+          commit('SET_CURRENT_FREQUENCY_MOTOR', { ...latestFrequencyMotor })
+        }
+      }
 
       return { success: true, deviceInfo }
     } catch (err) {

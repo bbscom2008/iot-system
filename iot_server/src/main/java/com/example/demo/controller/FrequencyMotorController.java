@@ -9,6 +9,8 @@ import com.example.demo.service.MqttService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -174,10 +176,10 @@ public class FrequencyMotorController {
             case 1:
                 // 自动温控
                 payload.put("atps", motor.getAtps());
-                payload.put("atls", motor.getAtls());
-                payload.put("atul", motor.getAtul());
-                payload.put("atdl", motor.getAtdl());
-                payload.put("aswt", motor.getAswt());
+                payload.put("atls", motor.getAtls().intValue());
+                payload.put("atul", toProtocolScaledValue(motor.getAtul()));
+                payload.put("atdl", toProtocolScaledValue(motor.getAtdl()));
+                payload.put("aswt", toProtocolScaledValue(motor.getAswt()));
                 payload.put("atrtm", motor.getAtrtm());
                 payload.put("atrts", motor.getAtrts());
                 payload.put("atptm", motor.getAtptm());
@@ -185,9 +187,9 @@ public class FrequencyMotorController {
                 break;
             case 2:
                 // 自动湿控
-                payload.put("ahls", motor.getAhls());
-                payload.put("ahul", motor.getAhul());
-                payload.put("ahdl", motor.getAhdl());
+                payload.put("ahls", motor.getAhls().intValue());
+                payload.put("ahul", toProtocolScaledValue(motor.getAhul()));
+                payload.put("ahdl", toProtocolScaledValue(motor.getAhdl()));
                 payload.put("ahrtm", motor.getAhrtm());
                 payload.put("ahrts", motor.getAhrts());
                 payload.put("ahptm", motor.getAhptm());
@@ -195,9 +197,9 @@ public class FrequencyMotorController {
                 break;
             case 3:
                 // 自动氨气
-                payload.put("anls", motor.getAnls());
-                payload.put("anul", motor.getAnul());
-                payload.put("andl", motor.getAndl());
+                payload.put("anls", motor.getAnls().intValue());
+                payload.put("anul", motor.getAnul().intValue());
+                payload.put("andl", motor.getAndl().intValue());
                 payload.put("anrtm", motor.getAnrtm());
                 payload.put("anrts", motor.getAnrts());
                 payload.put("anptm", motor.getAnptm());
@@ -208,6 +210,16 @@ public class FrequencyMotorController {
         }
 
         return payload;
+    }
+
+    private Integer toProtocolScaledValue(Double value) {
+        if (value == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(value)
+                .multiply(BigDecimal.TEN)
+                .setScale(0, RoundingMode.HALF_UP)
+                .intValue();
     }
 
     /**

@@ -24,9 +24,20 @@ public class JsonUtils {
             String key = "ts" + i;
             JsonNode v = node.get(key);
             if (v != null && v.isNumber()) {
-                list.add(new KV<Double>(key, v.asDouble()));
+                list.add(new KV<Double>(key, v.asDouble() / 10D));
             }
         }
+        // 湿度
+        JsonNode h = node.get("hv");
+        if (h != null && h.isNumber()) {
+            list.add(new KV<Double>("hv", h.asDouble() / 10D));
+        }
+
+        // 氨气
+        JsonNode n = node.get("nv");
+        if (n != null && n.isNumber()) {
+            list.add(new KV<Double>("nv", n.asDouble()));
+        }   
         return list;
     }
 

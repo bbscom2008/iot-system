@@ -11,6 +11,8 @@ import com.example.demo.service.MqttService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -154,8 +156,8 @@ public class MotorFanController {
         switch (fan.getWm()) {
             case 0: // 温控
                 payload.put("tcps", fan.getTcps());
-                payload.put("tcat", fan.getTcat());
-                payload.put("tcot", fan.getTcot());
+                payload.put("tcat", toProtocolScaledValue(fan.getTcat()));
+                payload.put("tcot", toProtocolScaledValue(fan.getTcot()));
                 payload.put("tcltrm", fan.getTcltrm());
                 payload.put("tcltrs", fan.getTcltrs());
                 payload.put("tcltpm", fan.getTcltpm());
@@ -164,8 +166,8 @@ public class MotorFanController {
                 break;
             case 1: // 1循环
                 payload.put("ccps", fan.getCcps());
-                payload.put("cctu", fan.getCctu());
-                payload.put("cctd", fan.getCctd());
+                payload.put("cctu", toProtocolScaledValue(fan.getCctu()));
+                payload.put("cctd", toProtocolScaledValue(fan.getCctd()));
                 payload.put("ccrm", fan.getCcrm());
                 payload.put("ccrs", fan.getCcrs());
                 payload.put("ccpm", fan.getCcpm());
@@ -173,8 +175,8 @@ public class MotorFanController {
                 payload.put("cccm", fan.getCccm());
                 break;
             case 2: // 湿控
-                payload.put("hchu", fan.getHchu());
-                payload.put("hchd", fan.getHchd());
+                payload.put("hchu", toProtocolScaledValue(fan.getHchu()));
+                payload.put("hchd", toProtocolScaledValue(fan.getHchd()));
                 payload.put("hcrm", fan.getHcrm());
                 payload.put("hcrs", fan.getHcrs());
                 payload.put("hcpm", fan.getHcpm());
@@ -209,8 +211,8 @@ public class MotorFanController {
                 payload.put("tict3fm", fan.getTict3fm());
 
                 payload.put("ticps", fan.getTicps());
-                payload.put("ticat", fan.getTicat());
-                payload.put("ticot", fan.getTicot());
+                payload.put("ticat", toProtocolScaledValue(fan.getTicat()));
+                payload.put("ticot", toProtocolScaledValue(fan.getTicot()));
                 payload.put("tictitm", fan.getTictitm());
                 break;
 
@@ -219,6 +221,16 @@ public class MotorFanController {
         }
 
         return payload;
+    }
+
+    private Integer toProtocolScaledValue(Double value) {
+        if (value == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(value)
+                .multiply(BigDecimal.TEN)
+                .setScale(0, RoundingMode.HALF_UP)
+                .intValue();
     }
 
     /**

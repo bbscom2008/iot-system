@@ -41,14 +41,15 @@ public class SensorService {
 
     /**
      * 新增传感器
-     * 如果传入了 sensor_code，则使用传入的编码；否则自动生成 sensor_code 格式：sen-{sensor_type_id}-{从1001开始递增}
+     * 如果传入了 sensor_code，则使用传入的编码；否则自动生成 sensor_code
+     * 格式：sen-{sensor_type_id}-{从1001开始递增}
      */
     public void addSensor(Sensor sensor) {
         // 如果 sensor_code 为空或null，才自动生成
         if (sensor.getSensorCode() == null || sensor.getSensorCode().trim().isEmpty()) {
             throw new IllegalArgumentException("Sensor code cannot be empty when add sensor");
         }
-        
+
         // 检查 sensor_code 是否已存在
         Sensor existingSensor = sensorMapper.findBySensorCode(sensor.getParentId(), sensor.getSensorCode());
         if (existingSensor != null) {
@@ -57,33 +58,33 @@ public class SensorService {
         sensorMapper.insert(sensor);
     }
 
-//    /**
-//     * 生成传感器编号
-//     * 格式：sen-{sensor_type_id}-{从1001开始递增}
-//     * 每个 sensor_type_id 独立计数，都从 1001 开始
-//     */
-//    private String generateSensorCode(Integer sensorTypeId) {
-//        // 查询当前 sensor_type_id 的最大编号
-//        String maxDeviceNum = sensorMapper.findMaxDeviceNumByType(sensorTypeId);
-//
-//        int nextNumber = 1001; // 默认从 1001 开始
-//
-//        if (maxDeviceNum != null && maxDeviceNum.matches("^sen-\\d+-(\\d+)$")) {
-//            // 提取当前最大编号
-//            try {
-//                String[] parts = maxDeviceNum.split("-");
-//                if (parts.length == 3) {
-//                    int maxNumber = Integer.parseInt(parts[2]);
-//                    nextNumber = maxNumber + 1;
-//                }
-//            } catch (NumberFormatException e) {
-//                // 如果解析失败，使用默认值 1001
-//                nextNumber = 1001;
-//            }
-//        }
-//
-//        return String.format("sen-%d-%d", sensorTypeId, nextNumber);
-//    }
+    // /**
+    // * 生成传感器编号
+    // * 格式：sen-{sensor_type_id}-{从1001开始递增}
+    // * 每个 sensor_type_id 独立计数，都从 1001 开始
+    // */
+    // private String generateSensorCode(Integer sensorTypeId) {
+    // // 查询当前 sensor_type_id 的最大编号
+    // String maxDeviceNum = sensorMapper.findMaxDeviceNumByType(sensorTypeId);
+    //
+    // int nextNumber = 1001; // 默认从 1001 开始
+    //
+    // if (maxDeviceNum != null && maxDeviceNum.matches("^sen-\\d+-(\\d+)$")) {
+    // // 提取当前最大编号
+    // try {
+    // String[] parts = maxDeviceNum.split("-");
+    // if (parts.length == 3) {
+    // int maxNumber = Integer.parseInt(parts[2]);
+    // nextNumber = maxNumber + 1;
+    // }
+    // } catch (NumberFormatException e) {
+    // // 如果解析失败，使用默认值 1001
+    // nextNumber = 1001;
+    // }
+    // }
+    //
+    // return String.format("sen-%d-%d", sensorTypeId, nextNumber);
+    // }
 
     /**
      * 更新传感器值
@@ -95,16 +96,17 @@ public class SensorService {
     /**
      * 更新传感器信息
      */
-    public void updateSensor( Sensor sensor) {
+    public void updateSensor(Sensor sensor) {
         // 如果修改了 sensor_code，需要检查是否与其他传感器重复
-//        if (sensor.getSensorCode() != null && !sensor.getSensorCode().isEmpty()) {
-//            Sensor existingSensor = sensorMapper.findSensorById(sensor.getId());
-//
-//            if (existingSensor != null && !existingSensor.getId().equals(sensor.getId())) {
-//                throw new RuntimeException("传感器编号已存在：" + sensor.getSensorCode());
-//            }
-//        }
-        
+        // if (sensor.getSensorCode() != null && !sensor.getSensorCode().isEmpty()) {
+        // Sensor existingSensor = sensorMapper.findSensorById(sensor.getId());
+        //
+        // if (existingSensor != null && !existingSensor.getId().equals(sensor.getId()))
+        // {
+        // throw new RuntimeException("传感器编号已存在：" + sensor.getSensorCode());
+        // }
+        // }
+
         sensorMapper.update(sensor);
     }
 
@@ -152,7 +154,7 @@ public class SensorService {
             }
         }
         for (JsonUtils.KV<Double> e : skvList) {
-            String tsKey = e.getKey(); // ts1  ts2
+            String tsKey = e.getKey(); // ts1 ts2 hv nv 等
             if (!existingCodes.contains(tsKey)) {
                 Sensor sensor = generateSensor(parentId, tsKey, e.getValue());
                 addSensor(sensor);
@@ -163,6 +165,7 @@ public class SensorService {
 
     /**
      * 根据传感器ID获取传感器值
+     * 
      * @param sensorId 传感器ID
      * @return 传感器值或null
      */
@@ -178,7 +181,8 @@ public class SensorService {
     }
 
     /**
-     * 根据 parentId ts1  value 创建 sensor 对象
+     * 根据 parentId ts1 value 创建 sensor 对象
+     * 
      * @param parentId
      * @param tsKey
      * @param value
@@ -188,20 +192,39 @@ public class SensorService {
         Sensor sensor = new Sensor();
         sensor.setParentId(parentId);
         sensor.setSensorCode(tsKey);
-        sensor.setSensorTypeId(5);
-        String name = "温度";
-        try {
+
+        // 这里简单根据 tsKey 的前缀来设置 sensorTypeId 和 sensorName，实际可以根据具体需求调整
+        // ts1 ts2 hv nv 等
+        if (tsKey.startsWith("ts")) {
+            sensor.setSensorTypeId(5); // 温度传感器
+            String name = "温度";
             String idxStr = tsKey.replaceAll("[^0-9]", "");
             if (!idxStr.isEmpty()) {
                 name = name + idxStr;
             }
-        } catch (Exception ignored) {
+
+            sensor.setSensorName(name);
+            sensor.setSensorValue(value);
+            sensor.setAdjustValue(0.0);
+            sensor.setUnit("°C");
+
+        } else if (tsKey.startsWith("hv")) { // 湿度传感器
+            sensor.setSensorTypeId(6);
+            sensor.setSensorName("湿度");
+            sensor.setSensorValue(value);
+            sensor.setAdjustValue(0.0);
+            sensor.setUnit("%");
+
+        } else if (tsKey.startsWith("nv")) { // 氨气传感器
+            sensor.setSensorTypeId(7);
+            sensor.setSensorName("氨气");
+            sensor.setSensorValue(value);
+            sensor.setAdjustValue(0.0);
+            sensor.setUnit("ppm");
+        } else {
+            throw new IllegalArgumentException("Unsupported sensor code: " + tsKey);
         }
-        sensor.setSensorName(name);
-        sensor.setSensorValue(value);
-        sensor.setAdjustValue(0.0);
-        sensor.setUnit("°C");
+
         return sensor;
     }
 }
-

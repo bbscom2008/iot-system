@@ -5,7 +5,6 @@
 
 import mqttClient from "../../utils/mqtt"
 import { MQTT_TOPICS } from "../../utils/mqtt-config"
-import device from "./device"
 
 let mqttListenersBound = false
 

@@ -81,7 +81,7 @@
         <!-- 设备卡片 -->
         <view
           class="device-card"
-          v-for="(item) in deviceList"
+          v-for="item in deviceList"
           :key="item.id"
           @tap="toDetail(item)"
         >
@@ -92,7 +92,14 @@
                 <SvgIcon name="alarm" :size="18" color="#cda109" />
               </view>
               <view class="device-number">{{ item.deviceName }}</view>
-              <view class="device-number">编号: {{ item.deviceNum.length > 8 ? item.deviceNum.slice(-8) : item.deviceNum }}</view>
+              <view class="device-number"
+                >编号:
+                {{
+                  item.deviceNum.length > 8
+                    ? item.deviceNum.slice(-8)
+                    : item.deviceNum
+                }}</view
+              >
             </view>
 
             <!-- 状态指示器 -->
@@ -125,9 +132,7 @@
                 <text
                   class="status-text"
                   :class="{ active: item.power > 50 }"
-                  >{{
-                    item.power > 50 ? "电量充足" : "电量不足"
-                  }}</text
+                  >{{ item.power > 50 ? "电量充足" : "电量不足" }}</text
                 >
               </view>
               <view class="status-item">
@@ -147,9 +152,7 @@
           <!-- 传感器数据 -->
           <view class="sensor-data">
             <!-- 第一行：温度传感器（sensor_type_id = 5） -->
-            <view
-              class="sensor-row"
-            >
+            <view class="sensor-row">
               <!-- v-if="getTemperatureSensors(item.sensors).length > 0" -->
               <view
                 class="sensor-item"
@@ -157,8 +160,18 @@
                 :key="sensor.id"
               >
                 <text class="sensor-label">{{ sensor.sensorName }}</text>
-                <text class="sensor-text" :class="{ 'out-of-range': item.deviceLineState == 1 && isTemperatureOutOfRange(sensor, item) }"
-                  >{{ item.deviceLineState == 1 ? (sensor.sensorValue || "--") : "--" }}°C</text
+                <text
+                  class="sensor-text"
+                  :class="{
+                    'out-of-range':
+                      item.deviceLineState == 1 &&
+                      isTemperatureOutOfRange(sensor, item),
+                  }"
+                  >{{
+                    item.deviceLineState == 1
+                      ? sensor.sensorValue || "--"
+                      : "--"
+                  }}°C</text
                 >
               </view>
             </view>
@@ -173,11 +186,19 @@
                 :key="sensor.id"
               >
                 <text class="sensor-label">{{ sensor.sensorName }}</text>
-                <text class="sensor-text" 
-                  :class="{ 
-                    'out-of-range': item.deviceLineState == 1 && (isHumidityOutOfRange(sensor, item) || isGasOutOfRange(sensor, item))
+                <text
+                  class="sensor-text"
+                  :class="{
+                    'out-of-range':
+                      item.deviceLineState == 1 &&
+                      (isHumidityOutOfRange(sensor, item) ||
+                        isGasOutOfRange(sensor, item)),
                   }"
-                  >{{ item.deviceLineState == 1 ? (sensor.sensorValue || "--") : "--" }}{{ sensor.unit }}</text
+                  >{{
+                    item.deviceLineState == 1
+                      ? sensor.sensorValue || "--"
+                      : "--"
+                  }}{{ sensor.unit }}</text
                 >
               </view>
             </view>
@@ -201,85 +222,117 @@
 </template>
 
 <script>
-import request from "@/utils/request.js";
-import SvgIcon from "@/components/SvgIcon.vue";
-import RechargeView from "./recharge.vue";
-import { mapState, mapActions } from 'vuex';
+import request from "@/utils/request.js"
+import SvgIcon from "@/components/SvgIcon.vue"
+import RechargeView from "./recharge.vue"
+import { mapState, mapActions } from "vuex"
 
 export default {
   name: "HomeView",
   components: { SvgIcon, RechargeView },
+  props: {
+    visible: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       searchValue: "",
       isLogin: true,
+      deviceEventBound: false,
       currentTab: 0,
       QueryParams: {
         pageNum: 1,
         pageSize: 10,
         type: 1,
       },
-    };
+    }
   },
   computed: {
-    ...mapState('device', {
-      deviceList: state => state.deviceList,
-      allDevice: state => state.deviceStats.allDevice,
-      lineDevice: state => state.deviceStats.lineDevice,
-      warningDevice: state => state.deviceStats.warningDevice,
-    })
+    ...mapState("device", {
+      deviceList: (state) => state.deviceList,
+      allDevice: (state) => state.deviceStats.allDevice,
+      lineDevice: (state) => state.deviceStats.lineDevice,
+      warningDevice: (state) => state.deviceStats.warningDevice,
+    }),
   },
-  
+  watch: {
+    visible: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.startDeviceListeners()
+        } else {
+          this.stopDeviceListeners()
+        }
+      },
+    },
+  },
   mounted() {
-    this.handleDeviceUpdate();
-    // 监听设备更新事件
-    uni.$on("device/update", this.handleDeviceUpdate);
-    uni.$on("device/alarm", this.handleDeviceUpdate);
+    if (this.visible) {
+      this.startDeviceListeners()
+    }
   },
   beforeDestroy() {
-    // 移除设备更新事件监听
-    uni.$off("device/update", this.handleDeviceUpdate);
-    uni.$off("device/alarm", this.handleDeviceUpdate);
+    this.stopDeviceListeners()
   },
   methods: {
-    ...mapActions('device', [
-      'setDeviceList',
-      'setDeviceStats',
-      'fetchDeviceList',
-      'fetchDeviceStats'
+    ...mapActions("device", [
+      "setDeviceList",
+      "setDeviceStats",
+      "fetchDeviceList",
+      "fetchDeviceStats",
     ]),
-    handleDeviceUpdate(){
-      console.log("刷新设备列表和统计");
-      this.getDeviceList();
-      this.equipmentState();
+    startDeviceListeners() {
+      if (this.deviceEventBound) return
+      console.log("=====startDeviceListeners=======")
+
+      this.handleDeviceUpdate()
+      uni.$on("device/update", this.handleDeviceUpdate)
+      uni.$on("device/alarm", this.handleDeviceUpdate)
+      this.deviceEventBound = true
+    },
+    stopDeviceListeners() {
+      if (!this.deviceEventBound) return
+      console.log("=====stopDeviceListeners=======")
+
+      uni.$off("device/update", this.handleDeviceUpdate)
+      uni.$off("device/alarm", this.handleDeviceUpdate)
+      this.deviceEventBound = false
+    },
+    handleDeviceUpdate() {
+      console.log("刷新设备列表和统计")
+      this.getDeviceList()
+      this.equipmentState()
     },
     // 切换 Tab
     switchTab(index) {
-      this.currentTab = index;
+      this.currentTab = index
       if (index === 0) {
-        this.handleDeviceUpdate();
+        this.handleDeviceUpdate()
       } else {
-        this.getRechargeList();
+        this.getRechargeList()
       }
     },
     // 获取充值列表
     async getRechargeList() {
-      console.log("获取充值列表");
+      console.log("获取充值列表")
     },
     // 获取设备列表（使用 Vuex action）
     async getDeviceList() {
       try {
-        await this.fetchDeviceList();
+        await this.fetchDeviceList()
       } catch (err) {
-        console.log('获取设备列表失败', err)
+        console.log("获取设备列表失败", err)
       }
     },
     // 获取设备统计（使用 Vuex action）
     async equipmentState() {
       try {
-        await this.fetchDeviceStats();
+        await this.fetchDeviceStats()
       } catch (err) {
-        console.log('获取设备统计失败', err)
+        console.log("获取设备统计失败", err)
       }
     },
     // 搜索输入处理（预留方法）
@@ -290,28 +343,28 @@ export default {
     async handleSearchOrAdd() {
       if (this.searchValue) {
         // 有内容，执行搜索
-        await this.qsearch(this.searchValue);
+        await this.qsearch(this.searchValue)
       } else {
         // 没有内容，执行添加
-        this.handleAdd();
+        this.handleAdd()
       }
     },
-    async bindDevice(deviceNum){
+    async bindDevice(deviceNum) {
       try {
         await request.post("/device/bind", {
           deviceNum: deviceNum,
-        });
+        })
         uni.showToast({
           title: "绑定成功",
           icon: "success",
-        });
+        })
         // 刷新设备列表
-        this.handleDeviceUpdate();
+        this.handleDeviceUpdate()
       } catch (err) {
         uni.showToast({
           title: err.msg || "绑定失败",
           icon: "none",
-        });
+        })
       }
     },
     // 处理添加设备
@@ -320,18 +373,18 @@ export default {
       uni.scanCode({
         onlyFromCamera: false,
         success: async (res) => {
-          console.log("扫码结果:", res.result);
+          console.log("扫码结果:", res.result)
           // 扫码成功后，绑定设备
           this.bindDevice(res.result)
         },
         fail: (err) => {
-          console.log("扫码失败:", err);
+          console.log("扫码失败:", err)
           uni.showToast({
             title: "扫码失败",
             icon: "none",
-          });
+          })
         },
-      });
+      })
       // #endif
       // #ifdef H5
       uni.showModal({
@@ -342,54 +395,53 @@ export default {
         success: (res) => {
           if (res.confirm) {
             // 点击「确定」，res.content 为输入的内容
-            console.log("用户输入：", res.content);
+            console.log("用户输入：", res.content)
             // 业务逻辑：如提交、校验等
             if (res.content.trim() === "") {
-              uni.showToast({ title: "内容不能为空", icon: "none" });
-              return;
+              uni.showToast({ title: "内容不能为空", icon: "none" })
+              return
             }
             this.bindDevice(res.content)
           } else if (res.cancel) {
             // 点击「取消」
-            console.log("用户取消输入");
+            console.log("用户取消输入")
           }
         },
         fail: (err) => {
-          console.error("当前端不支持输入框", err);
+          console.error("当前端不支持输入框", err)
           uni.showToast({
-              title: `当前端不支持输入框:${err.errMsg}`,
-              icon: "error",
-            });
+            title: `当前端不支持输入框:${err.errMsg}`,
+            icon: "error",
+          })
         },
-      });
+      })
       // #endif
     },
     async qsearch(keyword) {
       try {
         const res = await request.get("/device/list", {
           search: keyword,
-        });
+        })
         // 保存搜索结果到 Vuex 仓库
-        this.setDeviceList(res.list || []);
+        this.setDeviceList(res.list || [])
         if (res.list && res.list.length === 0) {
           uni.showToast({
             title: "未找到相关设备",
             icon: "none",
-          });
+          })
         }
       } catch (err) {
-        console.log("搜索失败", err);
+        console.log("搜索失败", err)
       }
     },
     // 跳转详情
     toDetail(item) {
-
-      this.$store.commit('deviceDetail/SET_CURR_DEVICE', item);
+      this.$store.commit("deviceDetail/SET_CURR_DEVICE", item)
 
       if (item.deviceType == 0) {
         uni.navigateTo({
           url: `/pages/particulars/particulars?deviceId=${item.id}`,
-        });
+        })
       } else if (item.deviceType == 1) {
         // 进入设备详情
         // 通知更新设备数据
@@ -398,97 +450,106 @@ export default {
         //   deviceNum: item.deviceNum,
         // });
 
-
         uni.navigateTo({
           url: `/pages/equipmentDetails/equipmentDetails`,
-        });
+        })
       }
     },
     // 跳转登录
     loginClick() {
       uni.navigateTo({
         url: "/pages/login/login",
-      });
+      })
     },
     // 获取温度传感器（sensor_type_id = 5）
     getTemperatureSensors(sensors) {
-      if (!sensors || !Array.isArray(sensors)) return [];
+      if (!sensors || !Array.isArray(sensors)) return []
       // 根据 ts1 - 4 排序
-      let sortSensors =  sensors.filter((s) => s.sensorTypeId === 5).sort((a, b) => {
-        const aNum = parseInt(a.sensorCode.replace("ts", ""));
-        const bNum = parseInt(b.sensorCode.replace("ts", ""));
-        return aNum - bNum;
-      });
-      return sortSensors;
+      let sortSensors = sensors
+        .filter((s) => s.sensorTypeId === 5)
+        .sort((a, b) => {
+          const aNum = parseInt(a.sensorCode.replace("ts", ""))
+          const bNum = parseInt(b.sensorCode.replace("ts", ""))
+          return aNum - bNum
+        })
+      return sortSensors
     },
     // 获取其他传感器（sensor_type_id != 5）
     getOtherSensors(sensors) {
-      if (!sensors || !Array.isArray(sensors)) return [];
-      return sensors.filter((s) => s.sensorTypeId !== 5);
+      if (!sensors || !Array.isArray(sensors)) return []
+      return sensors.filter((s) => s.sensorTypeId !== 5)
     },
     // 判断温度是否超过上下限
     isTemperatureOutOfRange(sensor, device) {
-      if (!sensor || sensor.sensorTypeId !== 5) return false;
-      if (!device) return false;
-      
-      const sensorValue = parseFloat(sensor.sensorValue);
-      if (isNaN(sensorValue)) return false;
-      
-      const upperLimit = parseFloat(device.tempUpperLimit);
-      const lowerLimit = parseFloat(device.tempLowerLimit);
-      
+      if (!sensor || sensor.sensorTypeId !== 5) return false
+      if (!device) return false
+
+      const sensorValue = parseFloat(sensor.sensorValue)
+      if (isNaN(sensorValue)) return false
+
+      const upperLimit = parseFloat(device.tempUpperLimit)
+      const lowerLimit = parseFloat(device.tempLowerLimit)
+
       // 如果上下限都设置为0，表示未设置限制
-      if (upperLimit === 0 && lowerLimit === 0) return false;
-      
+      if (upperLimit === 0 && lowerLimit === 0) return false
+
       // 超过上限或低于下限
-      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
-        return true;
+      if (
+        (upperLimit > 0 && sensorValue > upperLimit) ||
+        (lowerLimit > 0 && sensorValue < lowerLimit)
+      ) {
+        return true
       }
-      return false;
+      return false
     },
     // 判断湿度是否超过上下限
     isHumidityOutOfRange(sensor, device) {
-      if (!sensor || sensor.sensorTypeId !== 6) return false;
-      if (!device) return false;
-      
-      const sensorValue = parseFloat(sensor.sensorValue);
-      if (isNaN(sensorValue)) return false;
-      
-      const upperLimit = parseFloat(device.humidityUpperLimit);
-      const lowerLimit = parseFloat(device.humidityLowerLimit);
-      
+      if (!sensor || sensor.sensorTypeId !== 6) return false
+      if (!device) return false
+
+      const sensorValue = parseFloat(sensor.sensorValue)
+      if (isNaN(sensorValue)) return false
+
+      const upperLimit = parseFloat(device.humidityUpperLimit)
+      const lowerLimit = parseFloat(device.humidityLowerLimit)
+
       // 如果上下限都设置为0，表示未设置限制
-      if (upperLimit === 0 && lowerLimit === 0) return false;
-      
+      if (upperLimit === 0 && lowerLimit === 0) return false
+
       // 超过上限或低于下限
-      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
-        return true;
+      if (
+        (upperLimit > 0 && sensorValue > upperLimit) ||
+        (lowerLimit > 0 && sensorValue < lowerLimit)
+      ) {
+        return true
       }
-      return false;
+      return false
     },
     // 判断气体是否超过上下限
     isGasOutOfRange(sensor, device) {
-      if (!sensor || sensor.sensorTypeId !== 7) return false;
-      if (!device) return false;
-      
-      const sensorValue = parseFloat(sensor.sensorValue);
-      if (isNaN(sensorValue)) return false;
-      
-      const upperLimit = parseInt(device.gasUpperLimit);
-      const lowerLimit = parseInt(device.gasLowerLimit);
-      
+      if (!sensor || sensor.sensorTypeId !== 7) return false
+      if (!device) return false
+
+      const sensorValue = parseFloat(sensor.sensorValue)
+      if (isNaN(sensorValue)) return false
+
+      const upperLimit = parseInt(device.gasUpperLimit)
+      const lowerLimit = parseInt(device.gasLowerLimit)
+
       // 如果上下限都设置为0，表示未设置限制
-      if (upperLimit === 0 && lowerLimit === 0) return false;
-      
+      if (upperLimit === 0 && lowerLimit === 0) return false
+
       // 超过上限或低于下限
-      if ((upperLimit > 0 && sensorValue > upperLimit) || (lowerLimit > 0 && sensorValue < lowerLimit)) {
-        return true;
+      if (
+        (upperLimit > 0 && sensorValue > upperLimit) ||
+        (lowerLimit > 0 && sensorValue < lowerLimit)
+      ) {
+        return true
       }
-      return false;
+      return false
     },
-    
   },
-};
+}
 </script>
 
 <style scoped>
@@ -654,13 +715,11 @@ export default {
 }
 .device-info {
   padding-left: 40rpx;
-
-  
 }
 .device-info .base-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
 }
 
 .alarm-icon {
