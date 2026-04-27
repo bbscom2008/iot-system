@@ -159,6 +159,16 @@ public class DeviceController {
         Device device = dtoConverter.toEntity(request, Device.class);
         
         deviceService.updateDeviceSettings(id, userId, platform, device);
+
+        // 保存成功后，按工厂设置协议下发到硬件
+        Device latestDevice = deviceService.findByDeviceId(id);
+        if (latestDevice != null) {
+            boolean published = mqttService.publishFactorySetting(latestDevice);
+            if (!published) {
+                throw new RuntimeException("更新成功，但下发MQTT设置失败");
+            }
+        }
+
         return ApiResponse.success("更新成功");
     }
 

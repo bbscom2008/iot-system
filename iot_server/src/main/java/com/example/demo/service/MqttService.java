@@ -23,6 +23,8 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
 import java.nio.charset.StandardCharsets;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +63,14 @@ public class MqttService implements MqttCallback {
      */
     public static String DEVICE_CTRL(String deviceNum) {
         return "device/ctrl/" + deviceNum;
+    }
+
+    /**
+     * 服务器向温控仪下发工厂设置 topic
+     * 如：server/setting/{STM32ID}/factoryset
+     */
+    public static String FACTORY_SET(String deviceNum) {
+        return "server/setting/" + deviceNum + "/factoryset";
     }
 
     ;
@@ -924,6 +934,66 @@ public class MqttService implements MqttCallback {
      */
     public boolean publishString(String topic, String message) {
         return publishMessage(topic, message, 1);
+    }
+
+    /**
+     * 下发工厂设置到设备
+     */
+    public boolean publishFactorySetting(Device device) {
+        if (device == null || !StringUtils.hasText(device.getDeviceNum())) {
+            return false;
+        }
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("taul", toProtocolScaledValue(device.getTempUpperLimit(), 0));
+        payload.put("tadl", toProtocolScaledValue(device.getTempLowerLimit(), 0));
+        payload.put("haul", toProtocolScaledValue(device.getHumidityUpperLimit(), 0));
+        payload.put("hadl", toProtocolScaledValue(device.getHumidityLowerLimit(), 0));
+        payload.put("naul", intOrDefault(device.getGasUpperLimit(), 0));
+        payload.put("nadl", intOrDefault(device.getGasLowerLimit(), 0));
+
+        // 当前数据库无补偿字段，按协议下发默认 0
+        payload.put("tcv1", 0);
+        payload.put("tcv2", 0);
+        payload.put("tcv3", 0);
+        payload.put("tcv4", 0);
+        payload.put("hcv", 0);
+        payload.put("ncv", 0);
+
+        payload.put("tof1", intOrDefault(device.getTof1(), 0));
+        payload.put("tof2", intOrDefault(device.getTof2(), 0));
+        payload.put("tof3", intOrDefault(device.getTof3(), 0));
+        payload.put("tof4", intOrDefault(device.getTof4(), 0));
+        payload.put("lt", intOrDefault(device.getLevelTime(), 0));
+
+        payload.put("hr", intOrDefault(device.getHr(), 100));
+        payload.put("nr", intOrDefault(device.getNr(), 100));
+        payload.put("tb", intOrDefault(device.getTb(), 10));
+        payload.put("hb", intOrDefault(device.getHb(), 1));
+        payload.put("nb", intOrDefault(device.getNb(), 1));
+
+        String topic = FACTORY_SET(device.getDeviceNum());
+        boolean published = publishMessage(topic, payload, 1);
+        if (published) {
+            log.info("工厂设置已下发: topic={}, deviceNum={}", topic, device.getDeviceNum());
+        } else {
+            log.warn("工厂设置下发失败: topic={}, deviceNum={}", topic, device.getDeviceNum());
+        }
+        return published;
+    }
+
+    private Integer toProtocolScaledValue(Double value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        return BigDecimal.valueOf(value)
+                .multiply(BigDecimal.TEN)
+                .setScale(0, RoundingMode.HALF_UP)
+                .intValue();
+    }
+
+    private int intOrDefault(Integer value, int defaultValue) {
+        return value == null ? defaultValue : value;
     }
 
     private Double getTempValueBySelection(Map<Long, Sensor> sensorMap, Integer selection) {
