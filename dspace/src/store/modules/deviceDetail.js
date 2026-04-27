@@ -6,6 +6,7 @@ const state = {
   // currentSensor: null, // 当前选中的传感器信息
   currentSensorId: null, // 当前选中的传感器ID
   currentMotorFan: null, // 当前选中的风机信息
+  
   deviceInfo: null, // 当前设备的详细信息
   currDevice: null, // 设备列表中点击的设备条目
 }

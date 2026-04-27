@@ -177,6 +177,12 @@ public class MqttService implements MqttCallback {
                 return;
             }
 
+            // 工厂设置上报 device/report/{STM32ID}/factoryset
+            if (isFactorySetTopic(topic)) {
+                handleFactorySetReport(topic, node);
+                return;
+            }
+
         } catch (Exception e) {
             log.error("MQTT payload parse error", e);
         }
@@ -335,6 +341,18 @@ public class MqttService implements MqttCallback {
                 && "alarm".equalsIgnoreCase(parts[3]);
     }
 
+    private boolean isFactorySetTopic(String topic) {
+        if (!StringUtils.hasText(topic)) {
+            return false;
+        }
+        String[] parts = topic.split("/");
+        return parts.length == 4
+                && "device".equals(parts[0])
+                && "report".equals(parts[1])
+                && StringUtils.hasText(parts[2])
+                && "factoryset".equalsIgnoreCase(parts[3]);
+    }
+
     /**
      * 判断是否是设备常规上报 topic，如 device/report/{STM32ID}
      * 
@@ -451,6 +469,54 @@ public class MqttService implements MqttCallback {
             log.info("报警上报已保存: stm32Id={}, deviceId={}", stm32Id, device.getId());
         } catch (Exception e) {
             log.error("处理报警上报失败: topic={}", topic, e);
+        }
+    }
+
+    /**
+     * 工厂设置上报 device/report/{STM32ID}/factoryset
+     */
+    private void handleFactorySetReport(String topic, JsonNode node) {
+        try {
+            String[] parts = topic.split("/");
+            String deviceNum = parts[2];
+
+            if (!StringUtils.hasText(deviceNum)) {
+                log.warn("工厂设置上报忽略，缺少设备编号: topic={}", topic);
+                return;
+            }
+
+            Device device = deviceService.findByDeviceNum(deviceNum);
+            if (device == null) {
+                log.warn("工厂设置上报忽略，设备不存在: deviceNum={}, topic={}", deviceNum, topic);
+                return;
+            }
+
+            Device update = new Device();
+            update.setTempUpperLimit(getScaledDecimal(node, "taul"));
+            update.setTempLowerLimit(getScaledDecimal(node, "tadl"));
+            update.setHumidityUpperLimit(getScaledDecimal(node, "haul"));
+            update.setHumidityLowerLimit(getScaledDecimal(node, "hadl"));
+            update.setGasUpperLimit(getInt(node, "naul"));
+            update.setGasLowerLimit(getInt(node, "nadl"));
+            update.setLevelTime(getInt(node, "lt"));
+
+            update.setTof1(getInt(node, "tof1"));
+            update.setTof2(getInt(node, "tof2"));
+            update.setTof3(getInt(node, "tof3"));
+            update.setTof4(getInt(node, "tof4"));
+
+            update.setHr(getInt(node, "hr"));
+            update.setNr(getInt(node, "nr"));
+            update.setTb(getInt(node, "tb"));
+            update.setHb(getInt(node, "hb"));
+            update.setNb(getInt(node, "nb"));
+
+            deviceService.updateDeviceSettings(device.getId(), device.getUserId(), "web", update);
+            notifyToUpdate(deviceNum, topic);
+
+            log.info("工厂设置上报已更新: deviceNum={}, deviceId={}", deviceNum, device.getId());
+        } catch (Exception e) {
+            log.error("处理工厂设置上报失败: topic={}", topic, e);
         }
     }
 

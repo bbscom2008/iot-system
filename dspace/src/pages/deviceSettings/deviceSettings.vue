@@ -276,6 +276,13 @@ export default {
       ],
     }
   },
+  onShow() {
+    // 监听工厂设置上报
+    uni.$on("device/factorySetUpdate", this.handleFactorySetUpdate)
+  },
+  onHide() {
+    uni.$off("device/factorySetUpdate", this.handleFactorySetUpdate)
+  },
   computed: {
     deviceInfo() {
       return this.$store.state.deviceDetail.deviceInfo || {}
@@ -550,6 +557,15 @@ export default {
     },
   },
   methods: {
+    handleFactorySetUpdate({ deviceNum, message }){
+      // 如果是当前设备，就更新设备信息
+      if(this.deviceInfo.deviceNum === deviceNum){
+        this.$store.dispatch("deviceDetail/fetchDeviceInfo")
+      }else{
+        console.log('=====不是当前设备的工厂设置，不理===');
+        
+      }
+    },
     dialingMethodChange(e) {
       this.dialingMethod = parseValueFromEvent(e)
     },

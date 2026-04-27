@@ -228,6 +228,7 @@ const actions = {
           变频详情设置上报 device/report/{STM32ID}/{imtx}  x是 1-2
           风机详情设置上报 device/report/{STM32ID}/{mtx}   x是 1-10
           报警上报 device/report/{STM32ID}/alarm  如： device/report/464B21320F3936313536374D/alarm
+          工厂设置上报 device/report/{STM32ID}/factoryset
       */
       const deviceTopic = message.topic
       const parts = deviceTopic.split("/")
@@ -270,6 +271,16 @@ const actions = {
         // 报警上报 device/report/{STM32ID}/alarm  如： device/report/464B21320F3936313536374D/alarm
         console.log("处理报警更新: deviceNum=", deviceNum)
         uni.$emit("device/alarm", { deviceNum, message })
+      } else if (
+        parts.length === 4 &&
+        parts[0] === "device" &&
+        parts[1] === "report" &&
+        parts[2] === deviceNum &&
+        parts[3] === "factoryset"
+      ) {
+        // 工厂设置上报 device/report/{STM32ID}/factoryset  如： device/report/464B21320F3936313536374D/factoryset
+        console.log("处理工厂设置更新: deviceNum=", deviceNum)
+        uni.$emit("device/factorySetUpdate", { deviceNum, message })
       }
 
       // 更新设备首页信息
