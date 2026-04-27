@@ -34,6 +34,11 @@ public class DeviceSettingsRequest {
     private Integer tof2;                // 温度开关2：0-开 1-关
     private Integer tof3;                // 温度开关3：0-开 1-关
     private Integer tof4;                // 温度开关4：0-开 1-关
+    private Integer hr;                  // 湿度里程
+    private Integer nr;                  // 氨气里程
+    private Integer tb;                  // 温度回差
+    private Integer hb;                  // 湿度回差
+    private Integer nb;                  // 氨气回差
     
     private Integer dialingMethod;       // 拨打方式：1-同时拨打 2-依次拨打
     private Integer alarmMethod;         // 报警方式：1-打电话 2-发短信 3-打电话和发短信

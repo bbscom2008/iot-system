@@ -18,12 +18,13 @@
         </view>
         <view class="setting-item">
           <view class="setting-label">设备编号:</view>
-          <input
+          <!-- <input
             class="setting-input"
             v-model="deviceCode"
             disabled
             placeholder="867920077581750"
-          />
+          /> -->
+          <view class="setting-input">{{ deviceCode }}</view>
         </view>
         <view class="setting-item">
           <view class="setting-label">阶梯时间:</view>
@@ -96,6 +97,37 @@
           <view class="unit">ppm</view>
         </view>
         <!-- <button class="save-btn">保存</button> -->
+      </view>
+    </view>
+
+    <!-- 里程与回差 -->
+    <view class="section">
+      <view class="section-title">
+        <view class="title-bar"></view>
+        <text class="title-text">里程与回差</text>
+      </view>
+
+      <view class="setting-card">
+        <view class="setting-item">
+          <view class="setting-label">湿度里程:</view>
+          <input class="setting-input" v-model="hr" placeholder="100" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-label">氨气里程:</view>
+          <input class="setting-input" v-model="nr" placeholder="100" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-label">温度回差:</view>
+          <input class="setting-input" v-model="tb" placeholder="10" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-label">湿度回差:</view>
+          <input class="setting-input" v-model="hb" placeholder="1" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-label">氨气回差:</view>
+          <input class="setting-input" v-model="nb" placeholder="1" />
+        </view>
       </view>
     </view>
 
@@ -220,6 +252,12 @@ export default {
         tof2: 0,
         tof3: 0,
         tof4: 0,
+        //里程与回差 的默认值
+        hr: 100,
+        nr: 100,
+        tb: 10,
+        hb: 1,
+        nb: 1,
         //拨打方式 的默认值
         dialingMethod: 1,
         //报警方式 的默认值
@@ -400,6 +438,71 @@ export default {
         })
       },
     },
+    hr: {
+      get() {
+        return this.deviceInfo.hr !== undefined && this.deviceInfo.hr !== null
+          ? String(this.deviceInfo.hr)
+          : "100"
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+          field: "hr",
+          value: parseInt(value) || 0,
+        })
+      },
+    },
+    nr: {
+      get() {
+        return this.deviceInfo.nr !== undefined && this.deviceInfo.nr !== null
+          ? String(this.deviceInfo.nr)
+          : "100"
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+          field: "nr",
+          value: parseInt(value) || 0,
+        })
+      },
+    },
+    tb: {
+      get() {
+        return this.deviceInfo.tb !== undefined && this.deviceInfo.tb !== null
+          ? String(this.deviceInfo.tb)
+          : "10"
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+          field: "tb",
+          value: parseInt(value) || 0,
+        })
+      },
+    },
+    hb: {
+      get() {
+        return this.deviceInfo.hb !== undefined && this.deviceInfo.hb !== null
+          ? String(this.deviceInfo.hb)
+          : "1"
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+          field: "hb",
+          value: parseInt(value) || 0,
+        })
+      },
+    },
+    nb: {
+      get() {
+        return this.deviceInfo.nb !== undefined && this.deviceInfo.nb !== null
+          ? String(this.deviceInfo.nb)
+          : "1"
+      },
+      set(value) {
+        this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+          field: "nb",
+          value: parseInt(value) || 0,
+        })
+      },
+    },
     // 拨打方式
     dialingMethod: {
       get() {
@@ -526,6 +629,26 @@ export default {
             this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
               field: "tof4",
               value: this.defaultValue.tof4,
+            })
+            this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+              field: "hr",
+              value: this.defaultValue.hr,
+            })
+            this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+              field: "nr",
+              value: this.defaultValue.nr,
+            })
+            this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+              field: "tb",
+              value: this.defaultValue.tb,
+            })
+            this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+              field: "hb",
+              value: this.defaultValue.hb,
+            })
+            this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
+              field: "nb",
+              value: this.defaultValue.nb,
             })
             this.$store.commit("deviceDetail/UPDATE_DEVICE_FIELD", {
               field: "dialingMethod",
@@ -730,6 +853,21 @@ export default {
           this.deviceInfo.tof4 !== null
         ) {
           requestData.tof4 = this.deviceInfo.tof4
+        }
+        if (this.deviceInfo.hr !== undefined && this.deviceInfo.hr !== null) {
+          requestData.hr = this.deviceInfo.hr
+        }
+        if (this.deviceInfo.nr !== undefined && this.deviceInfo.nr !== null) {
+          requestData.nr = this.deviceInfo.nr
+        }
+        if (this.deviceInfo.tb !== undefined && this.deviceInfo.tb !== null) {
+          requestData.tb = this.deviceInfo.tb
+        }
+        if (this.deviceInfo.hb !== undefined && this.deviceInfo.hb !== null) {
+          requestData.hb = this.deviceInfo.hb
+        }
+        if (this.deviceInfo.nb !== undefined && this.deviceInfo.nb !== null) {
+          requestData.nb = this.deviceInfo.nb
         }
         if (
           this.deviceInfo.dialingMethod !== undefined &&

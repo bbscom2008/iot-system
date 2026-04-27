@@ -12,7 +12,8 @@ username: {STM32ID}
 password: {IMEI}
 ```
 ## 约定
-所有的温度数据，湿度数据以及相关的参数均*10发出，不发小数
+> 所有的温度、湿度数据均*10发出，不发小数
+> 气体，转速是整数，没有小数点
 
 ## 温控仪数据上报
 主题:  **device/report/{STM32ID}**
@@ -24,10 +25,10 @@ password: {IMEI}
     "STM32ID": "464B21320F3936313536374D",
     "IMEI": "864814078766416",
     "ICCID": "89860124801774637014",
-    "ts1": 48,
-    "ts2": 33,
-    "ts3": 32,
-    "ts4": 22,
+    "ts1": 420,
+    "ts2": 330,
+    "ts3": 320,
+    "ts4": 220,
     "hv": 50,
     "nv": 20,
     "mt1": 1,
@@ -65,17 +66,17 @@ password: {IMEI}
 ```json
 {
   "ta1": 0,
-  "ts1": 30,
+  "ts1": 300,
   "ta2": 0,
-  "ts2": 33,
+  "ts2": 330,
   "ta3": 0,
-  "ts3": 32,
+  "ts3": 320,
   "ta4": 0,
-  "ts4": 22,
+  "ts4": 220,
   "ha": 0,
-  "hv": 50,
+  "hv": 500,
   "na": 0,
-  "nv": 20
+  "nv": 200
 }
 
 ```
@@ -121,14 +122,14 @@ password: {IMEI}
 
 ```
 > taul：温度报警上限（380代表38°C）
-> tadl：温度报警下限
+> tadl：温度报警下限 
 > haul：湿度报警上限
 > hadl：湿度报警下限
 > naul：氨气报警上限
 > nadl：氨气报警下限
-> tcv1-tcv4：温度补偿值
+> tcv1-tcv4：温度补偿值  *10
 > hcv：湿度补偿值，*10
-> ncv：氨气补偿值
+> ncv：氨气补偿值 
 > tof1-tof4：4个温度开关标志位，0开1关
 > lt: 延时时间（阶梯时间）
 > hr：湿度里程
@@ -156,21 +157,23 @@ password: {IMEI}
 {
   "wm": 0,
   "tcps": 7,
-  "tcat": 25.0,
-  "tcot": 30.0,
+  "tcat": 250,
+  "tcot": 300,
   "tcltrm": 0,
   "tcltrs": 0,
   "tcltpm": 0,
   "tcltps": 0,
   "tctcm": 1,
+  
   "ccps": 7,
-  "cctu": 30.0,
-  "cctd": 20.0,
+  "cctu": 300,
+  "cctd": 200,
   "ccrm": 0,
   "ccrs": 0,
   "ccpm": 0,
   "ccpss": 0,
   "cccm": 0,
+  
   "hchu": 700,
   "hchd": 400,
   "hcrm": 0,
@@ -178,12 +181,14 @@ password: {IMEI}
   "hcpm": 0,
   "hcps": 0,
   "hchcm": 0,
+  
   "ncnu": 35,
   "ncnd": 10,
   "ncrm": 0,
   "ncrs": 0,
   "ncpm": 0,
   "ncps": 0,
+  
   "tict1nf": 0,
   "tict1nh": 8,
   "tict1nm": 0,

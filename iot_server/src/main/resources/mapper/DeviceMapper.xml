@@ -30,6 +30,11 @@
         <result column="tof2" property="tof2" jdbcType="INTEGER"/>
         <result column="tof3" property="tof3" jdbcType="INTEGER"/>
         <result column="tof4" property="tof4" jdbcType="INTEGER"/>
+        <result column="hr" property="hr" jdbcType="INTEGER"/>
+        <result column="nr" property="nr" jdbcType="INTEGER"/>
+        <result column="tb" property="tb" jdbcType="INTEGER"/>
+        <result column="hb" property="hb" jdbcType="INTEGER"/>
+        <result column="nb" property="nb" jdbcType="INTEGER"/>
         <result column="dialing_method" property="dialingMethod" jdbcType="TINYINT"/>
         <result column="alarm_method" property="alarmMethod" jdbcType="TINYINT"/>
         <result column="alarm_phones" property="alarmPhones" jdbcType="VARCHAR" typeHandler="com.example.demo.handler.StringListTypeHandler"/>
@@ -208,6 +213,11 @@
             <if test="tof2 != null">tof2 = #{tof2},</if>
             <if test="tof3 != null">tof3 = #{tof3},</if>
             <if test="tof4 != null">tof4 = #{tof4},</if>
+            <if test="hr != null">hr = #{hr},</if>
+            <if test="nr != null">nr = #{nr},</if>
+            <if test="tb != null">tb = #{tb},</if>
+            <if test="hb != null">hb = #{hb},</if>
+            <if test="nb != null">nb = #{nb},</if>
             <if test="dialingMethod != null">dialing_method = #{dialingMethod},</if>
             <if test="alarmMethod != null">alarm_method = #{alarmMethod},</if>
             <if test="alarmPhones != null">alarm_phones = #{alarmPhones,typeHandler=com.example.demo.handler.StringListTypeHandler},</if>
