@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -24,12 +26,14 @@ public class CheckDeviceStatus {
     public DeviceMapper deviceMapper;
     /**
       *  每 20 分钟检测一次设备更新时间，超过 5 分钟则标记为离线
+      *  应用启动后立即执行一次，然后每 20 分钟执行一次
       */
-    @Scheduled(fixedRate = 20 * 60 * 1000)
+    @Scheduled(initialDelay = 0, fixedRate = 20 * 60 * 1000)
     public void scheduledCheckDeviceOnlineStatus() {
         try {
             List<Device> devices = deviceMapper.findList(new HashMap<>());
             LocalDateTime now = LocalDateTime.now();
+            List<Map<String, Object>> updates = new ArrayList<>();
             for (Device d : devices) {
                 LocalDateTime lastOnlineTime = d.getLastOnlineTime();
                 int state = 0;
@@ -44,13 +48,22 @@ public class CheckDeviceStatus {
                     state = 0;
                 }
 
+                // 如果新状态和原状态不同，就添加到更新列表
+                if (!Objects.equals(d.getDeviceLineState(), state)) {
+                    Map<String, Object> update = new HashMap<>();
+                    update.put("deviceNum", d.getDeviceNum());
+                    update.put("state", state);
+                    updates.add(update);
+                }
+            }
+
+            // 批量更新设备状态
+            if (!updates.isEmpty()) {
                 try {
-                    // 如果新状态和原状态不同，就更新状态
-                    if (!Objects.equals(d.getDeviceLineState(), state)) {
-                        deviceMapper.updateDeviceOnlineState(d.getDeviceNum(), state);
-                    }
+                    deviceMapper.updateDeviceOnlineStates(updates);
+                    logger.info("批量更新了 {} 个设备的在线状态", updates.size());
                 } catch (Exception ex) {
-                    logger.error("Failed to update device online state for deviceNum={}", d.getDeviceNum(), ex);
+                    logger.error("批量更新设备在线状态失败", ex);
                 }
             }
         } catch (Exception e) {

@@ -94,7 +94,12 @@ public interface DeviceMapper {
 
     int updateDeviceOnlineState(@Param("deviceNum") String deviceNum, @Param("state") Integer state);
 
-        int updateDeviceIdentity(@Param("deviceNum") String deviceNum, @Param("imei") String imei,
+    /**
+     * 批量更新设备在线状态
+     */
+    int updateDeviceOnlineStates(@Param("updates") List<Map<String, Object>> updates);
+
+    int updateDeviceIdentity(@Param("deviceNum") String deviceNum, @Param("imei") String imei,
             @Param("iccid") String iccid);
 
     @Update("UPDATE devices SET device_line_state = 0, warning_status = 0, updated_time = NOW()")
