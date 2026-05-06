@@ -824,6 +824,7 @@ public class MqttService implements MqttCallback {
         // }
     }
 
+    
     /**
      * 处理设备所有电机的控制规则
      * 从数据库读取传感器和电机配置，应用控制规则
@@ -831,6 +832,7 @@ public class MqttService implements MqttCallback {
      * @param deviceId  设备ID
      * @param deviceNum
      */
+    @SuppressWarnings("unused")
     private void processMotorControlRules(Long deviceId, String deviceNum) {
         try {
             // 获取该设备的所有电机

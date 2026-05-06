@@ -19,6 +19,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.entity.MotorFanTimerTask.TIME_FORMATTER;
 
@@ -33,11 +36,12 @@ public class MotorControlRuleEngineService {
 
     private final MotorFanService motorFanService;
     private final SensorService sensorService;
-    private final MotorControlProducerService motorControlProducerService;
 
     private final ObjectMapper objectMapper;
 
     private final DeviceService deviceService;
+
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     // 延迟获取 MqttService 以打破启动时的循环依赖
     // private final ObjectProvider<MqttService> mqttServiceProvider;
@@ -593,7 +597,7 @@ public class MotorControlRuleEngineService {
     }
 
     /**
-     * 发送电机控制消息到RabbitMQ
+     * 发送电机控制消息到本地调度器
      *
      * @param motorFan  电机配置
      * @param newState  新电机状态
@@ -616,9 +620,15 @@ public class MotorControlRuleEngineService {
                 .build();
 
         if (delayTime != null && delayTime > 0) {
-            motorControlProducerService.sendMotorControlDelayMessage(message);
+            scheduler.schedule(() -> updateMotorFanStateByDelayMessage(message), delayTime, TimeUnit.MILLISECONDS);
+            log.info("[调度] 已安排本地延时电机控制消息: motorId={}, delay={}ms, state={}",
+                    message.getMotorId(), delayTime, message.getState());
         } else {
-            motorControlProducerService.sendMotorControlMessage(message);
+            if (message.getState() != null) {
+                updateMotorFanState(message.getDeviceNum(), message.getState(), deviceNum);
+            } else {
+                scheduler.schedule(() -> updateMotorFanStateByDelayMessage(message), 0, TimeUnit.MILLISECONDS);
+            }
         }
     }
 
